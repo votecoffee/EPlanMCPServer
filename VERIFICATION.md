@@ -41,3 +41,26 @@ All included report examples are synthetic custom schemas. No customer content i
 No native EPLAN instance, license, vendor-generated report scheme, ELK/ZW1 restoration or
 native check-run has been accepted. Package and protocol results do not prove live Codex UI
 reload, native EPLAN behavior, engineering correctness or physical continuity.
+
+## Results — October 21, 2026
+
+- 71 tests passed, including real MCP stdio, framework catalog/schema parity and routed
+  export writes, immutable deployment tamper rejection, plugin relocation and report ambiguity.
+- Ruff checks and formatting passed; dependency check found all installed packages compatible.
+- Source ZIP inventory and every member's bytes verified against the generated manifest.
+- Wheel (27 members) and source distribution inspected; private state and environments excluded.
+- A separate environment installed hash-locked dependencies plus the built wheel and passed the
+  real MCP smoke test: 38 tools, synthetic import, device/connection/PLC queries.
+- The Windows setup launcher completed, preserved the explicit synthetic source configuration,
+  and installed `eplan@eplan-local` version 0.1.0 through the Codex plugin CLI.
+- Only included synthetic examples were configured. No customer project roots were selected.
+
+To repeat the synthetic protocol smoke after configuring `examples/synthetic` as root `synthetic`:
+
+```powershell
+.\.venv\Scripts\python.exe scripts/protocol_smoke.py --root synthetic --reports examples/synthetic/reports.json
+```
+
+Source archive, wheel and source distribution are generated under ignored `.local/packages/`.
+The local standalone binding points to this checkout's environment. A fresh chat/reconnection
+is still needed to establish live Codex UI activation.

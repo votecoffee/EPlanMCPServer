@@ -315,6 +315,12 @@ class ExportService:
         body = self.load(snapshot_id)
         # Exact endpoint tuples avoid inventing bridges between different terminals on one device.
         edges = body["records"]["connections"]
+        scopes = collections.defaultdict(set)
+        for row in body["records"]["devices"]:
+            fields = row["fields"]
+            if fields.get("tag"):
+                scopes[fields["tag"]].add((fields.get("installation", ""), fields.get("location", "")))
+        ambiguous_tags = {name for name, values in scopes.items() if len(values) > 1}
         starts = set()
         for edge in edges:
             f = edge["fields"]
@@ -329,6 +335,8 @@ class ExportService:
             if node in visited:
                 continue
             visited.add(node)
+            if node[0] in ambiguous_tags:
+                continue
             for index, row in enumerate(edges):
                 f = row["fields"]
                 a = (f.get("source_tag", ""), f.get("source_terminal", ""))
@@ -352,7 +360,12 @@ class ExportService:
             "truncated": truncated,
             "matched_endpoints": sorted(starts),
             "sources": self.freshness(body),
-            "status": "reported_paths_only" if starts else "unresolved_start",
+            "status": "ambiguous_start"
+            if tag in ambiguous_tags
+            else "reported_paths_only"
+            if starts
+            else "unresolved_start",
+            "ambiguous_tags": sorted(ambiguous_tags),
             "limitations": [
                 "No internal device bridges or omitted connections inferred.",
                 "Full structured device tags are required; scoped tag ambiguity remains unresolved.",

@@ -3,40 +3,8 @@ from concurrent.futures import ThreadPoolExecutor
 
 import pytest
 
-from eplan_mcp.exports import ExportService, parse_report
+from eplan_mcp.exports import parse_report
 from eplan_mcp.service import sha256
-
-
-@pytest.fixture
-def exports(drawing_service):
-    drawings, root = drawing_service
-    (root / "devices.csv").write_text(
-        "DT,Text\n=AP+ST1-K1,Contactor\n=AP+ST1-X1,Terminal\n", encoding="utf-8"
-    )
-    (root / "connections.csv").write_text(
-        "source_tag,source_terminal,target_tag,target_terminal,wire\n"
-        "=AP+ST1-X1,1,=AP+ST1-K1,A1,W1\n"
-        "=AP+ST1-K1,A2,=AP+ST1-X1,2,W2\n",
-        encoding="utf-8",
-    )
-    (root / "io.xml").write_text(
-        "<Report><Point><DT>A1</DT><Address>I0.0</Address></Point></Report>", encoding="utf-8"
-    )
-    declarations = [
-        {
-            "relative_path": "devices.csv",
-            "kind": "devices",
-            "field_map": {"tag": "DT", "description": "Text"},
-        },
-        {"relative_path": "connections.csv", "kind": "connections"},
-        {
-            "relative_path": "io.xml",
-            "kind": "plc_io",
-            "row_tag": "Point",
-            "field_map": {"tag": "DT", "address": "Address"},
-        },
-    ]
-    return ExportService(drawings), root, declarations
 
 
 def test_import_provenance_preservation_freshness_and_readback(exports):
@@ -136,3 +104,15 @@ def test_concurrent_identical_imports_are_content_addressed(exports):
         results = list(pool.map(lambda _: service.import_reports("test", declarations), range(2)))
     assert results[0]["snapshot_id"] == results[1]["snapshot_id"]
     assert len(list((service.folder / "snapshots").glob("*.json"))) == 1
+
+
+def test_scoped_tag_ambiguity_stops_trace(exports):
+    service, root, declarations = exports
+    (root / "scoped.csv").write_text("tag,installation,location\nK1,A,L1\nK1,B,L2\n", encoding="utf-8")
+    (root / "connections.csv").write_text(
+        "source_tag,source_terminal,target_tag,target_terminal\nK1,1,X1,1\n", encoding="utf-8"
+    )
+    declarations[0] = {"relative_path": "scoped.csv", "kind": "devices"}
+    identifier = service.import_reports("test", declarations)["snapshot_id"]
+    trace = service.trace(identifier, "K1", "1")
+    assert trace["status"] == "ambiguous_start" and trace["items"] == []
