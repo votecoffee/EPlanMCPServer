@@ -27,7 +27,7 @@ async def test_framework_export_handlers_and_immutable_publication(exports, tmp_
     async with framework_host.create_host(state, publication, config) as host:
         client = host.client()
         native = await create_server(drawings, workflow=True).list_tools()
-        assert len(native) == 39
+        assert len(native) == 47
         for tool in native:
             description = payload(
                 await client.invoke("describe_tool", {"tool_id": "drawing-engine/" + tool.name})
@@ -54,6 +54,11 @@ async def test_framework_export_handlers_and_immutable_publication(exports, tmp_
         identifier = imported["snapshot_id"]
         records = await call("eplan_query_export", {"snapshot_id": identifier, "kind": "devices"})
         assert records["total"] == 2
+        xml = await call(
+            "eplan_read_xml",
+            {"root_id": "test", "relative_path": "io.xml", "record_tag": "Point", "limit": 1},
+        )
+        assert xml["items"][0]["value"]["children"][0]["text"] == "A1"
         exported = await call(
             "eplan_export_snapshot",
             {"snapshot_id": identifier, "request_id": "inner-report-export"},

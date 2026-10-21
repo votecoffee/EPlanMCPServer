@@ -1,6 +1,6 @@
 {
   "name": "eplan",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Source-preserving EPLAN export and electrical drawing analysis.",
   "author": {
     "name": "votecoffee"
@@ -13,7 +13,7 @@
       "interface": {
         "displayName": "EPLAN MCP Server",
         "shortDescription": "EPLAN exports, PLC I/O and connection evidence",
-        "longDescription": "Analyze mapped EPLAN exports and PDF/DXF/DWG derivatives with source hashes, snapshots and bounded connection tracing. Native EPLAN projects remain inventory only.",
+        "longDescription": "Analyze EPLAN exports, XML, local Access databases and raw/decompressed binary evidence with source hashes. Includes PDF/DXF/DWG derivatives; native semantic project decoding remains experimental.",
         "developerName": "votecoffee",
         "category": "Productivity",
         "capabilities": [

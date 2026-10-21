@@ -12,7 +12,7 @@ def bind_deployment(root: Path, digest: str):
 
 
 def worker_command(operation: str, *arguments: str) -> list[str]:
-    if operation not in {"_extract", "_render", "_tables", "_highlight"}:
+    if operation not in {"_extract", "_render", "_tables", "_local"}:
         raise ValueError("Unknown app worker operation")
     if _deployment is not None:
         root, digest = _deployment

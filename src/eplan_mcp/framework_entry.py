@@ -56,7 +56,7 @@ def main():
 
     bind_deployment(root, sys.argv[1])
     if len(sys.argv) > 2:
-        if sys.argv[2] not in {"_extract", "_render", "_tables", "_highlight"}:
+        if sys.argv[2] not in {"_extract", "_render", "_tables", "_local"}:
             raise ValueError("Unknown immutable backend worker operation")
         sys.argv = [sys.argv[0], *sys.argv[2:]]
     else:

@@ -10,13 +10,16 @@ uv pip install --python .venv/Scripts/python.exe --no-deps -e .
 .\.venv\Scripts\ruff.exe check .
 .\.venv\Scripts\ruff.exe format --check .
 .\.venv\Scripts\python.exe -m pytest -q
-.\.venv\Scripts\python.exe scripts/package.py --output .local/packages/EPlanMCPServer-0.1.0.zip
+.\.venv\Scripts\python.exe scripts/package.py --output .local/packages/EPlanMCPServer-0.2.0.zip
 .\.venv\Scripts\python.exe scripts/package.py --verify
 uv pip check --python .venv/Scripts/python.exe
 ```
 
 Tests cover synthetic PDF/DXF extraction, tables/previews, source hashes, indexing/freshness,
-geometry/electrical evidence, cross-process locking and durable write receipts. EPLAN report tests
+geometry/electrical evidence, cross-process locking and durable write receipts. Local-reader tests
+cover nested XML, UTF-16 links, missing/path-escaping database references, binary byte coordinates,
+zlib checksums/corruption/decompression budgets, experimental EOD slot geometry, ZIP member safety,
+and Windows ACE reads of a synthetic database with unchanged source hashes. EPLAN report tests
 cover explicit mapping, provenance, stale/deleted sources, duplicate multiplicity, malformed rows,
 XML entity rejection, namespaces/UTF-16, path escape, snapshot integrity and concurrent imports.
 Real stdio MCP testing initializes the server, discovers schemas/annotations, performs a cold PDF

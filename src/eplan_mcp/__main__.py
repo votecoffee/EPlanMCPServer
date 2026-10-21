@@ -7,13 +7,15 @@ import sys
 
 
 def main():
-    if len(sys.argv) > 1 and sys.argv[1] in {"_extract", "_render", "_tables"}:
+    if len(sys.argv) > 1 and sys.argv[1] in {"_extract", "_render", "_tables", "_local"}:
         if sys.argv[1] == "_extract":
             from .extract import run_worker
         elif sys.argv[1] == "_render":
             from .render import run_worker
         elif sys.argv[1] == "_tables":
             from .render import run_tables as run_worker
+        else:
+            from .local_data import run_worker
         run_worker(*sys.argv[2:])
         return
     parser = argparse.ArgumentParser(description="EPLAN MCP Server - local DWG/DXF/PDF extraction")
@@ -87,6 +89,17 @@ def main():
     cmd.add_argument("--query")
     cmd.add_argument("--offset", type=int, default=0)
     cmd.add_argument("--limit", type=int, default=50)
+    local = sub.add_parser(
+        "local-read", help="Independent XML, Access, project-link and binary evidence reader"
+    )
+    local.add_argument("root_id")
+    local.add_argument("relative_path")
+    local.add_argument(
+        "operation", choices=["xml", "access", "project", "bytes", "text", "streams", "archive"]
+    )
+    local.add_argument(
+        "--options", help="JSON file with reader options such as record_tag, table, offset and limit"
+    )
     args = parser.parse_args()
     if args.command.startswith("framework-"):
         from pathlib import Path
@@ -112,6 +125,20 @@ def main():
     from .service import DrawingService
 
     service = DrawingService(Config.load(args.config))
+    if args.command == "local-read":
+        from pathlib import Path
+
+        from .local_data import LocalDataService
+
+        options = json.loads(Path(args.options).read_text(encoding="utf-8-sig")) if args.options else {}
+        local = LocalDataService(service)
+        result = (
+            local.project(args.root_id, args.relative_path, **options)
+            if args.operation == "project"
+            else local.read(args.root_id, args.relative_path, args.operation, **options)
+        )
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+        return
     if args.command == "serve":
         from .server import SDK2, create_server
 

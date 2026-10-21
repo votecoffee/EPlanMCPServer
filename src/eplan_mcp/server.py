@@ -292,4 +292,7 @@ def create_server(service: DrawingService, port: int = 8816, *, workflow: bool =
     from .export_server import register_exports
 
     register_exports(tool, service)
+    from .local_server import register_local
+
+    register_local(tool, service)
     return mcp

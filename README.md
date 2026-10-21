@@ -2,7 +2,7 @@
 
 Source-preserving EPLAN export, electrical report and drawing analysis for MCP
 
-Standalone Codex plugin, shared Python service and CLI. Version **0.1.0**.
+Standalone Codex plugin, shared Python service and CLI. Version **0.2.0**.
 The repository uses `EPlanMCPServer`; the Python distribution uses the normalized package name
 `eplan-mcp-server` and imports as `eplan_mcp`.
 
@@ -63,7 +63,7 @@ do not prove activation in an already-open chat.
 ## Usage
 
 Start with `eplan_status` and `eplan_capabilities`. Select named roots using `eplan_list_files`.
-Native project files can be included with `supported_only=false`; drawing extraction filters do
+Local data files can be included with `supported_only=false`; drawing extraction filters do
 not enumerate report formats as supported drawings. Reports are imported through their own tool.
 
 Example `eplan_import_reports` arguments:
@@ -82,7 +82,7 @@ Example `eplan_import_reports` arguments:
 }
 ```
 
-Mappings are **canonical name Ã¢â€ â€™ exact exported column/property**. No localized labels, numeric
+Mappings are **canonical name ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ exact exported column/property**. No localized labels, numeric
 property IDs or export scheme are guessed. Exact canonical headers can omit field_map. CSV uses
 comma by default; TSV uses tab. Set delimiter explicitly for semicolon or pipe exports. UTF-8/BOM
 and BOM-marked UTF-16 are supported. XML requires exact row_tag (Clark notation for namespaces).
@@ -109,6 +109,30 @@ For drawings, index bounded batches with `eplan_index_project`, then use `eplan_
 Inspect failures and coverage. Use `eplan_get_text`, `eplan_get_entities`, `eplan_get_pdf_tables`
 and `eplan_render_preview` for source detail. Drawing-derived electrical snapshots use their own
 `project_id` and `eplan_build_electrical_project` workflow, separate from EPLAN `snapshot_id`.
+
+### Independent local readers
+
+These tools work without starting EPLAN or checking out an EPLAN license. They read isolated
+copies; every response identifies the original source hash. Windows Access reads require the
+installed Microsoft Access Database Engine (ACE) OLE DB provider matching Python's architecture.
+No Access installation or provider is downloaded automatically.
+
+| Tool | Content access |
+| --- | --- |
+| `eplan_read_xml` | Discover tags; query exact records including nested properties |
+| `eplan_read_access` | List local base tables; read paginated rows and column types |
+| `eplan_read_project_link` | Decode ELK/ELL references and inventory an in-root EDB folder |
+| `eplan_read_archive` | List ordinary ZIP members; run a bounded reader on one exact member |
+| `eplan_read_binary_bytes` | Inspect raw or inflated byte ranges as hex |
+| `eplan_read_binary_text` | Read ASCII-compatible text candidates with byte offsets |
+| `eplan_find_compressed_streams` | Discover checksum-valid zlib streams in bounded windows |
+| `eplan_read_eod_slots` | Experimental fixed-slot partitioning and raw headers |
+
+For binary reads, byte offsets refer to the source file unless `stream_offset` selects an
+inflated stream. Inflated results include the stream's source offset, consumed byte length and
+inflated hash. Follow scan continuation and result pagination separately. Binary matches can
+include incidental strings, stale data or window-edge fragments; they are not verified devices,
+pages, connections or active objects. See [local reader details](docs/local-readers.md).
 
 ### CLI
 
@@ -147,6 +171,11 @@ Sources and state directories must not overlap. Tool arguments cannot select exe
 
 ## Features
 
+- Independently inspect nested XML records, Windows Access base tables, ELK/ELL project links,
+  ordinary ZIP members, raw binary byte ranges and offset-bound text candidates.
+- Discover and inflate checksum-valid zlib streams in binary data with strict resource budgets.
+  Experimental EOD slot partitioning exposes raw headers; it does not infer native object status.
+
 - Import explicitly mapped CSV/TSV/TXT, JSON and flat XML report rows for devices, connections,
   PLC I/O, terminals, cables, parts, network inventory and pages.
 - Keep raw properties, canonical mappings, source SHA-256, row provenance and source freshness.
@@ -158,10 +187,11 @@ Sources and state directories must not overlap. Tool arguments cannot select exe
   WDP and AutoCAD Electrical reports remain a separate compatibility workflow.
 - Bound responses and worker concurrency; coordinate shared state across processes; record durable
   write receipts and recover lost replies without silently repeating effects.
-- Use 38 direct MCP tools, or the optional app-owned shared-framework host. No universal daemon required.
+- Use 46 direct MCP tools, or the optional app-owned shared-framework host. No universal daemon required.
 
-**Boundaries:** ELK/EDB/ZW1/ZW9/macros are inventory only. Arbitrary native EPJ schemas are not
-decoded; only declared flat XML rows can be read. No native project editing, save/upgrade,
+**Boundaries:** ZW1/ZW9/macros remain inventory only. ELK/ELL links and raw/decompressed EOD/EOX
+evidence can be read independently; full semantic project decoding is not provided. Nested XML
+can be inspected, while canonical report imports still require flat explicitly mapped rows. No native project editing, save/upgrade,
 restore, UI highlighting, controller access, network scanning or automatic OCR exists.
 Export completeness, native check-run results and physical continuity are not established.
 
@@ -202,4 +232,4 @@ from release packages. Public examples and fixtures must be synthetic or explici
 
 ## License
 
-[MIT](LICENSE) Â© 2026 votecoffee. See [NOTICE.md](NOTICE.md) for attribution.
+[MIT](LICENSE) Ãƒâ€šÃ‚Â© 2026 votecoffee. See [NOTICE.md](NOTICE.md) for attribution.

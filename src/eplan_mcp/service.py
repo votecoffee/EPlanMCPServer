@@ -155,7 +155,10 @@ class DrawingService:
                 "PDF text candidates",
             ],
             "electrical_analysis_requires_current_index": True,
-            "native_eplan": {"connected": False, "project_formats": "ELK/ZW1 are inventory only"},
+            "native_eplan": {
+                "connected": False,
+                "project_formats": "ELK/ELL link text and raw EOD/EOX evidence readable independently; ZW1/ZW9 inventory only",
+            },
         }
 
     def inventory(self, root_id: str, supported_only=True, offset=0, limit=100) -> dict:

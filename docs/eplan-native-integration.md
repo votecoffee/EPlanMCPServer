@@ -1,9 +1,12 @@
 # Native EPLAN integration boundary
 
-Version 0.1.0 is an offline export and drawing analysis server. It does not launch EPLAN,
-open projects, restore backups, alter project databases, load SDK assemblies or run arbitrary actions.
-ELK, EDB, ZW1/ZW9 and macros are inventory only. Flat XML reports are parsed only with an explicit
-row element and property map; generic XML parsing is not a native EPJ reader.
+Version 0.2.0 provides independent offline data readers in addition to export and drawing
+analysis. It does not launch EPLAN, open native projects, restore backups, alter project databases,
+load SDK assemblies or run arbitrary actions. Nested XML, Access tables, project-link text and
+raw/decompressed binary evidence are independently readable. Experimental EOD slots expose raw
+headers only. Native lifecycle state, property schemas, geometry and connectivity are not decoded.
+ZW1/ZW9 and macros remain inventory only; native backup extensions are never assumed to be ZIP.
+See [local readers](local-readers.md) for exact limits and provenance.
 
 EPLAN's official [project API](https://eplan.help/en-us/Infoportal/Content/api/2026/CreateOpenProject.html)
 requires a project to be open in EPLAN for DataModel access, and an offline program must use
