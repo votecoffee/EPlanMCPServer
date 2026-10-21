@@ -82,3 +82,5 @@ bridged terminal strip, and a 5.5 bar air source. These are synthetic assertions
 
 Replace ep_HASH with the returned snapshot_id. Historical snapshots without the new report kinds
 remain readable; missing collections are queried as empty rather than rewriting historical evidence.
+
+PDF table results include a cell_bboxes matrix aligned with cells. Coordinates are PDF points on the reported one-based page; merged or absent cells can be null. Use the cell boundaries and page preview to review explicit row assignments. Table detection remains heuristic, and switch-port text does not establish electrical or pneumatic continuity.

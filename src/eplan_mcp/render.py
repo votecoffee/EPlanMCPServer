@@ -18,6 +18,10 @@ def run_tables(source: str, destination: str, options: str):
                 "row_count": table.row_count,
                 "column_count": table.col_count,
                 "cells": table.extract(),
+                "cell_bboxes": [
+                    [list(cell) if cell is not None else None for cell in row.cells]
+                    for row in table.rows
+                ],
             }
             for table in found.tables
         ]

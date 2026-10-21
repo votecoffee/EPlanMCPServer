@@ -200,7 +200,7 @@ Sources and state directories must not overlap. Tool arguments cannot select exe
 - Query immutable snapshots, review potential duplicate tags/addresses, trace explicit connection
   endpoints, compare revisions including duplicate multiplicity, and export verified JSON evidence.
 - Inspect PDF/DXF and ODA-converted DWG/DWT/DWS: text, attributes, layers, blocks, dimensions,
-  references, PDF pages/tables, previews, literal project search and drawing comparisons.
+  references, PDF pages/tables with cell coordinates, previews, literal project search and drawing comparisons.
 - Analyze derivative drawing electrical devices, PLC I/O, equipment groups and connection evidence.
   WDP and AutoCAD Electrical reports remain a separate compatibility workflow.
 - Bound responses and worker concurrency; coordinate shared state across processes; record durable

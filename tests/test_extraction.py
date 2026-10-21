@@ -114,6 +114,10 @@ def test_pdf_table_cells_and_render(drawing_service):
     before = sha256(source / "sample.pdf")
     tables = service.pdf_tables("test", "sample.pdf", 1)
     assert tables["items"][0]["cells"] == [["PART", "QTY"], ["ABC-123", "2"]]
+    boxes = tables["items"][0]["cell_bboxes"]
+    assert len(boxes) == 2 and all(len(row) == 2 for row in boxes)
+    assert boxes[1][0][0] < boxes[1][1][0]
+    assert boxes[0][0][1] < boxes[1][0][1]
     preview = service.render("test", "sample.pdf", width=600)
     from PIL import Image
 
