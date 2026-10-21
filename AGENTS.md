@@ -11,3 +11,4 @@
 
 - Keep public documentation reusable: no machine-specific setup receipts, customer paths or usage history. Put these under repository-root `.local/private-docs/` or outside the checkout.
 - Keep the root README aligned with Standard Readme, including Table of Contents, Install/Dependencies, Usage/CLI, Contributing and License.
+- Keep application features vendor-generic. Organization-specific standards, rules, station mappings and engineering interpretations belong to the corresponding engineering service, using generic source-bound evidence from this server.

@@ -195,7 +195,9 @@ Questions and bug reports are welcome in [GitHub issues](https://github.com/vote
 Pull requests are accepted. Keep operations in the shared service layer, add relevant synthetic
 tests, run the checks in [VERIFICATION.md](VERIFICATION.md), and update documentation and the byte
 manifest. Never submit customer projects, real reports, private paths, credentials or local setup
-receipts. Use repository-root `.local/` for private working material; it is ignored by Git and excluded
+receipts. Keep organization-specific standards, validation rules and project interpretations in the
+corresponding engineering service, using this server's generic source-bound evidence.
+Use repository-root `.local/` for private working material; it is ignored by Git and excluded
 from release packages. Public examples and fixtures must be synthetic or explicitly redistributable.
 
 ## License
