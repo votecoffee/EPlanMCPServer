@@ -1,5 +1,5 @@
 .venv/
-.local/
+/.local/
 __pycache__/
 *.pyc
 .pytest_cache/
@@ -7,4 +7,9 @@ __pycache__/
 dist/
 *.egg-info/
 /EPLAN MCP Server.lnk
-/.autocad-shortcut-*.lnk
+/.eplan-shortcut-*.lnk
+
+# Private working material belongs here, never in public docs or examples.
+/private/
+/work/
+/outputs/

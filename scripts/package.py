@@ -21,6 +21,8 @@ ROOT_FILES = (
     "NOTICE.md",
 )
 
+PRIVATE_DIRECTORIES = {".local", ".venv", "private", "work", "outputs", "__pycache__"}
+
 
 def digest(data):
     return hashlib.sha256(data).hexdigest()
@@ -40,7 +42,17 @@ def selected_files(repo):
     for path in (repo / "plugins" / "eplan").rglob("*"):
         if path.is_file() and path.suffix.lower() in {".json", ".md", ".png"}:
             files.append(path)
-    return sorted(files, key=lambda path: path.relative_to(repo).as_posix())
+    public = []
+    for path in files:
+        relative = path.relative_to(repo)
+        if any(part.casefold() in PRIVATE_DIRECTORIES for part in relative.parts[:-1]):
+            continue
+        if any(parent.is_symlink() for parent in [path, *path.parents] if parent != repo.parent):
+            raise ValueError("Source packages cannot include symbolic links")
+        if not path.resolve(strict=True).is_relative_to(repo.resolve()):
+            raise ValueError("Source package member escapes the repository")
+        public.append(path)
+    return sorted(public, key=lambda path: path.relative_to(repo).as_posix())
 
 
 def verify(repo):

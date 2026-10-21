@@ -8,3 +8,6 @@
 - Work on main; make focused commits and push after relevant checks pass, as explicitly authorized by the user.
 - Test source preservation, malformed inputs, path boundaries, source freshness, concurrency and real MCP transport.
 - Include license and byte manifest in source packages. Use LF endings. Do not publish customer evidence.
+
+- Keep public documentation reusable: no machine-specific setup receipts, customer paths or usage history. Put these under repository-root `.local/private-docs/` or outside the checkout.
+- Keep the root README aligned with Standard Readme, including Table of Contents, Install/Dependencies, Usage/CLI, Contributing and License.

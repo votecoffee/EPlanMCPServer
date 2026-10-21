@@ -16,6 +16,3 @@ A future native adapter needs app-owned testing against the installed EPLAN vers
 an explicit project selection, reviewed action/parameter allowlists, source preservation on copies,
 bounded operations, durable receipts, and post-operation readback. Package tests do not establish
 native acceptance. No such adapter is claimed by this release.
-
-No EPLAN installation was discovered in the standard Program Files folders during initial setup.
-That is limited discovery, not proof that no installation exists elsewhere.

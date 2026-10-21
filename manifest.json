@@ -7,12 +7,12 @@
       "bytes": 99
     },
     ".gitignore": {
-      "sha256": "9b3a021d1701179e6911b0293087748dac70dc4b05504d9d735c2898717452d8",
-      "bytes": 127
+      "sha256": "cf0518299f74d8b60a9ddb0f57349dd6d7c2d21eaede7ee87541bcd4b07d8802",
+      "bytes": 229
     },
     "AGENTS.md": {
-      "sha256": "4e6d50febe090636fde6f2705d2be47265221c1f563c61b7ad70543202acb2a8",
-      "bytes": 903
+      "sha256": "1dab884e07f25371ac5c392e04383aff9cdcae00535749f290660a3a71d7323b",
+      "bytes": 1232
     },
     "InstallAndRun.cmd": {
       "sha256": "36ec1ca54824da6884614f60b5dc95c581048997322dbb89a0070ed58f34d0a8",
@@ -27,16 +27,16 @@
       "bytes": 477
     },
     "README.md": {
-      "sha256": "d0de2686ceae43036160c730067705b416a1ef131c042b12feb6c0e3cfdb349a",
-      "bytes": 8392
+      "sha256": "8da00900b798b71712310c4740b195e44de759ae6e023b9fb2fe516165a4e210",
+      "bytes": 10102
     },
     "VERIFICATION.md": {
-      "sha256": "d84293e4a7fb6201e16407e9ea0e92cf2ce288eec59ef005f7128ccd27c32eb0",
-      "bytes": 3741
+      "sha256": "03bd70afcaa95f2ee7db5e51c221bba7dcbec478ebfe8aadf8f4959d965c20a7",
+      "bytes": 2344
     },
     "docs/eplan-native-integration.md": {
-      "sha256": "2d0f7d3f9a9992e519eb2bb3a43008e192f5a230058d68dba02c6fe3387f33a4",
-      "bytes": 1542
+      "sha256": "03cd0507454b411222d4c93c5b9bc513d23daba9330116df913066a03cc60b4a",
+      "bytes": 1368
     },
     "examples/config.example.json": {
       "sha256": "3dad086567d3e64c15981b79b9f0e12b0a1580bc72b24613e8c1b3bbe8f97aa4",
@@ -111,8 +111,8 @@
       "bytes": 6732
     },
     "scripts/package.py": {
-      "sha256": "a9c4bbb41e364b1df0c223f657e687bfbf43e2542a733e6ba48ae326500755a9",
-      "bytes": 3886
+      "sha256": "746761c827d80c407b4d3b92dadee80dda435c15a436a5691f15b25b567b4fd3",
+      "bytes": 4519
     },
     "scripts/protocol_smoke.py": {
       "sha256": "4baa2dcddfe6a997d965f5bc90c39ce4789c58858d69496dc629f2d830bcd649",
@@ -241,6 +241,10 @@
     "tests/test_framework_dependency.py": {
       "sha256": "95d2c9a80ce72d17fd765f1e7aadbe1a01c1d9468d15bfa458b19de4880d417f",
       "bytes": 3754
+    },
+    "tests/test_package.py": {
+      "sha256": "82df83c6f0d654eb328ad72819900cadad1afcefc73a4beaf75a8995104e9027",
+      "bytes": 1730
     },
     "tests/test_plugin.py": {
       "sha256": "51c08574c72dfb2b140e0e77beba23508306b69ec0118bd59abc9ad23942c2f3",
