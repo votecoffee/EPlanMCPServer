@@ -33,6 +33,7 @@ Additional report kinds:
 | --- | --- |
 | `supplies` | Declared source devices/output ports, medium and optional ratings |
 | `supply_links` | Declared upstream-to-downstream terminal relationships |
+| `supply_references` | Device-associated feed labels/sheet references with unresolved port connectivity; never graph edges |
 | `bridges` | Explicit terminal/device-internal transfer relationships |
 
 Relevant canonical fields are `tag`, `terminal`, `medium`, `supply_kind`, `voltage`, `voltage_unit`,
@@ -40,6 +41,16 @@ Relevant canonical fields are `tag`, `terminal`, `medium`, `supply_kind`, `volta
 `flow_direction`, `source_installation`, `source_location`, `target_installation`, `target_location`.
 Medium must explicitly identify `electrical` or `pneumatic` for supply tracing. Other values remain
 raw records and are not interpreted by this tracer.
+
+For a known feed reference with missing port details, import `supply_references` using the downstream
+device `tag`, `medium`, `source_reference`, `target_reference` and optional `description` and scope.
+Use an evidence sidecar for reviewed PDF references. Profiles and supply traces return these under
+`reported_references`, retaining notes, PDF quotes and source hashes. Only the first ten are included
+with counts; use `eplan_query_export` with kind `supply_references` for further records.
+
+These references do not create nodes or edges, resolve a path, or become device descriptions or
+pressure/voltage facts. Even if the source reference names a supply, port connectivity remains
+unresolved until explicit terminal relationships are supplied. Do not fabricate ports to satisfy the tracer.
 
 `eplan_trace_device_supply` starts at the selected device/terminal and follows upstream declarations.
 `supply_links` declare source-to-target flow by kind. Ordinary `connections` and `bridges` require

@@ -50,6 +50,14 @@ def reviewed(drawing_service):
                 "medium": "electrical",
             }
         ],
+        "supply_references": [
+            {
+                "tag": "D1",
+                "medium": "pneumatic",
+                "source_reference": "Air feed on another sheet",
+                "target_reference": "Camera purge, ports unresolved",
+            }
+        ],
     }
     declarations = []
     for kind, values in rows.items():
@@ -230,6 +238,11 @@ async def test_reviewed_import_and_original_freshness_through_stdio(reviewed):
             assert not profile.is_error, profile.content
             result = profile.structured_content
             assert result["facts"]["ip_address"][0]["references"]
+            air = result["supplies"]["pneumatic"]
+            assert air["status"] == "unresolved_start"
+            reference = air["reported_references"]["items"][0]
+            assert reference["evidence"] == "reviewed_drawing_assertion"
+            assert reference["references"] and not reference["establishes_terminal_connectivity"]
             assert (
                 next(s for s in result["sources"] if s["kind"] == "reviewed_drawing_source")["state"]
                 == "unavailable"

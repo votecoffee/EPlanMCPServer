@@ -39,6 +39,7 @@ def register_exports(tool, drawings):
                 "explicit electrical/pneumatic supply traces",
                 "drawing text candidates",
                 "reviewed drawing rows with hash/quote bindings",
+                "reported feed/sheet references with unresolved port connectivity",
             ],
             "mapping": "field_map maps canonical names to exact exported column/property names; no numeric property IDs guessed",
             "limits": {"report_bytes": 16777216, "snapshot_rows": 100000, "report_count": 32},
@@ -56,7 +57,8 @@ def register_exports(tool, drawings):
         """Create immutable EPLAN evidence from declared CSV/TSV/JSON/flat XML exports.
 
         Each declaration: {relative_path, kind, field_map?, row_tag?, delimiter?, evidence_relative_path?}.
-        Kinds: devices, connections, plc_io, terminals, cables, parts, network, pages, supplies, supply_links, bridges.
+        Kinds include devices, connections, plc_io, terminals, cables, parts, network, pages,
+        supplies, supply_links, supply_references and bridges.
         field_map maps canonical field to exact source column. XML requires exact row_tag.
         evidence_relative_path selects an eplan-row-evidence/1 sidecar for reviewed drawing rows.
         Every row needs reviewer/note and hash/page/exact text-record quotes from indexed PDFs.

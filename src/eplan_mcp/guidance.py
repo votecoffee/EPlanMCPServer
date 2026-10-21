@@ -9,6 +9,8 @@ exact page/text-record quotes at the original SHA-256. These remain reviewed dra
 quote presence does not prove an interpretation. Retain all source freshness and uncertainty.
 Supply records declare outputs, medium and ratings. supply_links declare source-to-target flow;
 ordinary connections and internal bridges require explicit flow_direction.
+Use supply_references for reviewed feed labels or sheet references with unknown ports.
+They retain source_reference/target_reference and appear in device answers, never as graph edges.
 Do not invent internal bridges or infer energy flow from arbitrary source/target ordering.
 Use eplan_collect_device_evidence to locate device text, IPs, I/O labels and power/air context in
 indexed drawings. Text proximity is candidate evidence, never a confirmed assignment or supply.

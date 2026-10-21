@@ -205,6 +205,7 @@ Sources and state directories must not overlap. Tool arguments cannot select exe
   Air candidates include plant-air, feed, preparation, manifold and dump-valve labels.
   [Reviewed drawing records](docs/reviewed-drawing-records.md) retain original PDF hashes, page quotes
   and reviewer notes in device facts and supply traces, with original-source freshness checks.
+  Device answers also retain reported feed/sheet references when terminal connectivity is unresolved.
 - Analyze derivative drawing electrical devices, PLC I/O, equipment groups and connection evidence.
   WDP and AutoCAD Electrical reports remain a separate compatibility workflow.
 - Bound responses and worker concurrency; coordinate shared state across processes; record durable

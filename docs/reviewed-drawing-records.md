@@ -78,6 +78,13 @@ governing revision or prove live state. A resolved supply trace covers only the 
 Do not invent missing device ports or internal bridges merely to complete a path. A pneumatic sheet
 reference without known connector/port identifiers can remain a reviewed note instead of a trace edge.
 
+Use report kind `supply_references` to return such a note in device and supply answers. Set the
+downstream device `tag`, `medium`, `source_reference`, `target_reference` and optional `description`
+and installation/location scope. The row's evidence sidecar binds the relevant pages and quotes.
+These records appear under `reported_references`; they do not become terminal paths or device
+pressure/voltage facts. Keep regulator design notes specific to their stated circuit or chamber,
+and preserve labels such as "typical" rather than converting them to installed or measured values.
+
 Sidecars are limited to 4 MiB and 2,000 reviewed rows. Each row accepts 1-8 PDF references, each with
 1-20 quotes up to 1,000 characters. A quote may match up to 100 text records on its page. One import
 accepts at most 128 distinct drawing references. Current extraction caches are required; raster-only

@@ -100,6 +100,18 @@ class DeviceInformation:
             raise ValueError("max_depth must be 1..40 and max_paths 1..50")
         body = self.exports.load(snapshot_id)
         records = body["records"]
+        references = [
+            {
+                **reported(row, "supply_references"),
+                "association": "reported_reference_only",
+                "establishes_terminal_connectivity": False,
+            }
+            for row in records.get("supply_references", [])
+            if row["fields"].get("tag") == tag
+            and row["fields"].get("medium") == medium
+            and (installation is None or row["fields"].get("installation", "") == installation)
+            and (location is None or row["fields"].get("location", "") == location)
+        ]
         incoming, nodes, diagnostics = collections.defaultdict(list), set(), []
         for kind in ("connections", "supply_links", "bridges"):
             for ordinal, row in enumerate(records.get(kind, []), 1):
@@ -214,11 +226,13 @@ class DeviceInformation:
             "truncated": truncated,
             "paths": paths,
             "diagnostics": paginate(diagnostics, 0, 10),
+            "reported_references": paginate(references, 0, 10),
             "sources": self.exports.freshness(body),
             "limitations": [
                 "Flow is followed only when declared; ordinary source/target ordering does not prove energy flow.",
                 "Internal device/terminal bridges are never invented; reported direction does not establish live valve/switch state.",
                 "Completeness is limited to supplied records, not the project or physical installation.",
+                "Supply references preserve reported feed labels/sheet references only; they are never traversal edges.",
             ],
         }
 
@@ -227,7 +241,7 @@ class DeviceInformation:
             raise ValueError("Supply an exact device tag")
         body = self.exports.load(snapshot_id)
         rows, facts, scopes = [], collections.defaultdict(list), set()
-        for kind in ("devices", "plc_io", "network", "supplies"):
+        for kind in ("devices", "plc_io", "network", "supplies", "supply_references"):
             for row in body["records"].get(kind, []):
                 f = row["fields"]
                 if f.get("tag") != tag:
@@ -239,6 +253,8 @@ class DeviceInformation:
                 rows.append(reported(row, kind))
                 if kind == "devices" or f.get("installation") or f.get("location"):
                     scopes.add((f.get("installation", ""), f.get("location", "")))
+                if kind == "supply_references":
+                    continue  # Feed-reference descriptions are not device attributes or ratings.
                 for name in PROFILE_FIELDS:
                     if f.get(name):
                         fact = {"value": f[name], "source": row["source"], "kind": kind}
@@ -311,6 +327,7 @@ class DeviceInformation:
                     "truncated": traced["truncated"],
                     "supplies": list(candidates.values()),
                     "complete_for_supplied_relationships": traced["complete_for_supplied_relationships"],
+                    "reported_references": traced["reported_references"],
                 }
         device_found = any(r["kind"] == "devices" for r in rows)
         return {

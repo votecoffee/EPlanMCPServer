@@ -266,13 +266,62 @@ def test_historical_snapshot_without_supply_collections_remains_readable(exports
     service, _, declarations = exports
     identifier = service.import_reports("test", declarations)["snapshot_id"]
     body = service.load(identifier)
-    for kind in ("supplies", "supply_links", "bridges"):
+    for kind in ("supplies", "supply_links", "supply_references", "bridges"):
         body["records"].pop(kind)
     legacy = "ep_" + hashlib.sha256(canonical(body).encode()).hexdigest()
     atomic_json(service.folder / "snapshots" / (legacy + ".json"), body)
     assert service.query(legacy, "supplies")["total"] == 0
     assert service.compare(legacy, legacy)["total"] == 0
     assert DeviceInformation(service.drawings).profile(legacy, "=AP+ST1-K1")["status"] == "reported_device"
+
+
+def test_feed_references_are_visible_without_creating_paths_or_device_ratings(device_project):
+    service, records, build = device_project
+    records["supply_links"] = [r for r in records["supply_links"] if r["medium"] != "pneumatic"]
+    records["supply_references"] = [
+        {
+            "tag": "D1",
+            "medium": "pneumatic",
+            "source_reference": "Air manifold on A1",
+            "target_reference": "Camera purge on A2",
+            "description": "Regulator design note only",
+            "pressure": "6",
+            "pressure_unit": "bar",
+        }
+    ]
+    identifier = build()
+    traced = service.supply(identifier, "D1", "pneumatic")
+    assert traced["status"] == "unresolved_start" and not traced["paths"]
+    assert not traced["complete_for_supplied_relationships"]
+    assert traced["reported_references"]["total"] == 1
+    reference = traced["reported_references"]["items"][0]
+    assert reference["fields"]["source_reference"] == "Air manifold on A1"
+    assert not reference["establishes_terminal_connectivity"]
+    profile = service.profile(identifier, "D1")
+    assert profile["supplies"]["pneumatic"]["reported_references"]["total"] == 1
+    assert "pressure" not in profile["facts"]
+    assert profile["facts"]["description"][0]["value"] == "Inspection camera"
+    assert service.supply(identifier, "D1")["reported_references"]["total"] == 0
+    assert service.supply(identifier, "other", "pneumatic")["reported_references"]["total"] == 0
+
+
+def test_feed_reference_scopes_and_pagination_remain_explicit(device_project):
+    service, records, build = device_project
+    records["devices"] = [{"tag": "D1", "location": "A"}, {"tag": "D1", "location": "B"}]
+    records["supply_references"] = [
+        {"tag": "D1", "medium": "pneumatic", "location": location, "source_reference": f"Supply {i}"}
+        for location in ("A", "B")
+        for i in range(12)
+    ]
+    identifier = build()
+    assert service.profile(identifier, "D1")["status"] == "ambiguous_scope"
+    profile = service.profile(identifier, "D1", location="A")
+    references = profile["supplies"]["pneumatic"]["reported_references"]
+    assert references["total"] == 12 and len(references["items"]) == 10
+    assert references["next_offset"] == 10
+    assert all(r["fields"]["location"] == "A" for r in references["items"])
+    rows = service.exports.query(identifier, "supply_references", offset=10, limit=10)
+    assert len(rows["items"]) == 10
 
 
 def test_bracketed_io_literals_retain_scope_and_reject_partial_addresses(drawing_service):

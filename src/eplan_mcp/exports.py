@@ -26,6 +26,7 @@ KINDS = {
     "pages",
     "supplies",
     "supply_links",
+    "supply_references",
     "bridges",
 }
 FIELDS = {
@@ -73,6 +74,8 @@ FIELDS = {
     "source_location",
     "target_installation",
     "target_location",
+    "source_reference",
+    "target_reference",
 }
 MAX_BYTES = 16 * 1024 * 1024
 MAX_ROWS = 100_000

@@ -36,6 +36,7 @@ def register_devices(tool, drawings):
         """Trace upstream power or air feeds from explicit terminal relationships to reported supplies.
         medium is electrical or pneumatic. connections/bridges require explicit flow_direction;
         supply_links declare source-to-target flow by kind. No bridges, ratings or live valve states inferred.
+        reported_references retains feed labels/sheet references; these never create terminal graph edges.
         """
         return service.supply(
             snapshot_id, tag, medium, terminal, installation, location, max_depth, max_paths
