@@ -95,7 +95,7 @@ def main():
     local.add_argument("root_id")
     local.add_argument("relative_path")
     local.add_argument(
-        "operation", choices=["xml", "access", "project", "bytes", "text", "streams", "archive"]
+        "operation", choices=["xml", "access", "project", "bytes", "text", "streams", "slots", "archive"]
     )
     local.add_argument(
         "--options", help="JSON file with reader options such as record_tag, table, offset and limit"

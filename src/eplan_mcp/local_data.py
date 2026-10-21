@@ -330,8 +330,18 @@ def scalar(value):
 def access_data(path, options):
     if os.name != "nt":
         raise ValueError("Access reading currently requires Windows and the installed ACE OLE DB provider")
+    import winreg
+
     import pythoncom
     import win32com.client
+
+    # MCP stdio deliberately inherits a small environment. ADO schema components use
+    # expandable COM registrations referencing CommonProgramFiles. Recover only this
+    # OS-owned folder from machine configuration, never caller-supplied tool arguments.
+    if not os.environ.get("CommonProgramFiles"):
+        with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Windows\CurrentVersion") as key:
+            common = winreg.QueryValueEx(key, "CommonFilesDir")[0]
+        os.environ["CommonProgramFiles"] = common
 
     pythoncom.CoInitialize()
     connection = None

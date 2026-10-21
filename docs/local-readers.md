@@ -43,6 +43,7 @@ references. EDB directory inventory is not an atomic snapshot of a running proje
 exact member using the XML, Access, link-text or binary readers. It never trusts member paths;
 absolute paths, traversal, symlinks, encrypted members and duplicate names are rejected for reads.
 Members are CRC-verified and limited to 64 MiB; the archive inventory is limited to 100000 entries.
+PDF members can be read as paginated positioned text using member_operation `text`.
 Native ZW1/ZW9 backups are not assumed to be ZIP, even if an archive library might recognize one.
 
 ## Binary content and compressed streams

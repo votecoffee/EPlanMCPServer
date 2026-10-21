@@ -106,6 +106,27 @@ def test_experimental_slot_geometry_and_unknown_slots(local_files):
     assert result["items"][0]["header_u32be_at_0"] == 10
     assert not result["items"][2]["matches_header_pattern"]
     assert result["items"][3]["byte_offset"] == 288
+    import subprocess
+    import sys
+
+    child = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "eplan_mcp",
+            "--config",
+            str(root.parent / "config.json"),
+            "local-read",
+            "test",
+            "Functions.eod",
+            "slots",
+        ],
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+    assert child.returncode == 0, child.stderr
+    assert json.loads(child.stdout)["slot_size"] == 96
     path.write_bytes(path.read_bytes() + b"extra")
     with pytest.raises(ValueError, match="geometry"):
         service.read("test", "Functions.eod", "slots")
@@ -181,6 +202,35 @@ def test_access_reads_real_synthetic_database_without_source_changes(local_files
     assert cell["text"] == "2" and cell["total_length"] == 9
     assert cell["row_ordinal"] == 2
     assert sha256(path) == before
+    # ADO schema discovery also has to work in the reduced environment inherited by MCP.
+    import subprocess
+    import sys
+
+    from mcp.client.stdio import get_default_environment
+
+    options = root.parent / "access-options.json"
+    options.write_text(json.dumps({"table": "Parts", "limit": 1}), encoding="utf-8")
+    child = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "eplan_mcp",
+            "--config",
+            str(root.parent / "config.json"),
+            "local-read",
+            "test",
+            "parts.mdb",
+            "access",
+            "--options",
+            str(options),
+        ],
+        env=get_default_environment(),
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+    assert child.returncode == 0, child.stderr
+    assert json.loads(child.stdout)["items"][0]["fields"]["PartNumber"] == "EXAMPLE.1"
     with pytest.raises(ValueError, match="base-table"):
         service.read("test", "parts.mdb", "access", table="Parts];DELETE FROM Parts")
 

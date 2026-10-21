@@ -31,16 +31,16 @@
       "bytes": 12452
     },
     "VERIFICATION.md": {
-      "sha256": "9cfaa751d4f76dec36ef90daa7c609312539794b53782b1780e1e292efb8bac0",
-      "bytes": 2639
+      "sha256": "57743b6b4c518372b8c4576ed72f74b92bcfe39f4d76ec0a4fbe4809970ab7bb",
+      "bytes": 2731
     },
     "docs/eplan-native-integration.md": {
       "sha256": "976d8da05b0fbc0500213dbea05f2150c101c02850262a385c3ffe4061d96cc7",
       "bytes": 1644
     },
     "docs/local-readers.md": {
-      "sha256": "a9661042250f425ba11c7c6f6449eb29d30f91ed4191b629efaa73d65a091913",
-      "bytes": 6162
+      "sha256": "6b0f8bc35262d6bebb4f10f66a94a6b704a2d687d512070146abe2ff591b819a",
+      "bytes": 6246
     },
     "examples/config.example.json": {
       "sha256": "3dad086567d3e64c15981b79b9f0e12b0a1580bc72b24613e8c1b3bbe8f97aa4",
@@ -127,8 +127,8 @@
       "bytes": 100
     },
     "src/eplan_mcp/__main__.py": {
-      "sha256": "726f8a8ef2bc4d1d0ed87fdd37a94da87771375873ae19c25adbd4fce54450df",
-      "bytes": 9316
+      "sha256": "616dc513265935750a9f5909feb70f41c8c33cd7909852a4ef378d937b6a9571",
+      "bytes": 9325
     },
     "src/eplan_mcp/config.py": {
       "sha256": "8769b8600298d9b98e6f2f2e852d4035e8cfaf6a24f0b839559ee4a1bdfc9ef4",
@@ -191,8 +191,8 @@
       "bytes": 3372
     },
     "src/eplan_mcp/local_data.py": {
-      "sha256": "24be577812feff108cb4fee771524beea90f3f65999ad93417fce01d1f540993",
-      "bytes": 28733
+      "sha256": "a86215489078b7b117d6c1c42ce6d3613b0724b6bb9058486d4761dc299c5ed1",
+      "bytes": 29286
     },
     "src/eplan_mcp/local_server.py": {
       "sha256": "d65a58a02f9e4d5a3d7bdfb2044a604bf6dcbc0b44a80d292c606d888f363836",
@@ -255,8 +255,8 @@
       "bytes": 3754
     },
     "tests/test_local_data.py": {
-      "sha256": "d9e0736f69773628dd3f8fca6a1e76104f7a552eb1ce49acb9c9533ace7897e0",
-      "bytes": 10186
+      "sha256": "5d9aa2ec0db58197e11622d3bf43507cd642538a560568f027c5dc6a7c368350",
+      "bytes": 11587
     },
     "tests/test_package.py": {
       "sha256": "82df83c6f0d654eb328ad72819900cadad1afcefc73a4beaf75a8995104e9027",

@@ -19,7 +19,8 @@ Tests cover synthetic PDF/DXF extraction, tables/previews, source hashes, indexi
 geometry/electrical evidence, cross-process locking and durable write receipts. Local-reader tests
 cover nested XML, UTF-16 links, missing/path-escaping database references, binary byte coordinates,
 zlib checksums/corruption/decompression budgets, experimental EOD slot geometry, ZIP member safety,
-and Windows ACE reads of a synthetic database with unchanged source hashes. EPLAN report tests
+and Windows ACE reads of a synthetic database with unchanged source hashes. They
+also exercise ACE schema/row access in the reduced environment inherited by MCP stdio. EPLAN report tests
 cover explicit mapping, provenance, stale/deleted sources, duplicate multiplicity, malformed rows,
 XML entity rejection, namespaces/UTF-16, path escape, snapshot integrity and concurrent imports.
 Real stdio MCP testing initializes the server, discovers schemas/annotations, performs a cold PDF
