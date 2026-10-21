@@ -54,9 +54,16 @@ establish project-wide coverage, current energization or physical continuity. In
 ## Drawing evidence
 
 `eplan_collect_device_evidence` identifies validated IPv4 literals, power/air labels and common
-I/Q address-shaped text in extracted drawing text. Supply a literal device_query to collect matching
+I/Q address-shaped text and bracketed DI/DO, AI/AO, GI/GO and UI/UO literals in extracted drawing text.
+For example, `DO[101]` remains a literal candidate; it does not establish a controller, manifold,
+valve, signal direction or device assignment. The same literal on separate records/pages remains
+separate evidence. Supply a literal device_query to collect matching
 text and nearby PDF lines within a bounded radius on the same page. Results include source hashes,
 page/bounding box or CAD text locations, anchor record references and candidate counts by category.
+
+Air candidates include plant air, air feed/preparation/manifold/drop/lockout and dump-valve labels,
+as well as pressure text. These labels locate evidence for review; they do not establish an air
+path, a valve state, an installed pressure or an association with nearby actuators.
 
 This stage deliberately does not assign a nearby IP, PLC address or supply to the device. Repeated
 title blocks, revision notes, catalog descriptions and adjacent circuits can contain unrelated matches.

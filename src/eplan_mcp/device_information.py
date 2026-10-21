@@ -335,10 +335,16 @@ IP_PATTERN = re.compile(r"(?<![\d.])(?:\d{1,3}\.){3}\d{1,3}(?![\d.])")
 LABEL_PATTERNS = {
     "power": re.compile(r"power\s+suppl(?:y|ies)|\b\d+(?:[.,]\d+)?\s*V\s*(?:AC|DC)\b", re.I),
     "air": re.compile(
-        r"air\s+suppl(?:y|ies)|pneumatic|compressed\s+air|\b\d+(?:[.,]\d+)?\s*(?:bar|psi|kpa|mpa)\b|pressure\s+regulator",
+        r"\bair\s+(?:suppl(?:y|ies)|feed|prep(?:aration)?(?:\s+unit)?|manifold|drop|lockout)\b"
+        r"|\bplant\s+air\b|\bdump\s+valve\b|pneumatic|compressed\s+air"
+        r"|\b\d+(?:[.,]\d+)?\s*(?:bar|psi|kpa|mpa)\b|pressure\s+regulator",
         re.I,
     ),
-    "io": re.compile(r"(?<![\w])%?[IQ](?:[XBWD])?\d+(?:\.\d+)?\b", re.I),
+    "io": re.compile(
+        r"(?<![\w])(?:%?[IQ](?:[XBWD])?\d+(?:\.\d+)?"
+        r"|(?:DI|DO|AI|AO|GI|GO|UI|UO)\[\d+\])(?![\w.\[\]])",
+        re.I,
+    ),
 }
 
 
@@ -444,6 +450,7 @@ def collect_evidence(
         "limitations": [
             "Text proximity and repeated tags do not establish device membership, feed direction or connectivity.",
             "Part catalog descriptions and revision notes can match supply labels.",
+            "I/O literals can repeat across controllers or manifolds; address text alone does not identify a channel owner.",
             "Evidence covers extracted text only; raster/unsupported content can be missing.",
         ],
         **paginate(results, offset, limit),

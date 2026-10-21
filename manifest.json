@@ -27,16 +27,16 @@
       "bytes": 477
     },
     "README.md": {
-      "sha256": "9f55569546a33a279198622af744863ecd7b4dc6204eaaefef43a3e2b5df11a9",
-      "bytes": 13765
+      "sha256": "0ae36a0d0137ec5878b0811c24df19ac1decebf24eba28e3c571696508956f7c",
+      "bytes": 13947
     },
     "VERIFICATION.md": {
       "sha256": "1ebea9be364f9bd724505c0c5870655d224fc2ec5893b7f4f4f0772ccc921000",
       "bytes": 2908
     },
     "docs/device-information.md": {
-      "sha256": "9e4e4b3a7084f727457198c81e7cf94af0fbf0b747336fb9a1bf588e4793c68c",
-      "bytes": 5697
+      "sha256": "74f42c920623e49ca15aefe29afbfc5242b11c3afaecd3f58e39feecc9e042c8",
+      "bytes": 6245
     },
     "docs/eplan-native-integration.md": {
       "sha256": "976d8da05b0fbc0500213dbea05f2150c101c02850262a385c3ffe4061d96cc7",
@@ -171,8 +171,8 @@
       "bytes": 5439
     },
     "src/eplan_mcp/device_information.py": {
-      "sha256": "888a6cbe6db867b3e86d5427431f50933fba72d08109ef388c5c652681276aa6",
-      "bytes": 18482
+      "sha256": "f72e93db4e0542a797bdbf4a1a17b59a896a48a91e502f7a6f34c5f7f01b428a",
+      "bytes": 18814
     },
     "src/eplan_mcp/device_server.py": {
       "sha256": "39bb62a3bcf80f2cdbb68e2918c2a0d0579f906c6f0660444f642582cc42e62a",
@@ -267,8 +267,8 @@
       "bytes": 9661
     },
     "tests/test_device_information.py": {
-      "sha256": "54b7d898ccd2834a42477acd7eee09b25a4129ecb95e240962a7b140d43d891f",
-      "bytes": 11669
+      "sha256": "1c232936e6348f792b5ead4cb28b4d99202399b9771e72f49b0f7f1ef325da9c",
+      "bytes": 14065
     },
     "tests/test_electrical_graph.py": {
       "sha256": "1d471296ccf48cf43c6e9e179c89a026e0d55a2a27b9b0144c4d44463405fbbb",

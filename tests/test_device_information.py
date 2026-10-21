@@ -273,3 +273,63 @@ def test_historical_snapshot_without_supply_collections_remains_readable(exports
     assert service.query(legacy, "supplies")["total"] == 0
     assert service.compare(legacy, legacy)["total"] == 0
     assert DeviceInformation(service.drawings).profile(legacy, "=AP+ST1-K1")["status"] == "reported_device"
+
+
+def test_bracketed_io_literals_retain_scope_and_reject_partial_addresses(drawing_service):
+    import pymupdf
+
+    drawings, root = drawing_service
+    with pymupdf.open() as pdf:
+        page = pdf.new_page()
+        page.insert_text((40, 40), "MANIFOLD A DO[101] DI[102] AI[3] AO[4] GI[5] GO[6] UI[7] UO[8]")
+        page.insert_text((40, 70), "%IX1.2 QW4 I2.0")
+        page.insert_text((40, 100), "XDO[101] DO[102]suffix DO[bad] DO[1.2] DO[3 I2.0suffix I3.2.1")
+        pdf.new_page().insert_text((40, 40), "MANIFOLD B DO[101]")
+        pdf.save(root / "io.pdf")
+    drawings.load("test", "io.pdf")
+    evidence = collect_evidence(drawings, "test", ["io.pdf"], category="io")
+    assert evidence["total"] == 12
+    assert {r["value"] for r in evidence["items"]} == {
+        "DO[101]",
+        "DI[102]",
+        "AI[3]",
+        "AO[4]",
+        "GI[5]",
+        "GO[6]",
+        "UI[7]",
+        "UO[8]",
+        "%IX1.2",
+        "QW4",
+        "I2.0",
+    }
+    repeated = [r for r in evidence["items"] if r["value"] == "DO[101]"]
+    assert {r["location"]["page"] for r in repeated} == {1, 2}
+    assert all(not r["establishes_device_identity_or_supply"] for r in repeated)
+    scoped = collect_evidence(drawings, "test", ["io.pdf"], "MANIFOLD A", "io", radius=10)
+    assert all(r["location"]["page"] == 1 for r in scoped["items"])
+
+
+def test_air_feed_labels_are_candidates_without_implied_connections(drawing_service):
+    import pymupdf
+
+    drawings, root = drawing_service
+    labels = ["PLANT AIR", '1/2" AIR FEED', "AIR PREP UNIT", "AIR MANIFOLD", "DUMP VALVE", "AIR LOCKOUT"]
+    with pymupdf.open() as pdf:
+        page = pdf.new_page()
+        for i, label in enumerate(labels):
+            page.insert_text((40, 40 + i * 20), label)
+        page.insert_text((40, 200), "AIR FEEDBACK REPAIR MANIFOLD")
+        pdf.save(root / "air.pdf")
+    drawings.load("test", "air.pdf")
+    evidence = collect_evidence(drawings, "test", ["air.pdf"], category="air")
+    assert evidence["total"] == len(labels)
+    assert {r["value"] for r in evidence["items"]} == {
+        "PLANT AIR",
+        "AIR FEED",
+        "AIR PREP UNIT",
+        "AIR MANIFOLD",
+        "DUMP VALVE",
+        "AIR LOCKOUT",
+    }
+    assert all(r["source"]["sha256"] and r["location"]["bbox"] for r in evidence["items"])
+    assert all(not r["establishes_device_identity_or_supply"] for r in evidence["items"])
