@@ -40,7 +40,8 @@ def reported(row, kind):
         "kind": kind,
         "fields": row["fields"],
         "source": row["source"],
-        "evidence": "declared_export_record",
+        "evidence": row.get("evidence", "declared_export_record"),
+        **{key: row[key] for key in ("review", "references") if key in row},
         "native_engine_validated": False,
     }
 
@@ -241,6 +242,9 @@ class DeviceInformation:
                 for name in PROFILE_FIELDS:
                     if f.get(name):
                         fact = {"value": f[name], "source": row["source"], "kind": kind}
+                        fact.update(
+                            {key: row[key] for key in ("evidence", "review", "references") if key in row}
+                        )
                         fact["context"] = {
                             k: f[k]
                             for k in (

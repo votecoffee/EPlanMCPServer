@@ -3,6 +3,10 @@
 WORKFLOW = """EPLAN analysis workflow v2.
 Prioritize device names/descriptions, network addresses, PLC I/O and electrical/pneumatic feeds.
 Use eplan_get_device_profile and eplan_trace_device_supply for explicit export assertions.
+Caller-reviewed drawing rows may use import_reports evidence_relative_path with an
+eplan-row-evidence/1 sidecar. Index referenced PDFs first. Every row needs reviewer/note and
+exact page/text-record quotes at the original SHA-256. These remain reviewed drawing assertions;
+quote presence does not prove an interpretation. Retain all source freshness and uncertainty.
 Supply records declare outputs, medium and ratings. supply_links declare source-to-target flow;
 ordinary connections and internal bridges require explicit flow_direction.
 Do not invent internal bridges or infer energy flow from arbitrary source/target ordering.

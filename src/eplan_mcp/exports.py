@@ -12,6 +12,7 @@ import uuid
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
+from .reviewed_evidence import load_row_evidence
 from .service import paginate, sha256
 
 KINDS = {
@@ -165,6 +166,7 @@ class ExportService:
         if not isinstance(reports, list) or not 1 <= len(reports) <= 32:
             raise ValueError("Supply 1..32 report declarations")
         sources, records, mappings = [], {kind: [] for kind in sorted(KINDS)}, []
+        documents = {}
         for declaration in reports:
             if not isinstance(declaration, dict) or set(declaration) - {
                 "relative_path",
@@ -172,6 +174,7 @@ class ExportService:
                 "field_map",
                 "row_tag",
                 "delimiter",
+                "evidence_relative_path",
             }:
                 raise ValueError("Unknown report declaration fields")
             kind = declaration.get("kind")
@@ -199,6 +202,16 @@ class ExportService:
                 row_tag=declaration.get("row_tag"),
                 delimiter=declaration.get("delimiter"),
             )
+            evidence = {}
+            if "evidence_relative_path" in declaration:
+                evidence, dependencies = load_row_evidence(
+                    self.drawings,
+                    root_id,
+                    declaration["evidence_relative_path"],
+                    {number for number, _ in rows},
+                    documents,
+                )
+                sources.extend(dependencies)
             mapping = declaration.get("field_map")
             if mapping is None:
                 # Exact canonical headers only. Localized names and numeric property IDs need explicit mapping.
@@ -220,12 +233,14 @@ class ExportService:
                         "source": provenance,
                         "evidence": "declared_export_record",
                         "native_engine_validated": False,
+                        **evidence.get(number, {}),
                     }
                 )
             sources.append(source)
             mappings.append({**declaration, "field_map": mapping})
         if sum(map(len, records.values())) > MAX_ROWS:
             raise ValueError("Combined snapshot exceeds 100000 records")
+        sources = list({canonical(source): source for source in sources}.values())
         # All sources must still match immediately before publishing the snapshot.
         for source in sources:
             if sha256(self.config.resolve(source["root_id"], source["relative_path"])) != source["sha256"]:
@@ -239,6 +254,7 @@ class ExportService:
                 "Declared report rows; no native EPLAN project validation.",
                 "Missing exports and filtered-out objects cannot be detected.",
                 "Tag-only associations do not prove physical continuity.",
+                "Reviewed drawing assertions retain caller interpretation; quote/hash checks do not authenticate reviewers or validate engineering meaning.",
             ],
         }
         identifier = "ep_" + hashlib.sha256(canonical(body).encode()).hexdigest()

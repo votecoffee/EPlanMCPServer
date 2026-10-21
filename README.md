@@ -203,6 +203,8 @@ Sources and state directories must not overlap. Tool arguments cannot select exe
   references, PDF pages/tables with cell coordinates, previews, literal project search and drawing comparisons.
   Drawing I/O candidates include I/Q and bracketed DI/DO, AI/AO, GI/GO and UI/UO address text.
   Air candidates include plant-air, feed, preparation, manifold and dump-valve labels.
+  [Reviewed drawing records](docs/reviewed-drawing-records.md) retain original PDF hashes, page quotes
+  and reviewer notes in device facts and supply traces, with original-source freshness checks.
 - Analyze derivative drawing electrical devices, PLC I/O, equipment groups and connection evidence.
   WDP and AutoCAD Electrical reports remain a separate compatibility workflow.
 - Bound responses and worker concurrency; coordinate shared state across processes; record durable

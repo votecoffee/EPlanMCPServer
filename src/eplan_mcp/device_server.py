@@ -16,7 +16,8 @@ def register_devices(tool, drawings):
         limit: int = 25,
     ) -> dict:
         """Read exact-tag device descriptions, IPs, PLC I/O facts and power/air supply summaries.
-        Uses explicit export assertions. Preserves conflicting facts and known scope ambiguity.
+        Uses declared exports or explicitly reviewed drawing rows. Retains quote/hash references,
+        conflicting facts and known scope ambiguity. Reviewer labels are not authenticated.
         Facts retain sources; first ten per field are returned with full counts. Use query_export for more.
         """
         return service.profile(snapshot_id, tag, installation, location, offset, limit)

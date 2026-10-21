@@ -38,19 +38,29 @@ def register_exports(tool, drawings):
                 "source-bound profiles",
                 "explicit electrical/pneumatic supply traces",
                 "drawing text candidates",
+                "reviewed drawing rows with hash/quote bindings",
             ],
             "mapping": "field_map maps canonical names to exact exported column/property names; no numeric property IDs guessed",
             "limits": {"report_bytes": 16777216, "snapshot_rows": 100000, "report_count": 32},
             "workflow": "Import explicitly declared exports; query snapshot_id; inspect freshness on every response.",
+            "reviewed_drawings": {
+                "declaration_field": "evidence_relative_path",
+                "sidecar_schema": "eplan-row-evidence/1",
+                "requires": "Indexed PDF, original SHA-256, page and exact text-record quotes for every row",
+                "boundary": "Caller review assertion; quote/hash validation does not prove engineering meaning or authenticate the reviewer",
+            },
         }
 
     @tool(read=False)
     def eplan_import_reports(root_id: str, reports: list[dict]) -> dict:
         """Create immutable EPLAN evidence from declared CSV/TSV/JSON/flat XML exports.
 
-        Each declaration: {relative_path, kind, field_map?, row_tag?, delimiter?}.
+        Each declaration: {relative_path, kind, field_map?, row_tag?, delimiter?, evidence_relative_path?}.
         Kinds: devices, connections, plc_io, terminals, cables, parts, network, pages, supplies, supply_links, bridges.
         field_map maps canonical field to exact source column. XML requires exact row_tag.
+        evidence_relative_path selects an eplan-row-evidence/1 sidecar for reviewed drawing rows.
+        Every row needs reviewer/note and hash/page/exact text-record quotes from indexed PDFs.
+        These remain reviewed drawing assertions, not authenticated exports or native validation.
         Writes only private state; source reports remain unchanged. Native ELK/ZW1 cannot be imported here.
         """
         return service.import_reports(root_id, reports)

@@ -11,6 +11,10 @@ and retain source hashes, row references and conflicting claims. Scope can be se
 installation/location; known duplicate tag scopes are never silently combined. Part catalogs describe
 available parts and do not establish which devices are installed or how they are connected.
 
+For explicitly reviewed PDF claims, use an `evidence_relative_path` sidecar as described in
+[Reviewed drawing records](reviewed-drawing-records.md). Profiles, facts and supply paths retain that
+distinct evidence label, reviewer note and checked quotes; freshness includes the original PDFs.
+
 `eplan_get_device_profile` returns:
 
 - Device names, descriptions, manufacturer and part numbers when explicitly reported.
