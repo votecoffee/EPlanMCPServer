@@ -1,0 +1,4 @@
+source_tag,source_terminal,target_tag,target_terminal,medium
+PS1,+,XT1,1,electrical
+XT1,2,D1,PWR,electrical
+AS1,OUT,D1,AIR,pneumatic

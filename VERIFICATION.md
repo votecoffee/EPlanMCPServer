@@ -10,12 +10,14 @@ uv pip install --python .venv/Scripts/python.exe --no-deps -e .
 .\.venv\Scripts\ruff.exe check .
 .\.venv\Scripts\ruff.exe format --check .
 .\.venv\Scripts\python.exe -m pytest -q
-.\.venv\Scripts\python.exe scripts/package.py --output .local/packages/EPlanMCPServer-0.2.0.zip
+.\.venv\Scripts\python.exe scripts/package.py --output .local/packages/EPlanMCPServer-0.3.0.zip
 .\.venv\Scripts\python.exe scripts/package.py --verify
 uv pip check --python .venv/Scripts/python.exe
 ```
 
 Tests cover synthetic PDF/DXF extraction, tables/previews, source hashes, indexing/freshness,
+device profiles, explicit power/air paths, terminal-bridge boundaries, ambiguous tag scopes,
+multi-point I/O, conflicting IP claims, branching/cycles and PDF candidate context,
 geometry/electrical evidence, cross-process locking and durable write receipts. Local-reader tests
 cover nested XML, UTF-16 links, missing/path-escaping database references, binary byte coordinates,
 zlib checksums/corruption/decompression budgets, experimental EOD slot geometry, ZIP member safety,

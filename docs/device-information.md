@@ -1,0 +1,84 @@
+# Device information
+
+The primary output is a source-bound device profile: names/descriptions, IP addresses, PLC I/O
+points and the electrical or pneumatic supplies feeding the device. Raw file access supports this
+goal; discovering strings alone is not a semantic device model.
+
+## Structured records
+
+Use `eplan_import_reports` with explicitly mapped records. The device tools join exact tag strings
+and retain source hashes, row references and conflicting claims. Scope can be selected with
+installation/location; known duplicate tag scopes are never silently combined. Part catalogs describe
+available parts and do not establish which devices are installed or how they are connected.
+
+`eplan_get_device_profile` returns:
+
+- Device names, descriptions, manufacturer and part numbers when explicitly reported.
+- IP/interface/port facts, including literal validation and potential same-context conflicts.
+- PLC/controller, rack, slot, channel, address and signal facts. Multiple I/O points on a device
+  remain separate facts and are not treated as a conflict merely because addresses differ.
+- Electrical and pneumatic supply summaries, with ratings retained as declared text and units.
+- Associated source records with pagination. The first ten facts per field are returned alongside
+  full counts; use `eplan_query_export` for additional underlying records.
+
+## Supply records and paths
+
+Additional report kinds:
+
+| Kind | Meaning |
+| --- | --- |
+| `supplies` | Declared source devices/output ports, medium and optional ratings |
+| `supply_links` | Declared upstream-to-downstream terminal relationships |
+| `bridges` | Explicit terminal/device-internal transfer relationships |
+
+Relevant canonical fields are `tag`, `terminal`, `medium`, `supply_kind`, `voltage`, `voltage_unit`,
+`pressure`, `pressure_unit`, `source_tag`, `source_terminal`, `target_tag`, `target_terminal`,
+`flow_direction`, `source_installation`, `source_location`, `target_installation`, `target_location`.
+Medium must explicitly identify `electrical` or `pneumatic` for supply tracing. Other values remain
+raw records and are not interpreted by this tracer.
+
+`eplan_trace_device_supply` starts at the selected device/terminal and follows upstream declarations.
+`supply_links` declare source-to-target flow by kind. Ordinary `connections` and `bridges` require
+explicit flow_direction: `source_to_target`, `target_to_source` or `bidirectional`. A plain from/to
+export can describe arbitrary reference orientation, so it does not automatically establish feed flow.
+
+Internal conduction is never assumed between a fuse's terminals, terminal-strip positions, relay
+contacts, valve ports or other device terminals. Add a bridge only when a supplied record explicitly
+establishes that transfer. A static declaration does not prove the current switch/valve state.
+
+Paths retain every relationship's row/hash. Branching supplies remain separate. Missing bridges,
+unknown direction, missing source ports, ambiguous scopes, cycles and traversal budgets remain
+explicit. `complete_for_supplied_relationships` describes only the supplied records; it does not
+establish project-wide coverage, current energization or physical continuity. Inspect source freshness.
+
+## Drawing evidence
+
+`eplan_collect_device_evidence` identifies validated IPv4 literals, power/air labels and common
+I/Q address-shaped text in extracted drawing text. Supply a literal device_query to collect matching
+text and nearby PDF lines within a bounded radius on the same page. Results include source hashes,
+page/bounding box or CAD text locations, anchor record references and candidate counts by category.
+
+This stage deliberately does not assign a nearby IP, PLC address or supply to the device. Repeated
+title blocks, revision notes, catalog descriptions and adjacent circuits can contain unrelated matches.
+Address-shaped text can be a false positive. Candidate counts are text occurrences, not unique devices
+or unique addresses. Raster-only content and unsupported entities remain coverage gaps.
+
+Index drawings first. To investigate a particular label, combine the candidates with positioned text,
+tables, drawing previews and explicit report relationships. Promote a claim only after its source
+actually establishes the association; never convert proximity into an electrical/pneumatic edge.
+
+## Synthetic example
+
+Configure `examples/device-profile` as root `demo`, then import its `reports.json` declarations.
+The example describes one camera, one IP, two PLC I/O points, a 24 VDC source via an explicitly
+bridged terminal strip, and a 5.5 bar air source. These are synthetic assertions, not customer data.
+
+```powershell
+.\.venv\Scripts\python.exe -m eplan_mcp --config .local/config.json import-reports demo examples/device-profile/reports.json
+.\.venv\Scripts\python.exe -m eplan_mcp --config .local/config.json device-profile ep_HASH D1
+.\.venv\Scripts\python.exe -m eplan_mcp --config .local/config.json supply-trace ep_HASH D1 --medium electrical --terminal PWR
+.\.venv\Scripts\python.exe -m eplan_mcp --config .local/config.json supply-trace ep_HASH D1 --medium pneumatic --terminal AIR
+```
+
+Replace ep_HASH with the returned snapshot_id. Historical snapshots without the new report kinds
+remain readable; missing collections are queried as empty rather than rewriting historical evidence.

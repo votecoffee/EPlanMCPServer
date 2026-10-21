@@ -100,6 +100,23 @@ def main():
     local.add_argument(
         "--options", help="JSON file with reader options such as record_tag, table, offset and limit"
     )
+    for name in ("device-profile", "supply-trace"):
+        command = sub.add_parser(name)
+        command.add_argument("snapshot_id")
+        command.add_argument("tag")
+        command.add_argument("--installation")
+        command.add_argument("--location")
+        if name == "supply-trace":
+            command.add_argument("--medium", choices=["electrical", "pneumatic"], default="electrical")
+            command.add_argument("--terminal")
+    evidence = sub.add_parser("device-evidence")
+    evidence.add_argument("root_id")
+    evidence.add_argument("drawing_paths", nargs="+")
+    evidence.add_argument("--device-query")
+    evidence.add_argument("--category", choices=["device", "ip", "power", "air", "io"])
+    evidence.add_argument("--radius", type=float, default=80)
+    evidence.add_argument("--offset", type=int, default=0)
+    evidence.add_argument("--limit", type=int, default=50)
     args = parser.parse_args()
     if args.command.startswith("framework-"):
         from pathlib import Path
@@ -125,6 +142,30 @@ def main():
     from .service import DrawingService
 
     service = DrawingService(Config.load(args.config))
+    if args.command in {"device-profile", "supply-trace", "device-evidence"}:
+        from .device_information import DeviceInformation, collect_evidence
+
+        if args.command == "device-evidence":
+            result = collect_evidence(
+                service,
+                args.root_id,
+                args.drawing_paths,
+                args.device_query,
+                args.category,
+                args.radius,
+                args.offset,
+                args.limit,
+            )
+        elif args.command == "device-profile":
+            result = DeviceInformation(service).profile(
+                args.snapshot_id, args.tag, args.installation, args.location
+            )
+        else:
+            result = DeviceInformation(service).supply(
+                args.snapshot_id, args.tag, args.medium, args.terminal, args.installation, args.location
+            )
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+        return
     if args.command == "local-read":
         from pathlib import Path
 

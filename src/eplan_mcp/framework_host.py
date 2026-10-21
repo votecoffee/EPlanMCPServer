@@ -156,7 +156,7 @@ def prepare(config_path: Path, state: Path, *, port=8818, highlighting=False) ->
         "backend_revision": publication.backends[0].revision,
         "deployment": str(deployment),
         "framework_version": FRAMEWORK_VERSION,
-        "backend_tools": 47,
+        "backend_tools": 50,
         "live_migration_performed": False,
     }
 

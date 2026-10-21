@@ -27,7 +27,7 @@ async def test_framework_export_handlers_and_immutable_publication(exports, tmp_
     async with framework_host.create_host(state, publication, config) as host:
         client = host.client()
         native = await create_server(drawings, workflow=True).list_tools()
-        assert len(native) == 47
+        assert len(native) == 50
         for tool in native:
             description = payload(
                 await client.invoke("describe_tool", {"tool_id": "drawing-engine/" + tool.name})

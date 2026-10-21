@@ -139,7 +139,7 @@ async def test_mcp_classification_and_result_budget(drawing_service):
     server = create_server(service)
     tools = await server.list_tools()
     by_name = {tool.name: tool for tool in tools}
-    assert len(tools) == 46
+    assert len(tools) == 49
     for name, tool in by_name.items():
         assert tool.output_schema is not None
         assert tool.annotations.read_only_hint == (

@@ -20,7 +20,7 @@ async def run(config, root, reports=None):
         async with ClientSession(read, write, read_timeout_seconds=120.0) as client:
             initialized = await client.initialize()
             tools = (await client.list_tools()).tools
-            assert len(tools) == 46
+            assert len(tools) == 49
             assert all(tool.output_schema for tool in tools)
             for name in ("eplan_status", "eplan_capabilities"):
                 result = await client.call_tool(name, {})

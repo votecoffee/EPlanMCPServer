@@ -17,7 +17,7 @@ async def test_real_stdio_drawing_and_export_workflows(exports):
             initialized = await client.initialize()
             assert initialized.server_info.name == "EPLAN MCP Server"
             tools = (await client.list_tools()).tools
-            assert len(tools) == 46
+            assert len(tools) == 49
             assert not any("highlight" in t.name for t in tools)
             inspected = await client.call_tool(
                 "eplan_inspect", {"root_id": "test", "relative_path": "sample.pdf"}

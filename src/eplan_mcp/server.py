@@ -295,4 +295,7 @@ def create_server(service: DrawingService, port: int = 8816, *, workflow: bool =
     from .local_server import register_local
 
     register_local(tool, service)
+    from .device_server import register_devices
+
+    register_devices(tool, service)
     return mcp

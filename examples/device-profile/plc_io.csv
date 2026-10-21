@@ -1,0 +1,3 @@
+tag,controller,rack,slot,channel,address,signal
+D1,PLC1,0,1,0,I0.0,Camera ready
+D1,PLC1,0,2,1,Q0.1,Camera trigger

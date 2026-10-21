@@ -1,0 +1,3 @@
+tag,terminal,medium,supply_kind,voltage,voltage_unit,pressure,pressure_unit
+PS1,+,electrical,power_supply,24,VDC,,
+AS1,OUT,pneumatic,air_service,,,5.5,bar

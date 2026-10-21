@@ -34,6 +34,11 @@ def register_exports(tool, drawings):
                 "checksum-valid zlib streams",
             ],
             "binary_semantic_project_decoder": False,
+            "device_information": [
+                "source-bound profiles",
+                "explicit electrical/pneumatic supply traces",
+                "drawing text candidates",
+            ],
             "mapping": "field_map maps canonical names to exact exported column/property names; no numeric property IDs guessed",
             "limits": {"report_bytes": 16777216, "snapshot_rows": 100000, "report_count": 32},
             "workflow": "Import explicitly declared exports; query snapshot_id; inspect freshness on every response.",
@@ -44,7 +49,7 @@ def register_exports(tool, drawings):
         """Create immutable EPLAN evidence from declared CSV/TSV/JSON/flat XML exports.
 
         Each declaration: {relative_path, kind, field_map?, row_tag?, delimiter?}.
-        Kinds: devices, connections, plc_io, terminals, cables, parts, network, pages.
+        Kinds: devices, connections, plc_io, terminals, cables, parts, network, pages, supplies, supply_links, bridges.
         field_map maps canonical field to exact source column. XML requires exact row_tag.
         Writes only private state; source reports remain unchanged. Native ELK/ZW1 cannot be imported here.
         """

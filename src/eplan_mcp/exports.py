@@ -14,7 +14,19 @@ from pathlib import Path
 
 from .service import paginate, sha256
 
-KINDS = {"devices", "connections", "plc_io", "terminals", "cables", "parts", "network", "pages"}
+KINDS = {
+    "devices",
+    "connections",
+    "plc_io",
+    "terminals",
+    "cables",
+    "parts",
+    "network",
+    "pages",
+    "supplies",
+    "supply_links",
+    "bridges",
+}
 FIELDS = {
     "id",
     "tag",
@@ -47,6 +59,19 @@ FIELDS = {
     "potential",
     "color",
     "cross_section",
+    "name",
+    "device_type",
+    "medium",
+    "flow_direction",
+    "supply_kind",
+    "voltage",
+    "voltage_unit",
+    "pressure",
+    "pressure_unit",
+    "source_installation",
+    "source_location",
+    "target_installation",
+    "target_location",
 }
 MAX_BYTES = 16 * 1024 * 1024
 MAX_ROWS = 100_000
@@ -254,7 +279,7 @@ class ExportService:
         if kind not in KINDS:
             raise ValueError("Unknown record kind")
         body = self.load(snapshot_id)
-        rows = body["records"][kind]
+        rows = body["records"].get(kind, [])
         if query:
             rows = [r for r in rows if query.casefold() in canonical(r["fields"]).casefold()]
         return {
@@ -377,8 +402,8 @@ class ExportService:
         before, after = self.load(before_snapshot_id), self.load(after_snapshot_id)
         changes = []
         for kind in sorted(KINDS):
-            a = collections.Counter(canonical(r["fields"]) for r in before["records"][kind])
-            b = collections.Counter(canonical(r["fields"]) for r in after["records"][kind])
+            a = collections.Counter(canonical(r["fields"]) for r in before["records"].get(kind, []))
+            b = collections.Counter(canonical(r["fields"]) for r in after["records"].get(kind, []))
             for action, delta in (("removed", a - b), ("added", b - a)):
                 changes.extend(
                     {"kind": kind, "change": action, "fields": json.loads(key), "count": count}

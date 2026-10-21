@@ -1,0 +1,8 @@
+[
+  {"relative_path":"devices.csv","kind":"devices"},
+  {"relative_path":"network.csv","kind":"network"},
+  {"relative_path":"plc_io.csv","kind":"plc_io"},
+  {"relative_path":"supplies.csv","kind":"supplies"},
+  {"relative_path":"links.csv","kind":"supply_links"},
+  {"relative_path":"bridges.csv","kind":"bridges"}
+]
