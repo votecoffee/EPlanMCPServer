@@ -256,3 +256,20 @@ def test_pdf_candidate_context_does_not_establish_membership(drawing_service):
     assert all(r["source"]["sha256"] and r["location"]["page"] == 1 for r in evidence["items"])
     missing = collect_evidence(drawings, "test", ["not-there.pdf"])
     assert missing["coverage"][0]["status"] == "unavailable"
+
+
+def test_historical_snapshot_without_supply_collections_remains_readable(exports):
+    import hashlib
+
+    from eplan_mcp.exports import atomic_json, canonical
+
+    service, _, declarations = exports
+    identifier = service.import_reports("test", declarations)["snapshot_id"]
+    body = service.load(identifier)
+    for kind in ("supplies", "supply_links", "bridges"):
+        body["records"].pop(kind)
+    legacy = "ep_" + hashlib.sha256(canonical(body).encode()).hexdigest()
+    atomic_json(service.folder / "snapshots" / (legacy + ".json"), body)
+    assert service.query(legacy, "supplies")["total"] == 0
+    assert service.compare(legacy, legacy)["total"] == 0
+    assert DeviceInformation(service.drawings).profile(legacy, "=AP+ST1-K1")["status"] == "reported_device"

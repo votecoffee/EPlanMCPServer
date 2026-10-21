@@ -95,8 +95,8 @@
       "bytes": 533
     },
     "plugins/eplan/.codex-plugin/plugin.json": {
-      "sha256": "ff610cc66fa3d23cf92a3d24b56c146f5320a54666b4ed2e67c84f2f3c997a8f",
-      "bytes": 986
+      "sha256": "d8e1201a09d36200af36f06dcc6ec88f243412e029c9953477226bb40087f5cb",
+      "bytes": 1003
     },
     "plugins/eplan/.mcp.json": {
       "sha256": "8117118dceafae22c4f11a00a73d5cc5368257e0541349487533fac749a660e3",
@@ -107,8 +107,8 @@
       "bytes": 121
     },
     "plugins/eplan/plugin.json": {
-      "sha256": "ff610cc66fa3d23cf92a3d24b56c146f5320a54666b4ed2e67c84f2f3c997a8f",
-      "bytes": 986
+      "sha256": "d8e1201a09d36200af36f06dcc6ec88f243412e029c9953477226bb40087f5cb",
+      "bytes": 1003
     },
     "plugins/eplan/skills/eplan-analysis/SKILL.md": {
       "sha256": "e3693bc6681035a21a36121a1a6a587cad1d7047346a7c3081e918e7fafce9df",
@@ -267,8 +267,8 @@
       "bytes": 9661
     },
     "tests/test_device_information.py": {
-      "sha256": "44b042fa86c22c3e0c710e60ff2bfd74c59513b7b67623b4c48610580a9eeac1",
-      "bytes": 10892
+      "sha256": "54b7d898ccd2834a42477acd7eee09b25a4129ecb95e240962a7b140d43d891f",
+      "bytes": 11669
     },
     "tests/test_electrical_graph.py": {
       "sha256": "1d471296ccf48cf43c6e9e179c89a026e0d55a2a27b9b0144c4d44463405fbbb",

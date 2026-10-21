@@ -12,8 +12,8 @@
       "requires_local_executor": true,
       "interface": {
         "displayName": "EPLAN MCP Server",
-        "shortDescription": "EPLAN exports, PLC I/O and connection evidence",
-        "longDescription": "Analyze EPLAN exports, XML, local Access databases and raw/decompressed binary evidence with source hashes. Includes PDF/DXF/DWG derivatives; native semantic project decoding remains experimental.",
+        "shortDescription": "Device profiles, PLC I/O and power/air supply paths",
+        "longDescription": "Extract device names/descriptions, IPs and PLC I/O, trace explicitly reported power/air feeds, and collect positioned drawing evidence. Independent local readers preserve source hashes.",
         "developerName": "votecoffee",
         "category": "Productivity",
         "capabilities": [
@@ -21,7 +21,7 @@
           "Write"
         ],
         "defaultPrompt": [
-          "Inspect my EPLAN exports and show the device inventory and PLC I/O."
+          "Show device names, descriptions, IP addresses, I/O points, and documented power/air feeds."
         ]
       }
     }
