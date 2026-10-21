@@ -1,0 +1,29 @@
+{
+  "name": "eplan",
+  "version": "0.1.0",
+  "description": "Source-preserving EPLAN export and electrical drawing analysis.",
+  "author": {
+    "name": "votecoffee"
+  },
+  "repository": "https://github.com/votecoffee/EPlanMCPServer",
+  "license": "MIT",
+  "extensions": {
+    "com.openai": {
+      "requires_local_executor": true,
+      "interface": {
+        "displayName": "EPLAN MCP Server",
+        "shortDescription": "EPLAN exports, PLC I/O and connection evidence",
+        "longDescription": "Analyze mapped EPLAN exports and PDF/DXF/DWG derivatives with source hashes, snapshots and bounded connection tracing. Native EPLAN projects remain inventory only.",
+        "developerName": "votecoffee",
+        "category": "Productivity",
+        "capabilities": [
+          "Read",
+          "Write"
+        ],
+        "defaultPrompt": [
+          "Inspect my EPLAN exports and show the device inventory and PLC I/O."
+        ]
+      }
+    }
+  }
+}

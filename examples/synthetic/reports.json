@@ -1,0 +1,5 @@
+[
+  {"relative_path":"devices.csv","kind":"devices","field_map":{"tag":"Device designation","description":"Function text","page":"Page","part_number":"Article number"}},
+  {"relative_path":"connections.csv","kind":"connections","field_map":{"source_tag":"Source DT","source_terminal":"Source terminal","target_tag":"Target DT","target_terminal":"Target terminal","wire":"Wire"}},
+  {"relative_path":"plc.xml","kind":"plc_io","row_tag":"Point","field_map":{"tag":"Device","address":"Address","channel":"Channel","signal":"Signal"}}
+]

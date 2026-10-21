@@ -1,0 +1,3 @@
+Source DT,Source terminal,Target DT,Target terminal,Wire
+=AP+ST1-X1,1,=AP+ST1-K1,A1,W1
+=AP+ST1-X1,2,=AP+ST1-K1,A2,W2

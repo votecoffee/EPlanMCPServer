@@ -1,0 +1,2 @@
+# Keep tracked bytes stable for source-manifest verification on every platform.
+* text=auto eol=lf

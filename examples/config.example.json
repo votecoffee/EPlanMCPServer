@@ -1,0 +1,6 @@
+{
+  "roots": {"engineering": "C:/Engineering/EPLAN-Exports"},
+  "state_dir": "C:/Engineering/EPlanMCPState",
+  "max_concurrent_requests": 4,
+  "max_queued_requests": 32
+}

@@ -1,0 +1,10 @@
+.venv/
+.local/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+dist/
+*.egg-info/
+/EPLAN MCP Server.lnk
+/.autocad-shortcut-*.lnk
