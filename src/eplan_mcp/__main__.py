@@ -41,6 +41,10 @@ def main():
     )
     proxy.add_argument("--host-state", required=True)
     sub.add_parser("status")
+    guidance_publish = sub.add_parser(
+        "guidance-publish", help="Explicitly publish installed app guidance to connected readers"
+    )
+    guidance_publish.add_argument("--expected-revision", required=True)
     inventory = sub.add_parser("inventory")
     inventory.add_argument("root_id")
     inventory.add_argument("--all", action="store_true")
@@ -142,6 +146,15 @@ def main():
     from .service import DrawingService
 
     service = DrawingService(Config.load(args.config))
+    if args.command == "guidance-publish":
+        from .guide_publication import publish
+
+        print(
+            json.dumps(
+                publish(service.config.state, service.coordinator, expected_revision=args.expected_revision)
+            )
+        )
+        return
     if args.command in {"device-profile", "supply-trace", "device-evidence"}:
         from .device_information import DeviceInformation, collect_evidence
 
@@ -186,7 +199,11 @@ def main():
         server = create_server(service, args.port, workflow=args.workflow)
         from .management import Reporting
 
-        with Reporting(service.config.state, server.eplan_scheduler.status):
+        with Reporting(
+            service.config.state,
+            server.eplan_scheduler.status,
+            role="Per-chat stdio connection" if args.transport == "stdio" else "Standalone loopback service",
+        ):
             if args.transport == "stdio" or not SDK2:
                 server.run(transport=args.transport)
             else:

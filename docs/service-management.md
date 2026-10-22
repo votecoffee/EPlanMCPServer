@@ -34,3 +34,18 @@ replacement health.
 New server processes report automatically. Updating package files does not convert an already
 running chat process into a reporting process; its normal reconnect is separate acceptance.
 No native EPLAN project access or safe production-process restart is claimed by this integration.
+
+## Instance lifecycle and test isolation
+
+The default standalone stdio route owns one server per live connection; multiple responding rows
+can be legitimate different chats. Status labels distinguish per-chat stdio connections, standalone
+loopback services and the app-owned framework host. Historical stopped/offline rows are not proof
+of currently running processes or permission to kill them. Inspect the owning connection/process
+chain before any shutdown; never clear journals or bulk-kill by executable name.
+
+Every test/acceptance stdio process must pass `EPLAN_MANAGEMENT_REGISTRY` explicitly in its transport
+environment. The SDK filters inherited environment variables, so a parent-only environment override
+is insufficient. Public stdio tests and the smoke script set it explicitly and verify clean EOF
+shutdown/stopped registration in their private registry. In-memory tests do not register processes.
+Disposable framework workers do not register as supervisors. A zero operation counter does not
+prove safe shutdown; live user sessions, pending effects and uncertain receipts remain untouched.

@@ -234,6 +234,15 @@ Tasks, remote access, OAuth, replication and native UI integration are not enabl
 
 ## Development
 
+`eplan_capabilities.feature_profiles` reports enabled/tested features and concrete blockers.
+[Feature profiles](docs/feature-profiles.md) cover progress, cooperative cancellation, private
+report resources, bounded modern discovery caching and the unchanged transient legacy backend.
+
+The stable packaged skill reads the current workflow and supporting references through
+`eplan_get_workflow` on the selected route. Both compatible endpoints also publish the same data
+through Skills-over-MCP. [Runtime guidance](docs/runtime-guidance.md) describes explicit live
+publication, stale-reference checks and the separate native host reload boundary.
+
 The direct server and optional app-owned framework host report to the existing Windows MCP Service
 Manager through framework 0.18.0. No manager installation or broker registration is performed here.
 Status uses cached package/plugin metadata and per-instance activity; availability remains unknown

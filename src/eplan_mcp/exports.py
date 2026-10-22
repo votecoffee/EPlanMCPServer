@@ -166,11 +166,14 @@ class ExportService:
         self.folder = self.config.state / "eplan-exports"
 
     def import_reports(self, root_id: str, reports: list[dict]):
+        from .operation_progress import checkpoint, progress
+
         if not isinstance(reports, list) or not 1 <= len(reports) <= 32:
             raise ValueError("Supply 1..32 report declarations")
         sources, records, mappings = [], {kind: [] for kind in sorted(KINDS)}, []
         documents = {}
         for declaration in reports:
+            checkpoint()
             if not isinstance(declaration, dict) or set(declaration) - {
                 "relative_path",
                 "kind",
@@ -224,6 +227,8 @@ class ExportService:
             if any(not isinstance(column, str) or not column for column in mapping.values()):
                 raise ValueError("field_map values must be column names")
             for number, raw in rows:
+                if number % 128 == 0:
+                    checkpoint()
                 missing = set(mapping.values()) - set(raw)
                 if missing:
                     raise ValueError(f"Mapped columns missing from report row {number}: {sorted(missing)}")
@@ -241,11 +246,13 @@ class ExportService:
                 )
             sources.append(source)
             mappings.append({**declaration, "field_map": mapping})
+            progress(len(mappings), len(reports) + 1, "stages", "Read report sources; publication pending")
         if sum(map(len, records.values())) > MAX_ROWS:
             raise ValueError("Combined snapshot exceeds 100000 records")
         sources = list({canonical(source): source for source in sources}.values())
         # All sources must still match immediately before publishing the snapshot.
         for source in sources:
+            checkpoint()
             if sha256(self.config.resolve(source["root_id"], source["relative_path"])) != source["sha256"]:
                 raise ValueError("Source changed before snapshot publication")
         body = {
@@ -262,7 +269,9 @@ class ExportService:
         }
         identifier = "ep_" + hashlib.sha256(canonical(body).encode()).hexdigest()
         with self.drawings.coordinator.lock("eplan-export:" + identifier):
+            checkpoint()
             atomic_json(self.folder / "snapshots" / (identifier + ".json"), body)
+        progress(len(reports) + 1, len(reports) + 1, "stages", "Immutable report snapshot published")
         return self.get(identifier)
 
     def load(self, snapshot_id):

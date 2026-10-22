@@ -1,4 +1,5 @@
 import json
+import os
 
 import pytest
 
@@ -203,6 +204,7 @@ async def test_device_tools_through_real_stdio(device_project):
     source = drawings.config.roots["test"]
     params = StdioServerParameters(
         command=sys.executable,
+        env={"EPLAN_MANAGEMENT_REGISTRY": os.environ["EPLAN_MANAGEMENT_REGISTRY"]},
         args=["-m", "eplan_mcp", "--config", str(source.parent / "config.json"), "serve"],
     )
     async with stdio_client(params) as (read, write):

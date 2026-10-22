@@ -51,8 +51,9 @@ def track_backend(backend, activity):
 
 
 class Reporting:
-    def __init__(self, state, activity, *, registry=None):
+    def __init__(self, state, activity, *, registry=None, role="App-owned analysis instance"):
         self.state, self.activity = state, activity
+        self.role = role
         self.guard = threading.Lock()
         self.stopped = threading.Event()
         self.versions = {}
@@ -105,7 +106,7 @@ class Reporting:
             versions = dict(self.versions)
         return ManagedStatus(
             state="busy" if pending else "running",
-            message="Standalone offline analysis; per-instance admitted/queued work only; native EPLAN not connected",
+            message=self.role + "; per-instance admitted/queued work only; native EPLAN not connected",
             active_operations=pending,
             versions=versions,
             restart_allowed=False,

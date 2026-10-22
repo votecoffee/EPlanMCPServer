@@ -306,12 +306,15 @@ class DrawingService:
         }
 
     def index(self, root_id: str, offset=0, limit=2) -> dict:
+        from .operation_progress import checkpoint, progress
+
         if not 1 <= limit <= 5:
             raise ValueError("Index batches contain 1..5 files; follow next_offset")
         batch = self.inventory(root_id, True, offset, limit)
         results = []
         started = time.monotonic()
         for file in batch["items"]:
+            checkpoint()
             if results and time.monotonic() - started > 150:
                 break
             relative_path = file["relative_path"]
@@ -327,6 +330,8 @@ class DrawingService:
                 )
             except (ValueError, OSError, RuntimeError, KeyError) as error:
                 results.append({"path": relative_path, "status": "failed", "error": str(error)[:3000]})
+            progress(len(results), len(batch["items"]), "files", "Processed drawing files")
+        checkpoint()
         return {
             "root_id": root_id,
             "results": results,

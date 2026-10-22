@@ -1,3 +1,4 @@
+import os
 import sys
 
 import pytest
@@ -10,6 +11,7 @@ async def test_real_stdio_drawing_and_export_workflows(exports):
     service, root, declarations = exports
     parameters = StdioServerParameters(
         command=sys.executable,
+        env={"EPLAN_MANAGEMENT_REGISTRY": os.environ["EPLAN_MANAGEMENT_REGISTRY"]},
         args=["-m", "eplan_mcp", "--config", str(root.parent / "config.json"), "serve"],
     )
     async with stdio_client(parameters) as (read, write):
@@ -17,7 +19,7 @@ async def test_real_stdio_drawing_and_export_workflows(exports):
             initialized = await client.initialize()
             assert initialized.server_info.name == "EPLAN MCP Server"
             tools = (await client.list_tools()).tools
-            assert len(tools) == 49
+            assert len(tools) == 50
             assert not any("highlight" in t.name for t in tools)
             inspected = await client.call_tool(
                 "eplan_inspect", {"root_id": "test", "relative_path": "sample.pdf"}
@@ -49,3 +51,8 @@ async def test_real_stdio_drawing_and_export_workflows(exports):
                 "eplan_query_export", {"snapshot_id": "../secret", "kind": "devices"}
             )
             assert rejected.is_error
+    from universal_tools.management import ManagementRegistry
+
+    records, errors = ManagementRegistry(os.environ["EPLAN_MANAGEMENT_REGISTRY"]).records()
+    assert not errors and len(records) == 1
+    assert records[0].app_id == "eplan" and records[0].stopped

@@ -1,5 +1,6 @@
 import copy
 import json
+import os
 
 import pymupdf
 import pytest
@@ -205,6 +206,7 @@ async def test_reviewed_import_and_original_freshness_through_stdio(reviewed):
     _, root, declarations, _, _ = reviewed
     params = StdioServerParameters(
         command=sys.executable,
+        env={"EPLAN_MANAGEMENT_REGISTRY": os.environ["EPLAN_MANAGEMENT_REGISTRY"]},
         args=["-m", "eplan_mcp", "--config", str(root.parent / "config.json"), "serve"],
     )
     async with stdio_client(params) as (read, write):

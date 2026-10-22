@@ -3,6 +3,7 @@
 import argparse
 import asyncio
 import json
+import os
 import sys
 import uuid
 from pathlib import Path
@@ -12,15 +13,19 @@ from mcp.client.stdio import StdioServerParameters, stdio_client
 
 
 async def run(config, root, reports=None):
+    from eplan_mcp.config import Config
+
+    registry = Config.load(config).state / "protocol-smoke-management"
     parameters = StdioServerParameters(
         command=sys.executable,
         args=["-m", "eplan_mcp", "--config", str(Path(config).resolve(strict=True)), "serve"],
+        env={**os.environ, "EPLAN_MANAGEMENT_REGISTRY": str(registry)},
     )
     async with stdio_client(parameters) as (read, write):
         async with ClientSession(read, write, read_timeout_seconds=120.0) as client:
             initialized = await client.initialize()
             tools = (await client.list_tools()).tools
-            assert len(tools) == 49
+            assert len(tools) == 50
             assert all(tool.output_schema for tool in tools)
             for name in ("eplan_status", "eplan_capabilities"):
                 result = await client.call_tool(name, {})

@@ -5,6 +5,8 @@ import json
 from functools import wraps
 from typing import Any
 
+from mcp.server.caching import CacheHint
+from mcp.server.mcpserver import Context
 from mcp.types import ToolAnnotations
 
 try:
@@ -20,6 +22,8 @@ except ImportError:
 from . import __version__
 from .coordination import RequestScheduler
 from .guidance import WORKFLOW
+from .guide_publication import GuidancePublication
+from .operation_progress import Operations, current
 from .service import DrawingService
 from .transactions import Transactions
 
@@ -27,12 +31,22 @@ from .transactions import Transactions
 def create_server(service: DrawingService, port: int = 8816, *, workflow: bool = False) -> MCPServer:
     scheduler = RequestScheduler(service.config.max_concurrent_requests, service.config.max_queued_requests)
     transactions = Transactions(service.config.state, service.coordinator)
-    mcp = MCPServer(
+    operations = Operations()
+    guidance = GuidancePublication(service.config.state, service.coordinator)
+    from universal_tools.extensions import ExtensionServer
+
+    mcp = ExtensionServer(
         "EPLAN MCP Server",
         instructions=WORKFLOW,
+        extensions=[guidance.catalog],
+        resource_providers=[guidance.catalog],
+        cache_hints={"tools/list": CacheHint(ttl_ms=1000, scope="private")},
         **({"version": __version__} if SDK2 else {"host": "127.0.0.1", "port": port}),
     )
     mcp.eplan_scheduler = scheduler
+    from .report_resources import register_report_resources
+
+    register_report_resources(mcp, service)
 
     def tool(*, read=True, control=False):
         def decorate(fn):
@@ -41,19 +55,49 @@ def create_server(service: DrawingService, port: int = 8816, *, workflow: bool =
 
             @wraps(fn)
             async def wrapped(*args, **kwargs):
+                context = kwargs.pop("mcp_context", None)
                 request_id = kwargs.pop("request_id", None) if not read else None
                 bound = original_signature.bind(*args, **kwargs)
                 bound.apply_defaults()
 
+                hook = (
+                    operations.start(fn.__name__, context)
+                    if fn.__name__ in {"eplan_index_project", "eplan_import_reports"}
+                    else None
+                )
+
                 def execute():
+                    if hook:
+                        hook.started = True
+                        hook.update(state="running")
+                        hook.check()
                     return fn(*args, **kwargs)
 
-                if read:
-                    result = await scheduler.run(execute, control=control)
-                else:
-                    result = await scheduler.run(
-                        transactions.execute, request_id, fn.__name__, dict(bound.arguments), execute
-                    )
+                token = current.set(hook)
+                try:
+                    if read:
+                        result = await scheduler.run(execute, control=control)
+                    else:
+                        result = await scheduler.run(
+                            transactions.execute, request_id, fn.__name__, dict(bound.arguments), execute
+                        )
+                    if hook:
+                        hook.update(state="completed")
+                        result = {**result, "operation_status": hook.status()}
+                except BaseException as error:
+                    if hook:
+                        hook.update(
+                            state="failed"
+                            if isinstance(error, Exception)
+                            else "stopped_at_checkpoint"
+                            if hook.cancelled
+                            else "cancelled_before_dispatch"
+                            if not hook.started
+                            else "uncertain"
+                        )
+                    raise
+                finally:
+                    current.reset(token)
                 if len(json.dumps(result, ensure_ascii=False).encode("utf-8")) > 200_000:
                     raise ValueError("Response exceeds budget; use smaller limit or narrower filters")
                 return result
@@ -73,6 +117,17 @@ def create_server(service: DrawingService, port: int = 8816, *, workflow: bool =
                     + "\nOptional request_id provides durable idempotency; inspect eplan_get_transaction after a lost response."
                 )
 
+            signature = getattr(wrapped, "__signature__", original_signature)
+            wrapped.__signature__ = signature.replace(
+                parameters=[
+                    *signature.parameters.values(),
+                    inspect.Parameter(
+                        "mcp_context", inspect.Parameter.KEYWORD_ONLY, default=None, annotation=Context
+                    ),
+                ]
+            )
+            wrapped.__annotations__ = {**wrapped.__annotations__, "mcp_context": Context}
+
             return mcp.tool(
                 structured_output=True,
                 annotations=ToolAnnotations.model_validate(
@@ -87,21 +142,17 @@ def create_server(service: DrawingService, port: int = 8816, *, workflow: bool =
 
         return decorate
 
-    if workflow:
-
-        @tool(control=True)
-        def eplan_get_workflow() -> dict:
-            """Read current app-owned drawing workflow, source boundaries and request recovery guidance."""
-            import hashlib
-
-            from . import __version__
-
-            return {
-                "schema_version": 1,
-                "app_version": __version__,
-                "workflow_revision": hashlib.sha256(WORKFLOW.encode()).hexdigest(),
-                "text": WORKFLOW,
-            }
+    @tool(control=True)
+    def eplan_get_workflow(
+        expected_revision: str | None = None,
+        reference_id: str | None = None,
+        expected_sha256: str | None = None,
+    ) -> dict:
+        """Read current EPLAN guidance and its reference catalog, or a revision/hash-pinned reference.
+        Call without arguments first. Guide content is not write approval or a native EPLAN claim.
+        Rediscover after stale pins; preserve the selected endpoint and engineering receipt IDs.
+        """
+        return guidance.read(expected_revision, reference_id, expected_sha256)
 
     @tool(control=True)
     def eplan_status() -> dict:
@@ -113,6 +164,7 @@ def create_server(service: DrawingService, port: int = 8816, *, workflow: bool =
         """Inspect per-process request admission, queue and worker limits; control calls remain responsive under load."""
         return {
             **scheduler.status(),
+            "operation_observations": operations.snapshot(),
             "shared_worker_process_limit": service.config.max_worker_processes,
             "shared_oda_process_limit": service.config.max_oda_processes,
             "native_eplan": "not connected",

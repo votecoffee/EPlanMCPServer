@@ -32,6 +32,7 @@ def selected_files(repo):
     files = [repo / name for name in ROOT_FILES]
     for folder in ("src", "scripts", "tests"):
         files.extend((repo / folder).rglob("*.py"))
+    files.extend((repo / "src/eplan_mcp/references").glob("*.md"))
     files.extend(
         p
         for p in (repo / "examples").rglob("*")

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import contextlib
 import errno
 import hashlib
@@ -145,9 +146,35 @@ class RequestScheduler:
 
         try:
             # A disconnected caller does not abandon a running state mutation. Its durable receipt remains queryable.
-            return await anyio.to_thread.run_sync(
-                partial(invoke), abandon_on_cancel=False, limiter=self.controls if control else self.limiter
+            work = asyncio.create_task(
+                anyio.to_thread.run_sync(
+                    partial(invoke),
+                    abandon_on_cancel=False,
+                    limiter=self.controls if control else self.limiter,
+                )
             )
+            try:
+                return await asyncio.shield(work)
+            except asyncio.CancelledError:
+                from .operation_progress import current
+
+                if hook := current.get():
+                    hook.request_cancel()
+                # Raw SDK asyncio cancellation must not orphan a thread or release admission early.
+                # Non-cooperative work drains normally; cooperative work stops at its next checkpoint.
+                with anyio.CancelScope(shield=True):
+                    while not work.done():
+                        try:
+                            await asyncio.shield(work)
+                        except asyncio.CancelledError:
+                            continue
+                        except BaseException:
+                            break
+                try:
+                    work.result()
+                except BaseException:
+                    pass
+                raise
         finally:
             with self.guard:
                 if control:

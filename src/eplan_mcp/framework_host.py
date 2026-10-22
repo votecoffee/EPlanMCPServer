@@ -67,6 +67,12 @@ def prepare(config_path: Path, state: Path, *, port=8818, highlighting=False) ->
     check_receipts(config)
     package = Path(__file__).parent
     contents = {"eplan_mcp/" + p.name: p.read_bytes() for p in sorted(package.glob("*.py"))}
+    contents.update(
+        {
+            "eplan_mcp/" + p.relative_to(package).as_posix(): p.read_bytes()
+            for p in sorted((package / "references").glob("*.md"))
+        }
+    )
     contents["worker.py"] = (package / "framework_entry.py").read_bytes()
     dependencies = {
         name: importlib.metadata.version(name)
@@ -101,7 +107,7 @@ def prepare(config_path: Path, state: Path, *, port=8818, highlighting=False) ->
         if not target.exists():
             target.write_bytes(data)
     if any(
-        (package / Path(name).name).read_bytes() != data
+        (package / name.removeprefix("eplan_mcp/")).read_bytes() != data
         for name, data in contents.items()
         if name != "worker.py"
     ):
@@ -221,7 +227,12 @@ def serve(state: Path, publication: Path, config_path: Path):
     host = create_host(
         state, publication, config_path, max_request_body_bytes=settings.max_request_body_bytes
     )
-    server = host.create_server(port=settings.port)
+    from .guide_publication import GuidancePublication
+    from .service import DrawingService
+
+    drawings = DrawingService(Config.load(config_path))
+    guidance = GuidancePublication(drawings.config.state, drawings.coordinator)
+    server = host.create_server(port=settings.port, skills=guidance.catalog)
     from .management import Activity, Reporting, track_backend
 
     activity = Activity()
@@ -231,7 +242,7 @@ def serve(state: Path, publication: Path, config_path: Path):
     @asynccontextmanager
     async def lifespan(_):
         async with host, server.session_manager.run():
-            with Reporting(Config.load(config_path).state, activity.status):
+            with Reporting(Config.load(config_path).state, activity.status, role="App-owned framework host"):
                 yield
 
     app = Starlette(routes=base.routes, lifespan=lifespan)

@@ -1,6 +1,7 @@
 """Thin MCP adapters for the EPLAN export service."""
 
 from .exports import FIELDS, KINDS, ExportService
+from .feature_profiles import profiles
 
 
 def register_exports(tool, drawings):
@@ -10,6 +11,7 @@ def register_exports(tool, drawings):
     def eplan_capabilities() -> dict:
         """Read export schema, supported analyses and native EPLAN boundaries before importing reports."""
         return {
+            "feature_profiles": profiles(),
             "report_kinds": sorted(KINDS),
             "canonical_fields": sorted(FIELDS),
             "formats": [

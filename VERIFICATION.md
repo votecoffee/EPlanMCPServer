@@ -59,8 +59,17 @@ counts and durable uncertain barriers across process/instance lifetimes. Those s
 are not EPLAN process-restart acceptance.
 
 Verify the pinned framework wheel SHA-256/RECORD, hashed locks, dependency consistency, packaged
-runtime and existing 49-tool direct/50-tool framework schemas. Start only a disposable source-free
+runtime and current 50-tool direct/backend schemas (49 original tools plus the shared workflow reader). Start only a disposable source-free
 or synthetic server for manager-row checks. Existing chats/projects must remain untouched. Confirm
 the exact plugin ID and actual running/stopped state rather than equating inventory with reporting.
 Live process replacement remains unaccepted and disabled until an app-owned supervisor and
 cross-chat safe quiescence protocol exist.
+# Runtime guidance profile
+
+Run `python -m pytest -q tests/test_guidance.py tests/test_framework.py`. Verify the generated
+bootstrap, canonical supporting-reference parity, manifest byte hashes, list/get/resource consistency,
+connected-client guide and reference updates/removal, stale revision/hash rejection, and failed
+publication preserving the prior guide/catalog. Directory reads must remain unadvertised. Source
+changes must remain unpublished until explicit revision-checked publication. Repeat protocol checks
+against the installed standalone route and an isolated wheel. Native Codex skill selection/reload
+and plugin-submission import remain separate host acceptance, not protocol-test results.
