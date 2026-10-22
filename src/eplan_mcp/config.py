@@ -5,7 +5,8 @@ import os
 from dataclasses import dataclass
 from pathlib import Path
 
-SUPPORTED = {".dwg", ".dxf", ".dwt", ".dws", ".pdf"}
+PROFILE = "direct-standalone-offline"
+SUPPORTED = {".dxf", ".pdf"}
 
 
 def inside(path: Path, root: Path) -> bool:
@@ -31,6 +32,10 @@ class Config:
     def load(cls, filename: str | Path) -> Config:
         filename = Path(filename).resolve(strict=True)
         raw = json.loads(filename.read_text(encoding="utf-8-sig"))
+        if raw.get("profile", PROFILE) != PROFILE:
+            raise ValueError("Only the direct-standalone-offline profile is available")
+        if raw.get("oda_executable"):
+            raise ValueError("Vendor/native converter configuration is disabled in the offline profile")
         roots = {name: Path(value).resolve(strict=True) for name, value in raw["roots"].items()}
         if not roots or any(
             not name or "/" in name or "\\" in name or not p.is_dir() for name, p in roots.items()
@@ -39,13 +44,7 @@ class Config:
         state = Path(raw.get("state_dir", filename.parent / "state")).resolve()
         if any(inside(state, root) or inside(root, state) for root in roots.values()):
             raise ValueError("State and source roots must not overlap")
-        oda = raw.get("oda_executable")
-        if not oda and os.name == "nt":
-            candidates = sorted(Path("C:/Program Files/ODA").glob("ODAFileConverter*/ODAFileConverter.exe"))
-            oda = str(candidates[-1]) if candidates else None
-        executable = Path(oda).resolve(strict=True) if oda else None
-        if executable and (not executable.is_file() or not Path(oda).is_absolute()):
-            raise ValueError("ODA executable must be an absolute installed file path")
+        executable = None  # No vendor discovery or environment-based opt-in in this profile.
         concurrency = {}
         for key, default, low, high in (
             ("max_concurrent_requests", 4, 1, 32),

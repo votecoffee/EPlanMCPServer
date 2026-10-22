@@ -136,6 +136,8 @@ def _main():
     evidence.add_argument("--offset", type=int, default=0)
     evidence.add_argument("--limit", type=int, default=50)
     args = parser.parse_args()
+    if args.command == "serve" and args.transport != "stdio":
+        raise ValueError("Only direct stdio serving is enabled in the standalone offline profile")
     if args.command.startswith("framework-"):
         from pathlib import Path
 

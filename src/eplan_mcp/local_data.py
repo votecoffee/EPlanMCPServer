@@ -560,7 +560,7 @@ def run_worker(source, destination, options):
     elif operation in {"bytes", "text"}:
         result = read_binary(path, opts)
     elif operation == "access":
-        result = access_data(path, opts)
+        raise ValueError("Access/ACE native provider reads are disabled in the direct offline profile")
     else:
         raise ValueError("Unknown local data operation")
     Path(destination).write_text(json.dumps(result, ensure_ascii=False, allow_nan=False), encoding="utf-8")
@@ -659,6 +659,8 @@ class LocalDataService:
         self.drawings, self.config = drawings, drawings.config
 
     def read(self, root_id, relative_path, operation, **options):
+        if operation == "access" or (operation == "archive" and options.get("member_operation") == "access"):
+            raise ValueError("Access/ACE native provider reads are disabled in the direct offline profile")
         path = self.config.resolve(root_id, relative_path)
         formats = {
             "archive": {".zip"},

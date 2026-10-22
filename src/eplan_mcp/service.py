@@ -17,7 +17,7 @@ import ezdxf
 import pymupdf
 
 from . import EXTRACTION_VERSION, __package_version__, __version__
-from .config import SUPPORTED, Config
+from .config import PROFILE, SUPPORTED, Config
 from .coordination import Coordinator
 from .owned_processes import run as run_owned
 from .worker_launch import worker_command
@@ -79,6 +79,8 @@ def paginate(rows: list, offset: int = 0, limit: int = 100) -> dict:
 
 class DrawingService:
     def __init__(self, config: Config):
+        if config.oda_executable is not None:
+            raise ValueError("Vendor/native converters are disabled in the offline profile")
         self.config = config
         self.coordinator = Coordinator(
             config.state, config.lock_timeout_seconds, config.max_worker_processes, config.max_oda_processes
@@ -124,6 +126,7 @@ class DrawingService:
             "name": "EPLAN MCP Server",
             "version": __version__,
             "package_version": __package_version__,
+            "profile": PROFILE,
             "roots": {k: str(v) for k, v in self.config.roots.items()},
             "state_dir": str(self.config.state),
             "supported_extensions": sorted(SUPPORTED),
@@ -145,15 +148,15 @@ class DrawingService:
                 "response_bytes": 200_000,
             },
             "limitations": [
-                "DWT/DWS use the DWG conversion route; validate each input individually.",
+                "DWG/DWT/DWS conversion and Access/ACE provider reads are disabled in the offline profile.",
                 "DGN/DWF/DWFx, STEP/IGES, SolidWorks and eDrawings: inventory only.",
-                "DWG structure is extracted via ODA/DXF; native CAD tables and custom proxies may be incomplete.",
+                "Only offline DXF/PDF and explicit reports/local byte structures are supported; no vendor discovery.",
                 "No CAD editing, network reference loading or automatic OCR; native EPLAN access is unavailable in this offline service.",
             ],
             "electrical_inputs": [
                 "WDP project membership",
                 "Electrical CSV/TSV/JSON reports",
-                "DWG/DXF block attributes",
+                "DXF block attributes (DWG inventory only)",
                 "PDF text candidates",
             ],
             "electrical_analysis_requires_current_index": True,

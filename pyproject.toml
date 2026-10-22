@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "eplan-mcp-server"
-version = "26.1022.173617"
+version = "26.1022.180119"
 description = "Source-preserving EPLAN export, electrical report and drawing analysis for MCP"
 readme = "README.md"
 license = "MIT"

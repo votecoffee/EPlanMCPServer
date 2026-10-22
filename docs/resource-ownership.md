@@ -1,7 +1,8 @@
 # Owned resource lifecycle
 
-This is an unaccepted Windows implementation under development. Pure stub tests and source checks
-do not prove process-tree cleanup. No plugin/server/native application is started by validation
+This remains unaccepted for MCP/native-host use. Pure/stub checks and bounded harmless Python
+process fixtures cover selected ownership paths, not transport/native acceptance.
+No plugin/server/native application is started by validation
 while an operator runtime hold is active. Existing native editors and unrelated processes are
 never enumerated, adopted or closed.
 
@@ -9,8 +10,9 @@ never enumerated, adopted or closed.
 
 The application CLI enters an exclusive process-owner scope. A library embedded in another
 application cannot implicitly adopt that host process. Child launch requires that exclusive scope
-and a private evidence directory selected by the application configuration. Current launch sites
-cover extraction, preview, table and local-reader workers, ODA conversion and CLI inventory.
+and a private evidence directory selected by the application configuration. Enabled launch sites
+cover extraction, preview, table and local-reader Python workers. ODA, Access providers, plugin
+CLI installation/inventory, shared hosts and HTTP are unavailable from selected entry points.
 All child arguments are literal argv, with no shell command expansion. There is no native EPLAN
 editor attachment, shared application lease or dirty native project save/close operation.
 
@@ -85,8 +87,8 @@ enable or restart those routes. Non-Windows child execution has no unmanaged fal
 | --- | --- | --- |
 | Direct stdio / loopback supervisor | Actual exclusive Python process owns its workers; no registration helper acts as owner | Implemented; existing SDK transport retained; new EOF/reconnect/crash/resource-use acceptance pending |
 | Extraction / local-reader / render / table worker | Shared ledger reservation, retained creation handle, app-owned Windows job tree | Pure/stub checks pass; real creation, descendants, cancellation and owner death pending |
-| ODA converter inside parser worker | Explicit owned launch, isolated source copy, nested job and matching supervisor generation | Implemented; converter acceptance pending on disposable input |
-| Access provider objects | Read-only worker-created ADO recordsets/schema/catalog/connection; all cleanup attempts occur even after one failure | Pure handle stubs pass; ACE native read/close acceptance pending; no user application attachment |
+| ODA converter | No discovery; configuration and conversion refused | Disabled; no vendor process launch in this profile |
+| Access provider objects | Direct/archive/worker Access dispatch refused; MDB bytes remain readable | Disabled; no COM/provider acquisition in this profile |
 | Shell / Node / console descendants | Job contains descendants of a directly launched private process; no arbitrary shell expansion | Real descendant fixtures pending; out-of-job service/COM launchers are not supported or adopted |
 | Existing user-owned native editor | Not opened, attached, enumerated or closed | Protected by absence of acquisition; attached preservation fixture still pending |
 | Shared native application / optional framework host | No accepted lease/refcount or backend containment profile | Implementation gap; serve/proxy startup refused, no automatic host start |

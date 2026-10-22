@@ -47,7 +47,7 @@ def _contain_owner(api, kernel):
     with _guard:
         if _owner_job is not None:
             return
-        candidate = api.CreateJobObject(None, None)
+        candidate = api.CreateJobObject(None, "")
         try:
             limits = api.QueryInformationJobObject(candidate, api.JobObjectExtendedLimitInformation)
             limits["BasicLimitInformation"]["LimitFlags"] = (
@@ -229,7 +229,7 @@ def run(
         if cancellation is not None and cancellation.is_set():
             raise OperationCancelled()
         _contain_owner(win32job, win32api)
-        job = win32job.CreateJobObject(None, None)
+        job = win32job.CreateJobObject(None, "")
         limits = win32job.QueryInformationJobObject(job, win32job.JobObjectExtendedLimitInformation)
         limits["BasicLimitInformation"]["LimitFlags"] = (
             win32job.JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE | win32job.JOB_OBJECT_LIMIT_ACTIVE_PROCESS

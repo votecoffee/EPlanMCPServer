@@ -7,6 +7,14 @@ def profiles():
 
     return {
         "assessment_scope": "Offline/synthetic app and protocol checks; native host acceptance is separate",
+        "selected_profile": "direct-standalone-offline",
+        "vendor_native_readers": item(
+            "blocked",
+            "ODA discovery/configuration/conversion and direct/archive/worker Access reads refused; no environment opt-in",
+        ),
+        "http_transport": item(
+            "blocked", "Only direct stdio serving is enabled; HTTP startup refused before config load"
+        ),
         "framework_020_runtime": item(
             "implemented-but-unassessed",
             "Reviewed 0.20 wheel/pins and synthetic ledger adapter checks; installed/MCP/native lifecycle acceptance pending",
@@ -17,11 +25,11 @@ def profiles():
         ),
         "parent_exit_cleanup": item(
             "implemented-but-unassessed",
-            "Exclusive Windows owner/child jobs and retained creation handles; abrupt parent exit/descendant cleanup require isolated acceptance",
+            "Harmless Python owner-death/descendant fixtures passed; actual MCP EOF/upstream-client loss still pending",
         ),
         "owned_process_lifecycle": item(
             "implemented-but-unassessed",
-            "Parser/converter/CLI argv trees use bounded exclusive Windows containment; no attached apps or unmanaged platform fallback",
+            "Harmless Python startup/timeout/cancel/normal/descendant fixtures passed; actual MCP worker path still pending",
         ),
         "shared_resource_ledger": item(
             "implemented-but-unassessed",

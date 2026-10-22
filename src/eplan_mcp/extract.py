@@ -28,6 +28,10 @@ def clean(value):
 def convert(source: Path, executable: str | None) -> tuple[Path, dict]:
     if source.suffix.lower() == ".dxf":
         return source, {"engine": "ezdxf", "conversion": None}
+    raise ValueError("Vendor/native conversion is disabled in the direct offline profile")
+
+
+def _convert_vendor_unaccepted(source: Path, executable: str | None) -> tuple[Path, dict]:
     if not executable:
         raise ValueError("DWG/DWT/DWS requires an installed ODA File Converter configured by the operator")
     output = source.parent / "converted"

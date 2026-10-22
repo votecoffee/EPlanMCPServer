@@ -1,6 +1,6 @@
 {
   "name": "eplan",
-  "version": "26.1022.173617",
+  "version": "26.1022.180119",
   "description": "Source-preserving EPLAN export and electrical drawing analysis.",
   "author": {
     "name": "votecoffee"

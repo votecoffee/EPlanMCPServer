@@ -42,6 +42,10 @@ def fake_windows(tmp_path, monkeypatch):
         if values.fail_assign and process != -1:
             raise OSError("synthetic assignment refusal")
 
+    def create_job(security, name):
+        assert name == ""  # pywin32 requires an empty string, not None, for an unnamed job.
+        return Handle("job")
+
     def terminate(job, code):
         events.append(("stop_tree", job.value))
         if values.fail_stop:
@@ -60,7 +64,7 @@ def fake_windows(tmp_path, monkeypatch):
         return values.waits.pop(0) if values.waits else 0
 
     fake_job = SimpleNamespace(
-        CreateJobObject=lambda *args: Handle("job"),
+        CreateJobObject=create_job,
         QueryInformationJobObject=job_info,
         SetInformationJobObject=lambda *args: None,
         AssignProcessToJobObject=assign,

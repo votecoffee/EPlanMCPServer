@@ -11,6 +11,16 @@ def register_exports(tool, drawings):
     def eplan_capabilities() -> dict:
         """Read export schema, supported analyses and native EPLAN boundaries before importing reports."""
         return {
+            "selected_profile": "direct-standalone-offline",
+            "disabled_routes": [
+                "vendor converters",
+                "Access/ACE provider",
+                "native engineering apps",
+                "controllers/SCM",
+                "shared host",
+                "HTTP serving",
+                "plugin install/bootstrap",
+            ],
             "feature_profiles": profiles(),
             "report_kinds": sorted(KINDS),
             "canonical_fields": sorted(FIELDS),
@@ -28,7 +38,6 @@ def register_exports(tool, drawings):
             "inventory_only": ["zw1", "zw9", "ema", "ems"],
             "independent_readers": [
                 "nested XML",
-                "Access base tables (Windows ACE)",
                 "ELK/ELL link text",
                 "ordinary ZIP members",
                 "raw binary ranges",

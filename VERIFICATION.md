@@ -30,6 +30,13 @@ extraction and exercises import/query/check/trace/compare/export plus receipt re
 
 ## Acceptance boundaries
 
+The selected source-gate profile is direct stdio offline only: DXF/PDF, explicit reports and
+provider-free local byte/XML/archive readers. Vendor conversion, Access/ACE (including archive
+members and low-level dispatch), HTTP and optional host/bootstrap entry points are refused.
+Harmless Python-only fixtures cover real Windows job normal/descendant/timeout/cancel/startup
+failure/owner-death paths and private-manager already-exited orphan receipts plus attached/shared
+protection. They do not start an MCP server or establish native Codex/transport acceptance.
+
 Timestamp-release checks are pure/package-only while held: padded display versus canonical PEP
 440/strict SemVer identity, once-stamped source/plugin/README parity, unchanged dependency pins,
 manager normalization, CLI `--version`, wheel METADATA/import and source byte-manifest parity.

@@ -239,6 +239,7 @@ def test_archive_member_reading_and_unsafe_names(local_files):
 
 
 @pytest.mark.skipif(os.name != "nt", reason="Windows ACE integration")
+@pytest.mark.skip(reason="ACE/provider profile is disabled; direct offline refusal is tested without COM acquisition")
 def test_access_reads_real_synthetic_database_without_source_changes(local_files):
     service, root = local_files
     import win32com.client

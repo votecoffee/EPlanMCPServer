@@ -2,7 +2,7 @@
 
 Source-preserving EPLAN export, electrical report and drawing analysis for MCP
 
-Standalone Codex plugin, shared Python service and CLI. Version **26.1022.173617**.
+Standalone Codex plugin, shared Python service and CLI. Version **26.1022.180119**.
 The main purpose is to extract device names/descriptions, network addresses, PLC I/O points,
 and the power or compressed-air supplies feeding each device.
 The repository uses `EPlanMCPServer`; the Python distribution uses the normalized package name
@@ -30,14 +30,17 @@ EPLAN for offline analysis. It does not yet provide native EPLAN project access 
 
 **Lifecycle transition:** bootstrap installation and the optional framework serve/proxy routes
 currently refuse startup pending owned-resource acceptance. The direct Windows process-containment
-implementation is source-tested with OS stubs only. Do not use it as an accepted production
+implementation has pure/stub and harmless Python process-fixture checks. MCP/host lifecycle
+acceptance is pending. Do not use it as an accepted production
 cleanup profile. See [resource ownership](docs/resource-ownership.md) for limits and pending checks.
 Installation examples below describe the retained setup workflow once that gate is resolved.
 
 ### Dependencies
 
-Python 3.11+; Windows is the primary target. Python 3.13 is used for validation. ODA File Converter
-is optional and required only for DWG/DWT/DWS. DXF, PDF and report analysis work without it.
+Python 3.11+; Windows is the primary target. Python 3.13 is used for validation. The selected
+`direct-standalone-offline` profile supports DXF, PDF, explicit reports and local byte/XML readers.
+DWG/DWT/DWS conversion and Access/ACE provider reads are refused. No vendor discovery or
+environment opt-in enables them. Configurations containing an ODA executable are refused.
 
 The shared framework is a separately supplied local wheel, not fetched from an unverified public
 package with the same name. The installer verifies SHA-256 and every wheel RECORD member:
@@ -57,14 +60,14 @@ under ignored `.local`. Existing configuration and explicit integration preferen
 The initial setup refreshes the standalone Codex plugin by default. To skip that integration use
 `--codex-integration none`. No customer directories are automatically selected.
 
-After first setup, double-click `InstallAndRun.cmd` for loopback HTTP at port **8816**, or:
+After controlled runtime authorization, direct stdio is the selected server route:
 
 ```powershell
-.\InstallAndRun.cmd --stdio
-.\.venv\Scripts\python.exe scripts\install_plugin.py --mode standalone
+.\.venv\Scripts\python.exe -m eplan_mcp --config .local/config.json serve
 ```
 
-The plugin is `eplan@eplan-local`. Its generated stdio binding starts this application's own
+HTTP, shared-host, bootstrap and plugin-install entry points currently refuse startup. The plugin
+is `eplan@eplan-local`. Its generated stdio binding starts this application's own
 environment. Reconnect Codex or open a fresh chat after installation. Package/protocol checks
 do not prove activation in an already-open chat.
 
@@ -137,14 +140,14 @@ scope handling and coverage limits.
 ### Independent local readers
 
 These tools work without starting EPLAN or checking out an EPLAN license. They read isolated
-copies; every response identifies the original source hash. Windows Access reads require the
-installed Microsoft Access Database Engine (ACE) OLE DB provider matching Python's architecture.
-No Access installation or provider is downloaded automatically.
+copies; every response identifies the original source hash. Access/ACE provider operations and
+archive-member Access reads are disabled before worker dispatch and at the low-level worker.
+Raw byte/text evidence from MDB files remains available without loading a provider.
 
 | Tool | Content access |
 | --- | --- |
 | `eplan_read_xml` | Discover tags; query exact records including nested properties |
-| `eplan_read_access` | List local base tables; read paginated rows and column types |
+| `eplan_read_access` | Refused in this profile; no ACE/COM provider acquisition |
 | `eplan_read_project_link` | Decode ELK/ELL references and inventory an in-root EDB folder |
 | `eplan_read_archive` | List ordinary ZIP members; run a bounded reader on one exact member |
 | `eplan_read_binary_bytes` | Inspect raw or inflated byte ranges as hex |

@@ -16,7 +16,8 @@ def register_local(tool, drawings):
         offset: int = 0,
         limit: int = 25,
     ) -> dict:
-        """List ordinary ZIP entries or read one exact member using xml/access/link/text/bytes/streams.
+        """List ordinary ZIP entries or read one exact member using xml/link/text/bytes/streams.
+        Access/ACE member operations are refused by the selected offline profile.
         Native ZW1/ZW9 are not treated as ZIP. Members are size-bounded, CRC-verified and isolated.
         reader_options supports record_tag, query, table, byte_offset, byte_length, stream_offset,
         minimum_length, text_encoding only. Pagination applies to the selected member reader or ZIP inventory.
@@ -81,7 +82,8 @@ def register_local(tool, drawings):
         start: int = 0,
         length: int = 8000,
     ) -> dict:
-        """List local Access base tables or read rows from an exact returned table name.
+        """Refused by the selected direct offline profile; never acquires an Access/ACE provider.
+        The signature is retained for compatibility. Raw MDB byte/text evidence remains available.
         Uses Windows ACE in read-only mode against an isolated copy. No arbitrary SQL or saved queries.
         Table row ordinals reflect provider order under the returned source hash, not inferred keys.
         For a full cell, supply column and zero-based row offset; start/length slice text or binary data.

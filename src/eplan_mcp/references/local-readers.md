@@ -1,5 +1,10 @@
 # Independent local readers
 
+The selected direct-standalone-offline profile refuses Access/ACE provider operations, including
+archive members, at both application dispatch and low-level worker dispatch. MDB byte/text reads
+remain supported. Provider-specific contracts below are retained design reference, not enabled
+features. No configuration or environment value enables a native provider or converter.
+
 The local reader service does not start EPLAN or require its runtime. It copies the selected
 source into app-owned scratch storage, verifies SHA-256 before and after, and runs a bounded
 worker. Every result identifies the original root, relative path, source hash and file size.
