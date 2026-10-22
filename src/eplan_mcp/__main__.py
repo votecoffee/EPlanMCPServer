@@ -10,6 +10,9 @@ def main():
     from .owned_processes import owner_scope
 
     with owner_scope(exclusive=True):
+        from .native_threads import apply_before_import
+
+        apply_before_import()
         return _main()
 
 

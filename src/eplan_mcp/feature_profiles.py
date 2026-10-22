@@ -8,6 +8,10 @@ def profiles():
     return {
         "assessment_scope": "Offline/synthetic app and protocol checks; native host acceptance is separate",
         "selected_profile": "direct-standalone-offline",
+        "native_thread_pool_policy": item(
+            "implemented-but-unassessed",
+            "Fixed standalone pre-import numerical limits; refuses preloaded hosts; pure tests only for this release, new MCP memory canary requires review",
+        ),
         "vendor_native_readers": item(
             "blocked",
             "ODA discovery/configuration/conversion and direct/archive/worker Access reads refused; no environment opt-in",

@@ -81,6 +81,23 @@ enable or restart those routes. Non-Windows child execution has no unmanaged fal
 
 ## Status and acceptance
 
+### Numerical pool policy
+
+Before application or worker imports, the exclusive standalone entry point applies a fixed target
+of one numerical thread via `OPENBLAS_NUM_THREADS`, `OMP_NUM_THREADS`, `MKL_NUM_THREADS`,
+`BLIS_NUM_THREADS`, `NUMEXPR_NUM_THREADS` and `VECLIB_MAXIMUM_THREADS`. Inherited larger settings
+are overridden only inside that process. A process that already loaded NumPy/scipy/ezdxf is
+refused rather than silently retuned. There is no system-wide environment change or runtime
+retuning of another application's libraries. SDK/management/I/O threads still exist; this is not
+a claim of one total OS thread or a hard RSS quota.
+
+Service status reports whether the pre-import policy ran and its configured values; it does not
+pretend to introspect every native backend's live pool. Pure module-map/environment tests and
+isolated dependency diagnostics support the design. Changed application bytes need independent
+review and a fresh approved runtime canary measuring startup, active-worker aggregate private
+commit, repeated bounded reads, threads/instances and post-cleanup identity state. Prior lifecycle
+evidence from an older immutable wheel is not automatic acceptance of this startup change.
+
 ### Launch-path coverage
 
 | Path | Ownership and containment | Source gate / remaining acceptance |

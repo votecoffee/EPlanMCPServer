@@ -122,11 +122,14 @@ class DrawingService:
             db.close()
 
     def status(self) -> dict:
+        from .native_threads import status as native_thread_status
+
         return {
             "name": "EPLAN MCP Server",
             "version": __version__,
             "package_version": __package_version__,
             "profile": PROFILE,
+            "native_thread_limits": native_thread_status(),
             "roots": {k: str(v) for k, v in self.config.roots.items()},
             "state_dir": str(self.config.state),
             "supported_extensions": sorted(SUPPORTED),

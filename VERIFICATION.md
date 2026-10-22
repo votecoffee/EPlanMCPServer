@@ -30,6 +30,12 @@ extraction and exercises import/query/check/trace/compare/export plus receipt re
 
 ## Acceptance boundaries
 
+The numerical-pool startup repair has pure environment/module-map tests only. Prior immutable
+canary lifecycle evidence and a separate dependency-import pool experiment do not validate new
+application startup bytes. Retain the original canary package, configuration, state, uncertainty
+receipts and observations; obtain review before running the repaired MCP package. A configured
+native limit is not measured private commit, an OS-thread ceiling or native-host acceptance.
+
 The selected source-gate profile is direct stdio offline only: DXF/PDF, explicit reports and
 provider-free local byte/XML/archive readers. Vendor conversion, Access/ACE (including archive
 members and low-level dispatch), HTTP and optional host/bootstrap entry points are refused.
