@@ -52,9 +52,26 @@ mutation. Cleanup uncertainty refuses success and fences further child launches 
 Review the retained resource record together with the app request receipt and source hashes before
 further engineering work. Inaccessible evidence prevents launch; no unjournaled fallback exists.
 
-The shared framework's durable resource-ledger API is not integrated yet. A future manager must
-verify creation identity and exclusive ownership through that published API before recovery.
-The app's current records are evidence, not authority for an external manager to kill a PID.
+Framework 0.20.0 `ResourceLedger`/`ResourceOwner` are integrated at source level. They use the same
+explicit `EPLAN_MANAGEMENT_REGISTRY` as service reporting, or the framework's default private
+registry. The actual launching supervisor creates its own generation. Before creation the shared
+ledger reserves a private, termination-eligible `offline-worker` claim. Before resume, its host
+identity, PID, decimal creation FILETIME and normalized executable image are compared against the
+retained creation handle. The app journal links to the shared resource ID.
+
+The app retains its stream/capture containment instead of using the framework background launcher,
+which does not provide inherited MCP stdio. Shared records declare `app_owned` containment: the
+manager may review an exact-process orphan, but does not acquire the app's job or infer a complete
+descendant inventory. EPLAN owns job/tree teardown. Confirmed teardown is reconciled through the
+shared API after exit verification; unverified cleanup records a recovery barrier. Existing
+barriers and cleanup receipts are never cleared automatically. Interrupted launch reservations
+remain visible. Shared records bound non-retired EPLAN claims to 32 across supervisor generations.
+
+Manager recovery remains a reviewed operation with exact host/identity, ownership, revision,
+conflicting-claim and uncertainty gates. No prior app-only JSON is silently imported or adopted.
+Neither the adapter nor status reads perform orphan cleanup or migrate a live registration. Real
+cross-manager recovery, transport and native cleanup acceptance remain pending.
+
 Optional framework serve/proxy entry points are blocked until their backend containment and
 shared-owner lease profile is accepted. Bootstrap and plugin-install wrappers are likewise blocked
 until their separate ownership profile is ready. Publication/preparation of local data does not

@@ -27,12 +27,12 @@
       "bytes": 477
     },
     "README.md": {
-      "sha256": "7d463586554bad8a53cd0d0936e2249ad1af3e123e749adfd3c4319e1571e923",
+      "sha256": "65e47b2b26e720b7cae01448d1d451dbfe02a2bf454bac5afac6a54f0f0a8d45",
       "bytes": 16369
     },
     "VERIFICATION.md": {
-      "sha256": "85d4b1de8a5f1552f66428cb9bf52a0354e8ef14e6e8290a411fab89e05a2ba3",
-      "bytes": 6022
+      "sha256": "bef4e7aaa971f4872d3ed112bbc2491b5bfad414611467c75198d070a24ccdd2",
+      "bytes": 6517
     },
     "docs/device-information.md": {
       "sha256": "5e3d552862f90b6ce5b5068ba8d7a47a23a1e4cbac689da953bc0040e0f334b8",
@@ -51,20 +51,20 @@
       "bytes": 99
     },
     "docs/resource-ownership.md": {
-      "sha256": "3db61705aa0ef888f6bcecc95271628f43e4bc3d49be68b449bcc346deedf2da",
-      "bytes": 5931
+      "sha256": "237f56e6645ae8dc8aa2e9a3efc47efefc3eda0a4f00116070fbf2e576535949",
+      "bytes": 7256
     },
     "docs/reviewed-drawing-records.md": {
       "sha256": "0bea52bc7206f12cedd04f1b006140652e9a90a101994c41ea9907f726aa21e1",
       "bytes": 121
     },
     "docs/runtime-guidance.md": {
-      "sha256": "7126cb9dacc0f2e8d6be6f3e8c92309d7d603946abe6ef550b99a583f94e1d69",
-      "bytes": 4299
+      "sha256": "e2a55063fea0d758601f0e5ecd8bbb224e9126ab1c2303852f07d70dba683eb9",
+      "bytes": 4294
     },
     "docs/service-management.md": {
-      "sha256": "65aeb5f8e428f4b7c2346cffc45e260457960ba981ea20650e3d7094e1bcf564",
-      "bytes": 5771
+      "sha256": "31cb764b99931503ad9295cc3f8b77085f1bb323cf85cdfb656355adc3a7dc6e",
+      "bytes": 5803
     },
     "examples/config.example.json": {
       "sha256": "3dad086567d3e64c15981b79b9f0e12b0a1580bc72b24613e8c1b3bbe8f97aa4",
@@ -135,15 +135,15 @@
       "bytes": 1491
     },
     "pyproject.toml": {
-      "sha256": "cc9f0ae1a86cd539ee8351a03ae681f97cabed0cd5c7c01f00546f57b69957f6",
+      "sha256": "76ff6e2503fcdccaf5c5e68d910b1891487a5ee3808d8a7f4db111dc765a5320",
       "bytes": 978
     },
     "requirements-dev-lock.txt": {
-      "sha256": "78822afa1f4c12f5b92237186a1628d824d88d4d9c5193a3e1a836f52106655e",
+      "sha256": "b6882a94b4cd449a9aeafb449d2508f0d39efe083a3f4c197220ae0124fbdf6e",
       "bytes": 74689
     },
     "requirements-lock.txt": {
-      "sha256": "5e9c75a27fd8cf1bfb5fc2833e621367440abff10d0331f73e1a1755af96f244",
+      "sha256": "c1c03a8c0973714b0dc5d82332b5c9ffa3c3e73a06365f05ea5cb2c055316590",
       "bytes": 72032
     },
     "schemas/electrical-project.schema.json": {
@@ -155,7 +155,7 @@
       "bytes": 1382
     },
     "scripts/framework_dependency.py": {
-      "sha256": "2b737f2d2c15dfb68c453e7d79ea921dde436740a42f19fb1d3405d52dceb265",
+      "sha256": "a3b9d066485ed47b9066ea599e0f3b2367731abb563b8a2e39fb5b5f03202493",
       "bytes": 3713
     },
     "scripts/generate_skill.py": {
@@ -239,15 +239,15 @@
       "bytes": 11876
     },
     "src/eplan_mcp/feature_profiles.py": {
-      "sha256": "9b3e0f5989caf9997ae01a2d18a83ea5726ba18c4ca5f6ac7fd36144c75f6ee0",
-      "bytes": 4073
+      "sha256": "a0bfb7400ad4778da476d0f9467ebaf4811fd0d3be87ac5b27eaddb82dca16c6",
+      "bytes": 4538
     },
     "src/eplan_mcp/framework_entry.py": {
       "sha256": "e84e914cf90065fddafbc17219305eee5e9a51ef82202b2b63aabc9d16532700",
       "bytes": 2930
     },
     "src/eplan_mcp/framework_host.py": {
-      "sha256": "c2a6be2400ef5437295b644bc2587ab19dbe330d86fa9f45537aebd22cebb436",
+      "sha256": "b1ad7255f4a845c5f239713a50dd20de7c52544000018f2cabd7ff1696b570e5",
       "bytes": 11537
     },
     "src/eplan_mcp/guidance.py": {
@@ -279,8 +279,8 @@
       "bytes": 3170
     },
     "src/eplan_mcp/owned_processes.py": {
-      "sha256": "fee69100dcbc7e18bca4489805910317d55c4e26bb00fa69da7adf075dd784c5",
-      "bytes": 14473
+      "sha256": "813152f5a0a08f06b78a07f1f5952916ce39bc79b37e43e2f83dd294dcd7983b",
+      "bytes": 16189
     },
     "src/eplan_mcp/references/device-information.md": {
       "sha256": "8be4fc8e31cb856a6154be438854527869fbaa8510ac4879b7d86003f566c226",
@@ -305,6 +305,10 @@
     "src/eplan_mcp/report_resources.py": {
       "sha256": "e3cd2388063dbde257598f69365fa2b5c2ff1ede01db8094629b9de162391586",
       "bytes": 2371
+    },
+    "src/eplan_mcp/resource_claims.py": {
+      "sha256": "63c8215d8f4112bfba676040ac3104b201895ee22d8f592984b788ce6f7b4811",
+      "bytes": 2853
     },
     "src/eplan_mcp/reviewed_evidence.py": {
       "sha256": "36d595c263b91e25b0f02ce538d246f82e6ef4a8a52d476bff6c90f9ab9f8a0e",
@@ -367,8 +371,8 @@
       "bytes": 3406
     },
     "tests/test_framework_dependency.py": {
-      "sha256": "3e6ce9d22985e7631279d0ba2d31fbd2aca24215fbd891235507a7278a2209fb",
-      "bytes": 3754
+      "sha256": "23d1308a1339ac9432d94aec1f5e12f0025dc5f717876738c9a18bb6ef7336f1",
+      "bytes": 3601
     },
     "tests/test_guidance.py": {
       "sha256": "2785e49e683449fb356f43642500bddff2aa4e244566f9d99e1ca401b0c5167d",
@@ -383,12 +387,12 @@
       "bytes": 15087
     },
     "tests/test_management.py": {
-      "sha256": "92a4de1998ced24f85cbfd6976ef0346c67a9fb36963a4d018f4ed715ab3af20",
+      "sha256": "08df1a6c21311d8e76efcedc3502b89856362b5758294cf126efe7f380e56fb2",
       "bytes": 3998
     },
     "tests/test_owned_processes.py": {
-      "sha256": "ca915eaa2885fc9fa2b7120071850f73d8e2ee3f16e977ead1d0e366440d7af6",
-      "bytes": 9234
+      "sha256": "61b4b8224097f19c58183dd5295cda9e0a33d332ca5abf68a73a12378726028e",
+      "bytes": 9810
     },
     "tests/test_package.py": {
       "sha256": "82df83c6f0d654eb328ad72819900cadad1afcefc73a4beaf75a8995104e9027",
@@ -405,6 +409,10 @@
     "tests/test_protocol.py": {
       "sha256": "8620e52200de43e9d3a96e7e2b8d8758645fd3d48e9c3b9e6639f28a81a6fb89",
       "bytes": 2978
+    },
+    "tests/test_resource_claims.py": {
+      "sha256": "4ce032ad66f1bf9fd16ae45bbbc776edaba8a319a8149e6c2c673ba10e95c05f",
+      "bytes": 3398
     },
     "tests/test_reviewed_evidence.py": {
       "sha256": "5bb82f22a1122d757b3b19b1c60c33834534999f6af024608f9108ee38e0aebe",

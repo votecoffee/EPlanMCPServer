@@ -43,13 +43,13 @@ The shared framework is a separately supplied local wheel, not fetched from an u
 package with the same name. The installer verifies SHA-256 and every wheel RECORD member:
 
 ```text
-universal_codex_tools-0.18.0-py3-none-any.whl
-SHA-256 0c1084b424f079957ebd3bec763e609564aaef64cd1fedee78b61a45bfbc24ac
-Source commit 7d8a0ccdc06598313061147ee8774837118a8861
+universal_codex_tools-0.20.0-py3-none-any.whl
+SHA-256 a1b3777f8e8c1900e136a514d89ddb485a6bf4d69a525e3d24e1d04cd040efb3
+Source commit 5b2cac50ca24d21a15b732e0424bb02fd794e1fb
 ```
 
 ```powershell
-.\InstallAndRun.cmd --framework-wheel C:\Packages\universal_codex_tools-0.18.0-py3-none-any.whl --root "engineering=C:\Engineering\EPLAN-Exports" --install-only
+.\InstallAndRun.cmd --framework-wheel C:\Packages\universal_codex_tools-0.20.0-py3-none-any.whl --root "engineering=C:\Engineering\EPLAN-Exports" --install-only
 ```
 
 Dependencies install into `.venv`; roots, caches, receipts, artifacts and plugin bindings stay
@@ -257,7 +257,7 @@ through Skills-over-MCP. [Runtime guidance](docs/runtime-guidance.md) describes 
 publication, stale-reference checks and the separate native host reload boundary.
 
 The direct server and optional app-owned framework host report to the existing Windows MCP Service
-Manager through framework 0.18.0. No manager installation or broker registration is performed here.
+Manager through framework 0.20.0. No manager installation or broker registration is performed here.
 Status uses cached package/plugin metadata and per-instance activity; availability remains unknown
 without an update source. Restart stays disabled: EPLAN has no surviving process supervisor or
 cross-chat quiescence fence for pending operations and uncertain receipts. New server processes

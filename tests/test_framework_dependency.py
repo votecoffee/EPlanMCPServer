@@ -1,7 +1,5 @@
 import base64
 import hashlib
-import subprocess
-import sys
 import zipfile
 from pathlib import Path
 
@@ -16,12 +14,12 @@ def fixture_wheel(tmp_path, monkeypatch):
     wheel = tmp_path / "supplied.whl"
     files = {
         "universal_tools/framework.py": b"# disposable framework fixture\n",
-        "universal_codex_tools-0.18.0.dist-info/licenses/LICENSE": b"MIT\n",
-        "universal_codex_tools-0.18.0.dist-info/METADATA": (
-            b"Metadata-Version: 2.4\nName: universal-codex-tools\nVersion: 0.18.0\nRequires-Dist: mcp==2.3.0\n"
+        "universal_codex_tools-0.20.0.dist-info/licenses/LICENSE": b"MIT\n",
+        "universal_codex_tools-0.20.0.dist-info/METADATA": (
+            b"Metadata-Version: 2.4\nName: universal-codex-tools\nVersion: 0.20.0\nRequires-Dist: mcp==2.3.0\n"
         ),
     }
-    record = "universal_codex_tools-0.18.0.dist-info/RECORD"
+    record = "universal_codex_tools-0.20.0.dist-info/RECORD"
     rows = [
         f"{name},sha256={base64.urlsafe_b64encode(hashlib.sha256(data).digest()).decode().rstrip('=')},{len(data)}"
         for name, data in files.items()
@@ -47,11 +45,10 @@ def test_modified_framework_wheel_is_rejected_before_installation(tmp_path):
 def test_setup_requires_explicit_local_framework_artifact(tmp_path):
     with pytest.raises(ValueError, match="--framework-wheel"):
         stage(tmp_path)
-    source = Path(__file__).resolve().parents[1]
-    result = subprocess.run(
-        [sys.executable, str(source / "scripts/launcher.py"), "--port", "0"], capture_output=True
-    )
-    assert result.returncode != 0 and b"--port must be" in result.stderr
+    from scripts.launcher import main
+
+    with pytest.raises(ValueError, match="lifecycle profile is unaccepted"):
+        main()
 
 
 def test_explicit_verified_framework_wheel_replaces_older_cache(tmp_path, monkeypatch):

@@ -25,6 +25,16 @@ _owner = uuid.uuid4().hex
 _evidence = None
 _owner_job = None
 _exclusive_owner = False
+_claims = None
+
+
+def _resource_claims():
+    global _claims
+    if _claims is None:
+        from .resource_claims import ResourceClaims
+
+        _claims = ResourceClaims(owner_id=_owner)
+    return _claims
 
 
 def _contain_owner(api, kernel):
@@ -49,7 +59,9 @@ def _contain_owner(api, kernel):
         except BaseException:
             candidate.Close()
             raise
-        _owner_job = candidate
+        # A PyHANDLE destructor during interpreter finalization could terminate the owner too
+        # early. Transfer the handle to OS process-lifetime ownership, without closing it.
+        _owner_job = candidate.Detach()
 
 
 def bind_evidence(state):
@@ -85,6 +97,7 @@ def snapshot():
             "ownership": "Exclusive app-launched children only; PIDs are diagnostic, handles authorize cleanup",
             "attached_or_shared_apps": "Not acquired; never enumerated or terminated",
             "runtime_acceptance": "pending",
+            "shared_ledger": _claims.snapshot() if _claims is not None else {"initialized": False},
             "items": [dict(item[0]) for item in _active.values()] + [dict(r) for r in _recent[-16:]],
         }
 
@@ -115,6 +128,8 @@ def close_owned():
     while True:
         with _guard:
             if not _active:
+                if _claims is not None:
+                    _claims.close()
                 return
         if time.monotonic() >= deadline:
             raise RuntimeError("Owned resource close is unverified; workers have not released their handles")
@@ -200,7 +215,14 @@ def run(
     with _guard:
         if _closing or len(_active) >= 16:
             raise ValueError("Resource owner is closing or owned-tree capacity is exhausted")
-        _persist(record)
+        record["framework_resource_id"] = _resource_claims().begin(
+            "EPLAN offline worker: " + Path(args[0]).name
+        )
+        try:
+            _persist(record)
+        except BaseException:
+            _closing = True
+            raise
         _active[record["resource_id"]] = (record, lambda: None)
     try:
         cancellation = cancel_requested.get()
@@ -248,6 +270,7 @@ def run(
                 startup,
             )
             win32job.AssignProcessToJobObject(job, process)
+            _claims.bind(record["framework_resource_id"], pid, process)
             record.update(
                 pid=pid,
                 creation_time=str(win32process.GetProcessTimes(process)["CreationTime"]),
@@ -275,6 +298,8 @@ def run(
                 ):
                     raise ValueError("Owned child output exceeded 4 MiB capture budget")
             code = win32process.GetExitCodeProcess(process)
+            record["state"] = "cleanup_requested"
+            _persist(record)
             win32job.TerminateJobObject(job, 1)  # Child exit never authorizes background descendants.
             _wait_empty(win32job, job)
             record.update(state="closed", returncode=code)
@@ -297,6 +322,12 @@ def run(
     finally:
         # Creation/assignment/startup failure still owns its suspended child by handle.
         try:
+            if record["state"] != "closed":
+                record["cleanup_requested"] = True
+                try:
+                    _persist(record)
+                except BaseException:
+                    record["state"] = "cleanup_unverified"
             if process is not None and win32event.WaitForSingleObject(process, 0) == win32event.WAIT_TIMEOUT:
                 _winapi.TerminateProcess(process, 1)
             if job is not None:
@@ -327,6 +358,16 @@ def run(
                         job.Close()  # Also enforces kill-on-close if explicit termination failed.
                     except OSError:
                         record["state"] = "cleanup_unverified"
+                try:
+                    if record["state"] == "cleanup_unverified":
+                        _claims.barrier(
+                            record["framework_resource_id"],
+                            "App-owned tree cleanup is unverified; inspect retained app receipts",
+                        )
+                    else:
+                        _claims.completed(record["framework_resource_id"])
+                except BaseException:
+                    record["state"] = "cleanup_unverified"
                 _active.pop(record["resource_id"], None)
                 _recent.append(dict(record))
                 del _recent[:-32]

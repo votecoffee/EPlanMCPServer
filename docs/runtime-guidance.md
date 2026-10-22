@@ -20,7 +20,7 @@ authorizes writes, switches routes, clears receipts or widens policy.
 
 ## Skills-over-MCP
 
-The direct SDK 2.3 endpoint uses framework 0.18 `ExtensionServer` and a nonempty `SkillCatalog`.
+The direct SDK 2.3 endpoint uses framework `ExtensionServer` and a nonempty `SkillCatalog`.
 The optional app-owned host uses `host.create_server(skills=catalog)`. Both advertise
 `io.modelcontextprotocol/skills` with real `skills/list`, `skills/get` and `resources/read` handlers.
 Directory reads are deliberately not advertised. No Tasks, OAuth, Apps or contributed code is loaded.

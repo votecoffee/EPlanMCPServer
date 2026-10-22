@@ -30,6 +30,12 @@ extraction and exercises import/query/check/trace/compare/export plus receipt re
 
 ## Acceptance boundaries
 
+Framework 0.20.0 alignment is source-only. Verify the reviewed wheel SHA-256/RECORD and exact SDK
+2.3 pin without installing it during a runtime hold. `test_resource_claims.py` exercises the actual
+shared ledger with synthetic process identities; `test_owned_processes.py` replaces all OS process
+APIs with stubs. These establish record/adapter behavior, not real Windows containment or manager
+orphan cleanup. Installed environments and historical plugin bindings are intentionally unchanged.
+
 Owned-resource lifecycle changes currently have pure Windows-API stub and in-process admission
 checks only. They launch no process, job, server, plugin or native application. Full regression,
 real Windows containment/parent-death/descendant cleanup, clean client EOF, installed runtime and

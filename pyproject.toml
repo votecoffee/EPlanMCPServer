@@ -10,7 +10,7 @@ readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
 requires-python = ">=3.11"
-dependencies = ["universal-codex-tools==0.18.0", "mcp==2.3.0", "ezdxf>=1.4,<2", "pymupdf>=1.26,<2", "pillow>=11,<13", "pywin32>=312; sys_platform == 'win32'"]
+dependencies = ["universal-codex-tools==0.20.0", "mcp==2.3.0", "ezdxf>=1.4,<2", "pymupdf>=1.26,<2", "pillow>=11,<13", "pywin32>=312; sys_platform == 'win32'"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8,<10", "ruff>=0.14,<1"]

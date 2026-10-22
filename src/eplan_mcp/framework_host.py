@@ -15,7 +15,7 @@ from . import __version__
 from .config import Config, inside
 from .integration import HIGHLIGHT, OFFLINE_WRITES
 
-FRAMEWORK_VERSION = "0.18.0"
+FRAMEWORK_VERSION = "0.20.0"
 HOST_INSTRUCTIONS = (
     "EPLAN MCP Server app-owned framework host. Use search_tools, then describe_service and "
     "describe_tool for drawing-engine/eplan_get_workflow. Read that tool's current app workflow "

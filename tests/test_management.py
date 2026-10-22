@@ -38,7 +38,7 @@ def test_cached_reporting_versions_busy_denial_and_clean_stop(tmp_path, monkeypa
         client = ManagementClient(registry)
         row = client.inspect(report.agent.record)
         assert row["plugin_id"] == PLUGIN_ID and row["status"]["state"] == "running"
-        assert row["status"]["versions"]["framework"]["running"] == "0.18.0"
+        assert row["status"]["versions"]["framework"]["running"] == "0.20.0"
         assert row["status"]["versions"]["sdk"]["running"] == "2.3.0"
         assert row["status"]["versions"]["plugin"]["running"] == "0.3.0"
         assert all(

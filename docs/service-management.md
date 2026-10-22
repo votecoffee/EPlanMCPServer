@@ -3,9 +3,9 @@
 The [owned-resource lifecycle](resource-ownership.md) is currently implemented with pure OS-stub
 acceptance only. Management reports owned-tree counts with that limitation. Optional framework
 serve/proxy and bootstrap/plugin-install launch paths are blocked pending their ownership profile;
-the retained framework package is not assumed to supply the forthcoming durable resource ledger.
+the shared ledger adapter is checked with synthetic process identities only, not runtime recovery.
 
-Framework 0.18.0 provides same-user authenticated loopback reporting to the optional Windows MCP
+Framework 0.20.0 provides same-user authenticated loopback reporting to the optional Windows MCP
 Service Manager. EPLAN does not install a manager, select a different plugin route or register a
 Universal Tools broker. Canonical plugin identity is `eplan@eplan-local`; each owning server/host
 process gets a random instance ID. Transient framework workers and proxy clients do not register
@@ -15,8 +15,8 @@ The architecture is the shared app framework plus the independent Windows manage
 its own Codex plugin and native skill. No universal Codex plugin or connection is required,
 installed, composed or used to choose EPLAN installation. The Python distribution/import names
 `universal-codex-tools` and `universal_tools` identify the shared library; they do not imply a
-universal plugin deployment. The pinned framework version remains unchanged until the new
-owned-resource ledger API is published and assessed for this application.
+universal plugin deployment. Framework 0.20.0 pins and reviewed wheel bytes are updated in source;
+no installed environment, live registration, plugin or manager has been migrated by that edit.
 
 The direct server reports admitted/queued analysis and control work from its scheduler. The
 app-owned framework host counts backend invocations, including failures. Counts describe that

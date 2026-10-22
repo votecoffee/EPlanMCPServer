@@ -31,6 +31,9 @@ def fake_windows(tmp_path, monkeypatch):
         def Close(self):
             events.append(("close", self.kind, self.value))
 
+        def Detach(self):
+            return self.value
+
     def job_info(handle, kind):
         return {"BasicLimitInformation": {}} if kind == 1 else {"ActiveProcesses": 0}
 
@@ -88,6 +91,14 @@ def fake_windows(tmp_path, monkeypatch):
     }
     for name, module in modules.items():
         monkeypatch.setitem(sys.modules, name, module)
+    claims = SimpleNamespace(
+        begin=lambda label: "f" * 32,
+        bind=lambda *args: events.append(("ledger_bind",)),
+        barrier=lambda *args: events.append(("ledger_barrier",)),
+        completed=lambda *args: events.append(("ledger_reconciled",)),
+        close=lambda: events.append(("ledger_owner_closed",)),
+        snapshot=lambda: {"initialized": True, "unresolved_claims": 0},
+    )
     for name, value in {
         "_active": {},
         "_recent": [],
@@ -95,6 +106,7 @@ def fake_windows(tmp_path, monkeypatch):
         "_owner_job": None,
         "_evidence": None,
         "_exclusive_owner": True,
+        "_claims": claims,
     }.items():
         monkeypatch.setattr(owned, name, value)
     owned.bind_evidence(tmp_path)
@@ -107,6 +119,7 @@ def test_containment_precedes_creation_and_resume_with_persistent_identity(fake_
     assert result.stdout == "synthetic output"
     names = [event[0] for event in events]
     assert names.index("assign") < names.index("create") < names.index("resume") < names.index("stop_tree")
+    assert names.index("create") < names.index("ledger_bind") < names.index("resume")
     record = json.loads(next(folder.glob("*.json")).read_bytes())
     assert record["state"] == "closed" and record["creation_time"] == "creation-101"
     assert record["owner_creation_time"] == "creation--1"

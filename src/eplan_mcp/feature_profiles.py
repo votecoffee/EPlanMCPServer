@@ -7,6 +7,10 @@ def profiles():
 
     return {
         "assessment_scope": "Offline/synthetic app and protocol checks; native host acceptance is separate",
+        "framework_020_runtime": item(
+            "implemented-but-unassessed",
+            "Reviewed 0.20 wheel/pins and synthetic ledger adapter checks; installed/MCP/native lifecycle acceptance pending",
+        ),
         "endpoint_instance_admission": item(
             "implemented-but-unassessed",
             "Four non-waiting cross-process slots per app state; source-only lock checks, server startup acceptance pending",
@@ -18,6 +22,10 @@ def profiles():
         "owned_process_lifecycle": item(
             "implemented-but-unassessed",
             "Parser/converter/CLI argv trees use bounded exclusive Windows containment; no attached apps or unmanaged platform fallback",
+        ),
+        "shared_resource_ledger": item(
+            "implemented-but-unassessed",
+            "Framework 0.20 reservations/binding/reconciliation tested with synthetic identities; real Windows and manager recovery acceptance pending",
         ),
         "framework_host_ownership": item(
             "blocked",
