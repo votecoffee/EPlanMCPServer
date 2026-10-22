@@ -37,6 +37,20 @@ No native EPLAN project access or safe production-process restart is claimed by 
 
 ## Instance lifecycle and test isolation
 
+Source-level admission now holds one of four non-waiting OS file-lock slots for the lifetime of
+each direct analysis endpoint or app-owned framework host using the same app state. Framework
+analysis backends also consume direct endpoint slots. Admission occurs before transport startup
+and management registration; capacity rejects without retrying or starting another service.
+Normal/exceptional exit releases the slot, and process death releases the OS lock. Lock files are
+not PID inventories and must not be deleted to bypass admission. Separate state directories have
+separate limits; this is not a system-wide memory bound or a shared supervisor.
+
+In-process lock checks cover capacity and exception release. End-to-end startup/termination tests
+for this new gate remain pending. The existing clean client-EOF checks do not establish cleanup
+after abrupt parent termination, inherited pipe handles, or forced process death. Descendant
+termination and a surviving supervisor remain concrete acceptance blockers. No automatic restart,
+hidden host startup, process killing, plugin enablement, or journal reconciliation is added.
+
 The default standalone stdio route owns one server per live connection; multiple responding rows
 can be legitimate different chats. Status labels distinguish per-chat stdio connections, standalone
 loopback services and the app-owned framework host. Historical stopped/offline rows are not proof

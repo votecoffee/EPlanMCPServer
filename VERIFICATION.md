@@ -34,6 +34,16 @@ Included report examples are synthetic custom schemas. Native EPLAN projects, ve
 schemes, project restoration and native check-runs require separate acceptance. Package and
 protocol checks do not establish engineering correctness or physical continuity.
 
+The explicit binary text-encoding reader has focused byte-preservation checks for UTF-8,
+UTF-16 LE/BE and Windows-1252, malformed sequences and surrogate pairs. Synthetic isolated-worker,
+compressed/archive and direct stdio checks passed during development. Full regression and wheel
+acceptance after the latest source changes remain pending; do not treat the earlier 125-test run
+as acceptance of subsequent changes.
+
+The four-endpoint admission gate currently has in-process lock/capacity/exception-release checks
+only. Startup, abrupt parent exit, descendant cleanup and installed-runtime acceptance remain
+pending. Do not start a server or validation worker while an operator startup hold is active.
+
 ## Local validation evidence
 
 Store installation receipts, machine details, customer paths, corpus manifests, extracted data,

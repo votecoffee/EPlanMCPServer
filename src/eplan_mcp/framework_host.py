@@ -256,7 +256,8 @@ def serve(state: Path, publication: Path, config_path: Path):
     )
     process = uvicorn.Server(runtime)
     runtime.app = ProtectedApp(app, settings, process, secrets.token_hex(16))
-    process.run()
+    with drawings.coordinator.instance():
+        process.run()
 
 
 def proxy(state: Path):

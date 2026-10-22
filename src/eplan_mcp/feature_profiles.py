@@ -7,6 +7,14 @@ def profiles():
 
     return {
         "assessment_scope": "Offline/synthetic app and protocol checks; native host acceptance is separate",
+        "endpoint_instance_admission": item(
+            "implemented-but-unassessed",
+            "Four non-waiting cross-process slots per app state; source-only lock checks, server startup acceptance pending",
+        ),
+        "parent_exit_cleanup": item(
+            "blocked",
+            "Client EOF cleanup was tested previously; abrupt parent exit and descendant termination lack an accepted supervisor profile",
+        ),
         "skills_and_guides": item(
             "enabled-and-tested", "Canonical tool/reference/catalog reads; explicit atomic publication"
         ),

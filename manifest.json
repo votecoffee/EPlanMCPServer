@@ -27,12 +27,12 @@
       "bytes": 477
     },
     "README.md": {
-      "sha256": "2da2fc6af4dd08c4da857c347436351ca931fa5c95261db2d48c5322d2436479",
-      "bytes": 15581
+      "sha256": "43d5ce91b88c571f3efa959905fc517e1f7949455ccf9649a5a9126ae84b324b",
+      "bytes": 15692
     },
     "VERIFICATION.md": {
-      "sha256": "d861017de7181f031f81c68bf0d2767a037e9ffe05a3262be6d910447e606e51",
-      "bytes": 4758
+      "sha256": "33fe1133954dc47dd2cbb447475d26090667b5b108cd62f26dc6c04b4467f7ff",
+      "bytes": 5463
     },
     "docs/device-information.md": {
       "sha256": "5e3d552862f90b6ce5b5068ba8d7a47a23a1e4cbac689da953bc0040e0f334b8",
@@ -59,8 +59,8 @@
       "bytes": 4299
     },
     "docs/service-management.md": {
-      "sha256": "f65438520b51ae168dc07d4ed8c8353c2f2eec672d292ccda5b236b7544ba036",
-      "bytes": 3707
+      "sha256": "14e9309ec6da80c73f9c79edbe73d49fe4e3f67ee81c698dfec1d7b56adb02be",
+      "bytes": 4840
     },
     "examples/config.example.json": {
       "sha256": "3dad086567d3e64c15981b79b9f0e12b0a1580bc72b24613e8c1b3bbe8f97aa4",
@@ -179,16 +179,16 @@
       "bytes": 100
     },
     "src/eplan_mcp/__main__.py": {
-      "sha256": "b18598bdcc1f6c96805c0667667c3e0df130a4f1ab5f1f5862eb90f05ad2c0fd",
-      "bytes": 11958
+      "sha256": "a67efa321725d49300a9f92adc8b7298a2945efa6c01b536ae09265503062764",
+      "bytes": 12042
     },
     "src/eplan_mcp/config.py": {
       "sha256": "8769b8600298d9b98e6f2f2e852d4035e8cfaf6a24f0b839559ee4a1bdfc9ef4",
       "bytes": 4799
     },
     "src/eplan_mcp/coordination.py": {
-      "sha256": "ef92c8e12a58f162674ae2e04a5e4177e5afc25c4513988335fc03a4a6c1e097",
-      "bytes": 6494
+      "sha256": "e86e6efd48b56250dc5b049f786b1110795dccda9c51e8e0ee17e804353463f9",
+      "bytes": 7033
     },
     "src/eplan_mcp/device_information.py": {
       "sha256": "c077beca41f8854c114d583e7c440eb48db2230d4d5531eedfdc4a8c24684246",
@@ -235,16 +235,16 @@
       "bytes": 11834
     },
     "src/eplan_mcp/feature_profiles.py": {
-      "sha256": "523a556464b7fcf43d7af4b2fa351d2811b6d42f6ddae1c1a11880c5b6eba85a",
-      "bytes": 2979
+      "sha256": "c946a645b1359a214fcb7ba492a92af5a0204009a3a17780ed3070705b4caacf",
+      "bytes": 3413
     },
     "src/eplan_mcp/framework_entry.py": {
       "sha256": "e84e914cf90065fddafbc17219305eee5e9a51ef82202b2b63aabc9d16532700",
       "bytes": 2930
     },
     "src/eplan_mcp/framework_host.py": {
-      "sha256": "7c5443fcdb62348e093ef230987815fe0b1e50ecbaca0ac375c9614f224b2961",
-      "bytes": 11097
+      "sha256": "e884d435920735e1a3130e8d0deb81e48a10e393e015432b28306d30b583f26d",
+      "bytes": 11143
     },
     "src/eplan_mcp/guidance.py": {
       "sha256": "3a3a05a3bcbf5bdb80015c558330412c861e7f47b826281a64c9d3e75bf87377",
@@ -259,12 +259,12 @@
       "bytes": 3372
     },
     "src/eplan_mcp/local_data.py": {
-      "sha256": "a86215489078b7b117d6c1c42ce6d3613b0724b6bb9058486d4761dc299c5ed1",
-      "bytes": 29286
+      "sha256": "0b56c37f7ce015e2ed6a8d8274d36f56ebde801b32b154726bbf0d0355a1553b",
+      "bytes": 31782
     },
     "src/eplan_mcp/local_server.py": {
-      "sha256": "d65a58a02f9e4d5a3d7bdfb2044a604bf6dcbc0b44a80d292c606d888f363836",
-      "bytes": 6338
+      "sha256": "84e0ea06a1f87d2da1bb83cf9171c2509b3fc20a0bcdf1be8a04fc75272513ca",
+      "bytes": 6636
     },
     "src/eplan_mcp/management.py": {
       "sha256": "c0fbb0295966046ac9c91cd169429e633e0d8b696816e962fd589c3136bb1df6",
@@ -283,8 +283,8 @@
       "bytes": 1606
     },
     "src/eplan_mcp/references/local-readers.md": {
-      "sha256": "6b0f8bc35262d6bebb4f10f66a94a6b704a2d687d512070146abe2ff591b819a",
-      "bytes": 6246
+      "sha256": "3af8c6c6597d9559edc7c0e3d23d4d383bfd6b24c9ff0562c76611bc2feb03df",
+      "bytes": 6947
     },
     "src/eplan_mcp/references/reviewed-drawing-records.md": {
       "sha256": "dfe970ff957acdf1f5b360bff7add157f4892c855f02eac6e24cfaea0e04902b",
@@ -366,9 +366,13 @@
       "sha256": "2785e49e683449fb356f43642500bddff2aa4e244566f9d99e1ca401b0c5167d",
       "bytes": 9049
     },
+    "tests/test_instance_admission.py": {
+      "sha256": "48c7ac02edea705cf183701cbc1f224f7ab1bee00a7551d062db0732664fb2d3",
+      "bytes": 1247
+    },
     "tests/test_local_data.py": {
-      "sha256": "966955e50b5110931e40902754a2f5547eaabb3db864572320a0e1a69de2f52a",
-      "bytes": 11671
+      "sha256": "ae71bde3cf1299ce5be9b32ff7256aef77314d358d46dee103c30ca89a129a47",
+      "bytes": 15087
     },
     "tests/test_management.py": {
       "sha256": "92a4de1998ced24f85cbfd6976ef0346c67a9fb36963a4d018f4ed715ab3af20",

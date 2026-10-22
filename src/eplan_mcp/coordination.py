@@ -94,6 +94,21 @@ class Coordinator:
             self._release(stream)
 
     @contextlib.contextmanager
+    def instance(self):
+        """Admit at most four analysis endpoints per selected app state, without waiting."""
+        stream = None
+        for index in range(4):
+            stream = self._try(f"endpoint-instance:{index}")
+            if stream is not None:
+                break
+        if stream is None:
+            raise ResourceBusy("EPLAN endpoint instance limit reached for this app state; no server started")
+        try:
+            yield
+        finally:
+            self._release(stream)
+
+    @contextlib.contextmanager
     def worker(self, native=False):
         # Always acquire the backend before a general slot, so queued native work does not occupy all slots.
         with self.pool("oda", self.oda_workers) if native else contextlib.nullcontext():

@@ -143,7 +143,58 @@ def inflate_at(data, offset):
     }
 
 
-def text_candidates(data, minimum=4):
+TEXT_ENCODINGS = {"utf-8", "utf-16-le", "utf-16-be", "cp1252"}
+
+
+def encoded_text_candidates(data, encoding, minimum):
+    """Explicit decoding only; invalid units split runs and retain their byte widths."""
+    if not isinstance(encoding, str) or encoding not in TEXT_ENCODINGS:
+        raise ValueError("text_encoding must be utf-8, utf-16-le, utf-16-be or cp1252")
+    wide = encoding.startswith("utf-16")
+    # A trailing half code unit cannot form a character. Do not synthesize a replacement.
+    payload = data[: len(data) - len(data) % 2] if wide else data
+    errors = "surrogatepass" if wide else "surrogateescape"
+    decoded = payload.decode(encoding, errors=errors)
+    rows, characters = [], []
+    position = run_start = 0
+
+    def emit():
+        if len(characters) >= minimum:
+            text = "".join(characters)
+            segment_offset = run_start
+            for index in range(0, len(text), 8000):
+                segment = text[index : index + 8000]
+                size = len(segment.encode(encoding))
+                rows.append(
+                    {
+                        "byte_offset": segment_offset,
+                        "byte_length": size,
+                        "encoding": encoding,
+                        "text": segment,
+                        "evidence": "binary_text_candidate",
+                    }
+                )
+                segment_offset += size
+                if len(rows) > 100_000:
+                    raise ValueError("Too many text candidates; select a smaller byte window")
+
+    for character in decoded:
+        size = len(character.encode(encoding, errors=errors))
+        if character.isprintable():
+            if not characters:
+                run_start = position
+            characters.append(character)
+        else:
+            emit()
+            characters.clear()
+        position += size
+    emit()
+    return rows
+
+
+def text_candidates(data, minimum=4, text_encoding=None):
+    if text_encoding is not None:
+        return encoded_text_candidates(data, text_encoding, minimum)
     # Byte-exact candidates, not inferred device tags or electrical relationships.
     patterns = [
         ("ascii", rb"[\x20-\x7e]{%d,}" % minimum),
@@ -188,16 +239,18 @@ def read_binary(path, options):
         "next_byte_offset": end if end < len(data) else None,
         "stream": stream,
         "coordinate_system": "inflated bytes" if stream else "source file bytes",
+        "text_encoding": options.get("text_encoding"),
         "limitations": [
             "Text candidates may include incidental binary matches.",
             "Record identities, properties, geometry and connectivity are not inferred.",
-            "ASCII-compatible text only; other character encodings require explicit byte inspection.",
+            "Default scanning is ASCII-compatible; Unicode/code-page decoding requires explicit text_encoding.",
+            "Explicit UTF-16 starts at the selected window offset; choose code-unit alignment deliberately.",
         ],
     }
     if options["operation"] == "bytes":
         integer(length, "byte_length", 1, 4096)
         return {**result, "hex": window.hex()}
-    rows = text_candidates(window, options.get("minimum_length", 4))
+    rows = text_candidates(window, options.get("minimum_length", 4), options.get("text_encoding"))
     for row in rows:
         row["byte_offset"] += start
     query = options.get("query")
@@ -600,6 +653,10 @@ class LocalDataService:
             raise ValueError("query must be a literal string up to 500 characters")
         if "minimum_length" in options:
             integer(options["minimum_length"], "minimum_length", 4, 128)
+        if options.get("text_encoding") is not None and (
+            not isinstance(options["text_encoding"], str) or options["text_encoding"] not in TEXT_ENCODINGS
+        ):
+            raise ValueError("text_encoding must be utf-8, utf-16-le, utf-16-be or cp1252")
         if operation == "xml" and path.stat().st_size > XML_LIMIT:
             raise ValueError("XML exceeds 16 MiB")
         before = sha256(path)

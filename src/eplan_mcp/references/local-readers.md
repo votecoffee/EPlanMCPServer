@@ -53,6 +53,15 @@ ASCII and ASCII-compatible UTF-16 strings within a selected window of up to 4 Mi
 encoding, byte offset and byte length. These are candidates: incidental strings, obsolete content
 and boundary fragments can appear. Non-ASCII character encodings are not silently guessed.
 
+For descriptions containing other characters, explicitly set `text_encoding` to `utf-8`,
+`utf-16-le`, `utf-16-be` or `cp1252`. The same option is available in archive `reader_options`.
+Invalid encoding units and control characters split candidate runs; replacement characters are
+never synthesized. Byte lengths include multibyte characters and surrogate pairs. UTF-16 code
+units start at the selected window offset: select alignment deliberately. A trailing incomplete
+unit is omitted; boundary fragments remain candidates. The default ASCII scan is unchanged.
+Use literal `query` to filter decoded descriptions. Encoding selection does not identify a
+property, active device, or supply connection.
+
 `eplan_find_compressed_streams` scans at most 4 MiB per request for zlib headers and accepts only
 streams that fully decompress with a verified checksum. It tries at most 512 candidate headers per
 request and stops after a cumulative output budget; each stream has a 16 MiB inflated-size limit.

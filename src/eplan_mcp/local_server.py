@@ -19,7 +19,7 @@ def register_local(tool, drawings):
         """List ordinary ZIP entries or read one exact member using xml/access/link/text/bytes/streams.
         Native ZW1/ZW9 are not treated as ZIP. Members are size-bounded, CRC-verified and isolated.
         reader_options supports record_tag, query, table, byte_offset, byte_length, stream_offset,
-        minimum_length only. Pagination applies to the selected member reader or ZIP inventory.
+        minimum_length, text_encoding only. Pagination applies to the selected member reader or ZIP inventory.
         """
         options = reader_options or {}
         if not isinstance(options, dict) or set(options) - {
@@ -30,6 +30,7 @@ def register_local(tool, drawings):
             "byte_length",
             "stream_offset",
             "minimum_length",
+            "text_encoding",
         }:
             raise ValueError("Unsupported archive reader_options")
         return service.read(
@@ -158,8 +159,11 @@ def register_local(tool, drawings):
         query: str | None = None,
         offset: int = 0,
         limit: int = 50,
+        text_encoding: str | None = None,
     ) -> dict:
-        """Read offset-bound ASCII/ASCII-compatible UTF-16 candidates from raw or inflated local data.
+        """Read offset-bound text candidates from raw or inflated local data.
+        Default is ASCII/ASCII-compatible UTF-16. Explicit text_encoding accepts utf-8, utf-16-le,
+        utf-16-be or cp1252; invalid units split runs. Align UTF-16 at the selected byte_offset.
         False positives and window-edge fragments are possible. No electrical identity/relationship inferred.
         """
         return service.read(
@@ -170,6 +174,7 @@ def register_local(tool, drawings):
             byte_length=byte_length,
             stream_offset=stream_offset,
             minimum_length=minimum_length,
+            text_encoding=text_encoding,
             query=query,
             offset=offset,
             limit=limit,

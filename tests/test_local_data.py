@@ -91,6 +91,74 @@ def test_utf16_candidates_keep_byte_offsets():
         )
 
 
+@pytest.mark.parametrize(
+    "encoding,text",
+    [
+        ("utf-8", "供給圧力 café 🛠"),
+        ("utf-16-le", "供給圧力 café 🛠"),
+        ("utf-16-be", "供給圧力 café 🛠"),
+        ("cp1252", "Alimentation électrique 24 V"),
+    ],
+)
+def test_explicit_unicode_candidates_preserve_exact_bytes(encoding, text):
+    prefix = "\x00".encode(encoding)
+    data = prefix + text.encode(encoding) + prefix
+    rows = text_candidates(data, text_encoding=encoding)
+    assert len(rows) == 1
+    row = rows[0]
+    assert row["text"] == text and row["byte_offset"] == len(prefix)
+    assert data[row["byte_offset"] : row["byte_offset"] + row["byte_length"]] == text.encode(encoding)
+
+
+@pytest.mark.parametrize(
+    "encoding,invalid",
+    [
+        ("utf-8", b"\xff\xc0"),
+        ("cp1252", b"\x81"),
+        ("utf-16-le", b"\x00\xd8"),
+        ("utf-16-be", b"\xd8\x00"),
+    ],
+)
+def test_explicit_decoding_splits_invalid_units_without_replacements(encoding, invalid):
+    first, last = "café", "válve"
+    data = first.encode(encoding) + invalid + last.encode(encoding)
+    rows = text_candidates(data, text_encoding=encoding)
+    assert [r["text"] for r in rows] == [first, last]
+    assert rows[1]["byte_offset"] == len(first.encode(encoding)) + len(invalid)
+    if encoding.startswith("utf-16"):
+        assert text_candidates(data + b"\xff", text_encoding=encoding) == rows
+
+
+def test_unicode_segments_and_worker_compressed_archive_source_preservation(local_files):
+    text = "供給" * 5000 + "🛠"
+    data = text.encode("utf-8")
+    rows = text_candidates(data, text_encoding="utf-8")
+    assert "".join(r["text"] for r in rows) == text
+    assert b"".join(data[r["byte_offset"] : r["byte_offset"] + r["byte_length"]] for r in rows) == data
+    service, root = local_files
+    path = root / "Unicode.eod"
+    prefix = b"\xff\x00\x01"
+    payload = "\x00Válvula 供給 🛠\x00".encode("utf-16-le")
+    path.write_bytes(prefix + zlib.compress(payload))
+    before = sha256(path)
+    result = service.read(
+        "test", path.name, "text", stream_offset=len(prefix), text_encoding="utf-16-le", query="válvula"
+    )
+    assert result["items"][0]["text"] == "Válvula 供給 🛠"
+    assert result["items"][0]["byte_offset"] == 2
+    assert result["coordinate_system"] == "inflated bytes"
+    assert result["source"]["sha256"] == before == sha256(path)
+    archive = root / "Unicode.zip"
+    with zipfile.ZipFile(archive, "w") as handle:
+        handle.writestr("text.eod", payload)
+    archived = service.read(
+        "test", archive.name, "archive", member="text.eod", member_operation="text", text_encoding="utf-16-le"
+    )
+    assert archived["items"][0]["text"] == "Válvula 供給 🛠"
+    with pytest.raises(ValueError, match="text_encoding"):
+        service.read("test", path.name, "text", text_encoding="automatic")
+
+
 def test_experimental_slot_geometry_and_unknown_slots(local_files):
     service, root = local_files
     signature = bytes.fromhex("001100130000007e00130000007e")
@@ -243,6 +311,7 @@ async def test_local_readers_through_real_mcp(local_files):
     from mcp.client.stdio import StdioServerParameters, stdio_client
 
     _, root = local_files
+    (root / "unicode.eod").write_bytes("\x00Válvula 供給 🛠\x00".encode("utf-8"))
     params = StdioServerParameters(
         command=sys.executable,
         env={"EPLAN_MANAGEMENT_REGISTRY": os.environ["EPLAN_MANAGEMENT_REGISTRY"]},
@@ -269,8 +338,19 @@ async def test_local_readers_through_real_mcp(local_files):
                 ),
                 ("eplan_read_project_link", {"root_id": "test", "relative_path": "demo.elk"}),
                 ("eplan_read_binary_text", {"root_id": "test", "relative_path": "demo.edb/Page.eod"}),
+                (
+                    "eplan_read_binary_text",
+                    {
+                        "root_id": "test",
+                        "relative_path": "unicode.eod",
+                        "text_encoding": "utf-8",
+                        "query": "válvula",
+                    },
+                ),
                 ("eplan_find_compressed_streams", {"root_id": "test", "relative_path": "demo.edb/Page.eod"}),
             ]:
                 result = await client.call_tool(name, args)
                 assert not result.is_error, json.dumps([c.model_dump() for c in result.content])
                 assert result.structured_content["source"]["sha256"]
+                if args.get("text_encoding"):
+                    assert result.structured_content["items"][0]["text"] == "Válvula 供給 🛠"

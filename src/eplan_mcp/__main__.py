@@ -194,20 +194,20 @@ def main():
         print(json.dumps(result, ensure_ascii=False, indent=2))
         return
     if args.command == "serve":
+        from .management import Reporting
         from .server import SDK2, create_server
 
-        server = create_server(service, args.port, workflow=args.workflow)
-        from .management import Reporting
-
-        with Reporting(
-            service.config.state,
-            server.eplan_scheduler.status,
-            role="Per-chat stdio connection" if args.transport == "stdio" else "Standalone loopback service",
-        ):
-            if args.transport == "stdio" or not SDK2:
-                server.run(transport=args.transport)
-            else:
-                server.run(transport="streamable-http", host="127.0.0.1", port=args.port)
+        with service.coordinator.instance():
+            server = create_server(service, args.port, workflow=args.workflow)
+            with Reporting(
+                service.config.state,
+                server.eplan_scheduler.status,
+                role="Per-chat stdio connection" if args.transport == "stdio" else "Standalone loopback service",
+            ):
+                if args.transport == "stdio" or not SDK2:
+                    server.run(transport=args.transport)
+                else:
+                    server.run(transport="streamable-http", host="127.0.0.1", port=args.port)
         return
     if args.command in {"import-reports", "snapshot", "snapshot-export", "snapshot-check", "snapshot-query"}:
         from pathlib import Path

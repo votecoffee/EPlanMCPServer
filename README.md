@@ -84,7 +84,7 @@ Example `eplan_import_reports` arguments:
 }
 ```
 
-Mappings are **canonical name ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ exact exported column/property**. No localized labels, numeric
+Mappings are **canonical name to exact exported column/property**. No localized labels, numeric
 property IDs or export scheme are guessed. Exact canonical headers can omit field_map. CSV uses
 comma by default; TSV uses tab. Set delimiter explicitly for semicolon or pipe exports. UTF-8/BOM
 and BOM-marked UTF-16 are supported. XML requires exact row_tag (Clark notation for namespaces).
@@ -151,6 +151,10 @@ inflated stream. Inflated results include the stream's source offset, consumed b
 inflated hash. Follow scan continuation and result pagination separately. Binary matches can
 include incidental strings, stale data or window-edge fragments; they are not verified devices,
 pages, connections or active objects. See [local reader details](docs/local-readers.md).
+
+For non-ASCII descriptions, explicitly select `text_encoding` (`utf-8`, `utf-16-le`, `utf-16-be`
+or `cp1252`) on `eplan_read_binary_text`, including inflated streams. Results preserve exact byte
+offsets and lengths; invalid units split candidates. No character encoding or device ownership is guessed.
 
 ### CLI
 
