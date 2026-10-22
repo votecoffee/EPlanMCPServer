@@ -79,6 +79,29 @@ enable or restart those routes. Non-Windows child execution has no unmanaged fal
 
 ## Status and acceptance
 
+### Launch-path coverage
+
+| Path | Ownership and containment | Source gate / remaining acceptance |
+| --- | --- | --- |
+| Direct stdio / loopback supervisor | Actual exclusive Python process owns its workers; no registration helper acts as owner | Implemented; existing SDK transport retained; new EOF/reconnect/crash/resource-use acceptance pending |
+| Extraction / local-reader / render / table worker | Shared ledger reservation, retained creation handle, app-owned Windows job tree | Pure/stub checks pass; real creation, descendants, cancellation and owner death pending |
+| ODA converter inside parser worker | Explicit owned launch, isolated source copy, nested job and matching supervisor generation | Implemented; converter acceptance pending on disposable input |
+| Access provider objects | Read-only worker-created ADO recordsets/schema/catalog/connection; all cleanup attempts occur even after one failure | Pure handle stubs pass; ACE native read/close acceptance pending; no user application attachment |
+| Shell / Node / console descendants | Job contains descendants of a directly launched private process; no arbitrary shell expansion | Real descendant fixtures pending; out-of-job service/COM launchers are not supported or adopted |
+| Existing user-owned native editor | Not opened, attached, enumerated or closed | Protected by absence of acquisition; attached preservation fixture still pending |
+| Shared native application / optional framework host | No accepted lease/refcount or backend containment profile | Implementation gap; serve/proxy startup refused, no automatic host start |
+| Bootstrap / plugin installer wrappers | No accepted dependency-free installer containment profile | Implementation gap; entry points refuse installation/startup |
+| Windows manager recovery | Shared record host/creation/image identity and explicit private policy; no app auto-cleanup | Shared API stub integration checked; real orphan/receipt/barrier recovery pending |
+
+The direct offline profile is the candidate for controlled runtime validation. An unsupported
+optional launch path does not become enabled when a transport test passes. Start/close ownership,
+real manager recovery and supported Python/Windows containment must pass before ordinary use.
+Abrupt upstream-client loss with inherited open pipe handles is not established by source review;
+client EOF, parent/owner termination and duplicate reconnect need separate transport fixtures.
+No native dirty-document policy is implemented because native editor/project access is unsupported.
+Engineering write uncertainty remains in existing request journals; no journal replay or barrier
+resolution is performed by the ownership adapter.
+
 `eplan_concurrency_status.resource_ownership` reports bounded process-local ownership observations.
 Service-manager status reports the active owned-tree count and that acceptance is pending; it does
 not scan native applications or claim access to every resource record from other processes.

@@ -31,8 +31,8 @@
       "bytes": 16369
     },
     "VERIFICATION.md": {
-      "sha256": "bef4e7aaa971f4872d3ed112bbc2491b5bfad414611467c75198d070a24ccdd2",
-      "bytes": 6517
+      "sha256": "e1166319a2059a95fb4744f4e143fc2e208c144d901b6eea6ba2eb9b84dc7a98",
+      "bytes": 7103
     },
     "docs/device-information.md": {
       "sha256": "5e3d552862f90b6ce5b5068ba8d7a47a23a1e4cbac689da953bc0040e0f334b8",
@@ -51,8 +51,8 @@
       "bytes": 99
     },
     "docs/resource-ownership.md": {
-      "sha256": "237f56e6645ae8dc8aa2e9a3efc47efefc3eda0a4f00116070fbf2e576535949",
-      "bytes": 7256
+      "sha256": "4fe469de48ec01754cdac2d3bf5f7edeba991da8da5aa46fa2bf113fa5efd6a6",
+      "bytes": 9966
     },
     "docs/reviewed-drawing-records.md": {
       "sha256": "0bea52bc7206f12cedd04f1b006140652e9a90a101994c41ea9907f726aa21e1",
@@ -263,16 +263,16 @@
       "bytes": 3414
     },
     "src/eplan_mcp/local_data.py": {
-      "sha256": "592b27a0bb83ade0880c2657f9cdfce380d0f4cb47e2393a7efb720002d92c5f",
-      "bytes": 31823
+      "sha256": "fbaf7fbcdaf5f6302bf57e1b03800da3aa13ca8046e2e145e61b625b6e419d12",
+      "bytes": 32844
     },
     "src/eplan_mcp/local_server.py": {
       "sha256": "84e0ea06a1f87d2da1bb83cf9171c2509b3fc20a0bcdf1be8a04fc75272513ca",
       "bytes": 6636
     },
     "src/eplan_mcp/management.py": {
-      "sha256": "b93af77e4f0d4cd980c7cddf41e8bfa4febf9c1752f6e7190b74d87ea32639cc",
-      "bytes": 4655
+      "sha256": "b1630a0db9f0a90a1219bca816a46396347e1d5aa550f12820a71e436d0b5cab",
+      "bytes": 4899
     },
     "src/eplan_mcp/operation_progress.py": {
       "sha256": "3be68a1559975cb4f475908f7e37b7edb2dfaac33f2be640818ad1c0ed53f4be",
@@ -377,6 +377,10 @@
     "tests/test_guidance.py": {
       "sha256": "2785e49e683449fb356f43642500bddff2aa4e244566f9d99e1ca401b0c5167d",
       "bytes": 9049
+    },
+    "tests/test_handle_cleanup.py": {
+      "sha256": "1ee0c1de98e06a646f4a9ff3b08c7c13440d73b139969d9d0c0e6b70f6794de6",
+      "bytes": 2535
     },
     "tests/test_instance_admission.py": {
       "sha256": "48c7ac02edea705cf183701cbc1f224f7ab1bee00a7551d062db0732664fb2d3",

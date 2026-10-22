@@ -130,12 +130,21 @@ class Reporting:
             self.refresh_versions()
 
     def __enter__(self):
-        self.agent.start()
-        self.thread = threading.Thread(target=self._poll, name="eplan-version-cache", daemon=True)
-        self.thread.start()
+        self.thread = None
+        try:
+            self.agent.start()
+            self.thread = threading.Thread(target=self._poll, name="eplan-version-cache", daemon=True)
+            self.thread.start()
+        except BaseException:
+            self.stopped.set()
+            self.agent.close()
+            raise
         return self
 
     def __exit__(self, *_):
         self.stopped.set()
-        self.thread.join(timeout=6)
-        self.agent.close()
+        try:
+            if self.thread is not None:
+                self.thread.join(timeout=6)
+        finally:
+            self.agent.close()

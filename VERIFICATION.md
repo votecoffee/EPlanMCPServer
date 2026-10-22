@@ -30,6 +30,13 @@ extraction and exercises import/query/check/trace/compare/export plus receipt re
 
 ## Acceptance boundaries
 
+The source readiness gate includes pure reporting-startup/join-failure and read-only ADO cleanup
+stubs (`test_handle_cleanup.py`); these never start a management listener or COM/native provider.
+Retain per-run results privately with the launch-path inventory. Unsupported bootstrap/framework
+ownership profiles are implementation gaps; real EOF/crash/descendant/manager checks on the direct
+offline profile are runtime acceptance pending authorization. Neither category is ordinary-use
+acceptance. See the [launch-path coverage table](docs/resource-ownership.md#launch-path-coverage).
+
 Framework 0.20.0 alignment is source-only. Verify the reviewed wheel SHA-256/RECORD and exact SDK
 2.3 pin without installing it during a runtime hold. `test_resource_claims.py` exercises the actual
 shared ledger with synthetic process identities; `test_owned_processes.py` replaces all OS process

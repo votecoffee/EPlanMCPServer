@@ -381,6 +381,31 @@ def scalar(value):
     return str(value)
 
 
+def close_access_resources(connection, schema, recordset, catalog):
+    """Release only this worker's read-only ADO objects, attempting every handle on failure."""
+    failures = []
+    for resource in (recordset, schema):
+        if resource is not None:
+            try:
+                if resource.State:
+                    resource.Close()
+            except Exception as error:
+                failures.append(error)
+    if catalog is not None:
+        try:
+            catalog.ActiveConnection = None
+        except Exception as error:
+            failures.append(error)
+    if connection is not None:
+        try:
+            if connection.State:
+                connection.Close()
+        except Exception as error:
+            failures.append(error)
+    if failures:
+        raise ValueError("Read-only Access handle cleanup is unverified; inspect worker evidence") from failures[0]
+
+
 def access_data(path, options):
     if os.name != "nt":
         raise ValueError("Access reading currently requires Windows and the installed ACE OLE DB provider")
@@ -398,7 +423,7 @@ def access_data(path, options):
         os.environ["CommonProgramFiles"] = common
 
     pythoncom.CoInitialize()
-    connection = None
+    connection = schema = recordset = catalog = metadata = None
     try:
         connection = win32com.client.Dispatch("ADODB.Connection")
         connection.Mode = 1  # adModeRead, set before Open.
@@ -434,7 +459,7 @@ def access_data(path, options):
                 raise ValueError("Database table count exceeds 1000")
             schema.MoveNext()
         schema.Close()
-        schema = catalog = None
+        schema = None
         if options.get("table") is None:
             if options.get("column") is not None:
                 raise ValueError("Select a table before requesting a cell")
@@ -511,9 +536,11 @@ def access_data(path, options):
             "row_order": "provider order within this source hash; no primary key inferred",
         }
     finally:
-        if connection is not None and connection.State:
-            connection.Close()
-        pythoncom.CoUninitialize()
+        try:
+            close_access_resources(connection, schema, recordset, catalog)
+        finally:
+            connection = schema = recordset = catalog = metadata = None
+            pythoncom.CoUninitialize()
 
 
 def run_worker(source, destination, options):
