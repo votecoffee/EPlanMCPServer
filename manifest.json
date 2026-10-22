@@ -63,8 +63,8 @@
       "bytes": 4299
     },
     "docs/service-management.md": {
-      "sha256": "ef42897b92e497e827051c9fb153da90fdd1b05d25312ace772175a856dd0f05",
-      "bytes": 5229
+      "sha256": "65aeb5f8e428f4b7c2346cffc45e260457960ba981ea20650e3d7094e1bcf564",
+      "bytes": 5771
     },
     "examples/config.example.json": {
       "sha256": "3dad086567d3e64c15981b79b9f0e12b0a1580bc72b24613e8c1b3bbe8f97aa4",
@@ -397,6 +397,10 @@
     "tests/test_plugin.py": {
       "sha256": "51c08574c72dfb2b140e0e77beba23508306b69ec0118bd59abc9ad23942c2f3",
       "bytes": 2427
+    },
+    "tests/test_plugin_policy.py": {
+      "sha256": "99eede1e87cbdbd45c0deeedeafe85ee871992087963f831ba7bfce76bce72bc",
+      "bytes": 1691
     },
     "tests/test_protocol.py": {
       "sha256": "8620e52200de43e9d3a96e7e2b8d8758645fd3d48e9c3b9e6639f28a81a6fb89",

@@ -11,6 +11,13 @@ Universal Tools broker. Canonical plugin identity is `eplan@eplan-local`; each o
 process gets a random instance ID. Transient framework workers and proxy clients do not register
 as owning services.
 
+The architecture is the shared app framework plus the independent Windows manager. EPLAN keeps
+its own Codex plugin and native skill. No universal Codex plugin or connection is required,
+installed, composed or used to choose EPLAN installation. The Python distribution/import names
+`universal-codex-tools` and `universal_tools` identify the shared library; they do not imply a
+universal plugin deployment. The pinned framework version remains unchanged until the new
+owned-resource ledger API is published and assessed for this application.
+
 The direct server reports admitted/queued analysis and control work from its scheduler. The
 app-owned framework host counts backend invocations, including failures. Counts describe that
 instance only. Cross-process cache/index locks retain their existing behavior. Status callbacks
