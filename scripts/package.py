@@ -57,7 +57,11 @@ def selected_files(repo):
 
 
 def verify(repo):
+    from eplan_mcp.release_version import DISPLAY_VERSION, PACKAGE_VERSION
+
     manifest = json.loads((repo / "manifest.json").read_text(encoding="utf-8"))
+    if manifest.get("version") != PACKAGE_VERSION or manifest.get("display_version") != DISPLAY_VERSION:
+        raise ValueError("Manifest release identity differs from the fixed app release")
     expected = set(manifest["files"])
     actual = {path.relative_to(repo).as_posix() for path in selected_files(repo)}
     if actual != expected:
@@ -81,9 +85,14 @@ def main():
     if not args.output:
         parser.error("--output is required when packaging")
     files = selected_files(repo)
+    from eplan_mcp.release_version import DISPLAY_VERSION, PACKAGE_VERSION
+
+    if tomllib.loads((repo / "pyproject.toml").read_text(encoding="utf-8"))["project"]["version"] != PACKAGE_VERSION:
+        raise ValueError("Package version differs from fixed release identity")
     manifest = {
         "schema_version": 1,
         "version": tomllib.loads((repo / "pyproject.toml").read_text(encoding="utf-8"))["project"]["version"],
+        "display_version": DISPLAY_VERSION,
         "files": {
             path.relative_to(repo).as_posix(): {
                 "sha256": digest(path.read_bytes()),

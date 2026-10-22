@@ -2,7 +2,7 @@
 
 Source-preserving EPLAN export, electrical report and drawing analysis for MCP
 
-Standalone Codex plugin, shared Python service and CLI. Version **0.3.0**.
+Standalone Codex plugin, shared Python service and CLI. Version **26.1022.173617**.
 The main purpose is to extract device names/descriptions, network addresses, PLC I/O points,
 and the power or compressed-air supplies feeding each device.
 The repository uses `EPlanMCPServer`; the Python distribution uses the normalized package name
@@ -246,6 +246,10 @@ uses independent host/app receipts, and exposes the current workflow through `ep
 Tasks, remote access, OAuth, replication and native UI integration are not enabled by this app.
 
 ## Development
+
+Releases use one fixed America/New_York `YY.MMDD.HHmmss` timestamp. Python/plugin package
+identities remove component leading zeroes; human displays retain the fully padded value.
+See [release stamping and verification](docs/releases.md). Runtime startup and builds never restamp.
 
 `eplan_capabilities.feature_profiles` reports enabled/tested features and concrete blockers.
 [Feature profiles](docs/feature-profiles.md) cover progress, cooperative cancellation, private

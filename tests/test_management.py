@@ -5,6 +5,7 @@ import pytest
 from universal_tools.management import ManagementClient
 
 from eplan_mcp.management import PLUGIN_ID, RESTART_REASON, Activity, Reporting, track_backend
+from eplan_mcp.release_version import PACKAGE_VERSION
 
 
 @pytest.mark.anyio
@@ -28,7 +29,7 @@ def test_cached_reporting_versions_busy_denial_and_clean_stop(tmp_path, monkeypa
         json.dumps(
             {
                 "plugin_id": PLUGIN_ID,
-                "plugin_version": "0.3.0",
+                "plugin_version": PACKAGE_VERSION,
             }
         )
     )
@@ -40,7 +41,7 @@ def test_cached_reporting_versions_busy_denial_and_clean_stop(tmp_path, monkeypa
         assert row["plugin_id"] == PLUGIN_ID and row["status"]["state"] == "running"
         assert row["status"]["versions"]["framework"]["running"] == "0.20.0"
         assert row["status"]["versions"]["sdk"]["running"] == "2.3.0"
-        assert row["status"]["versions"]["plugin"]["running"] == "0.3.0"
+        assert row["status"]["versions"]["plugin"]["running"] == PACKAGE_VERSION
         assert all(
             v["available"] is None and not v["update_pending"] for v in row["status"]["versions"].values()
         )

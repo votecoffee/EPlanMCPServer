@@ -25,6 +25,7 @@ def prepare(repo: Path, config: Path | None = None, *, frontend="legacy", host_s
     if not python.is_file():
         raise ValueError("Run InstallAndRun.cmd --install-only first")
     from eplan_mcp.config import Config
+    from eplan_mcp.release_version import DISPLAY_VERSION, PACKAGE_VERSION
 
     Config.load(config)
     server = {
@@ -66,7 +67,7 @@ def prepare(repo: Path, config: Path | None = None, *, frontend="legacy", host_s
         b"".join(name.encode() + b"\0" + contents[name] for name in sorted(contents))
     ).hexdigest()[:16]
     root = repo / ".local" / "codex-marketplace"
-    package = root / "packages" / ("eplan-" + digest)
+    package = root / "packages" / ("eplan-" + PACKAGE_VERSION + "-" + digest)
     for name, data in contents.items():
         path = package / name
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -98,6 +99,8 @@ def prepare(repo: Path, config: Path | None = None, *, frontend="legacy", host_s
         "transport": "stdio",
         "standalone": True,
         "frontend": frontend,
+        "display_version": DISPLAY_VERSION,
+        "package_version": PACKAGE_VERSION,
     }
 
 

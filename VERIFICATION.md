@@ -30,6 +30,12 @@ extraction and exercises import/query/check/trace/compare/export plus receipt re
 
 ## Acceptance boundaries
 
+Timestamp-release checks are pure/package-only while held: padded display versus canonical PEP
+440/strict SemVer identity, once-stamped source/plugin/README parity, unchanged dependency pins,
+manager normalization, CLI `--version`, wheel METADATA/import and source byte-manifest parity.
+Native Codex cache/loader and MCP initialization information remain controlled-runtime acceptance;
+building or reading a plugin package never enables it. Historical artifacts are retained privately.
+
 The source readiness gate includes pure reporting-startup/join-failure and read-only ADO cleanup
 stubs (`test_handle_cleanup.py`); these never start a management listener or COM/native provider.
 Retain per-run results privately with the launch-path inventory. Unsupported bootstrap/framework

@@ -10,7 +10,8 @@ from contextlib import contextmanager
 
 from universal_tools.management import ComponentVersion, ManagedService, ManagedStatus, RestartResult
 
-from . import __version__
+from . import __package_version__, __version__
+from .release_version import canonical_identity
 
 PLUGIN_ID = "eplan@eplan-local"
 SDK_RUNNING = importlib.metadata.version("mcp")
@@ -72,12 +73,14 @@ class Reporting:
         # Installer/package metadata only. Never inspect engineering state or attach projects.
         versions = {}
         for key, distribution, running in (
-            ("app", "eplan-mcp-server", __version__),
+            ("app", "eplan-mcp-server", __package_version__),
             ("sdk", "mcp", SDK_RUNNING),
         ):
             try:
                 installed = importlib.metadata.version(distribution)
-            except importlib.metadata.PackageNotFoundError:
+                if key == "app":
+                    installed = canonical_identity(installed)
+            except (importlib.metadata.PackageNotFoundError, ValueError):
                 installed = "unknown"
             versions[key] = ComponentVersion(
                 installed=installed, running=running, available=None, update_pending=False
@@ -88,7 +91,7 @@ class Reporting:
             if isinstance(metadata, dict) and metadata.get("plugin_id") == PLUGIN_ID:
                 version = metadata.get("plugin_version")
                 if isinstance(version, str) and 0 < len(version) <= 128:
-                    installed = version
+                    installed = canonical_identity(version)
         except (OSError, ValueError, KeyError):
             pass
         if not self.versions and installed != "unknown":
@@ -111,6 +114,8 @@ class Reporting:
             state="busy" if pending else "running",
             message=(
                 self.role
+                + "; app release="
+                + __version__
                 + "; owned child trees="
                 + str(ownership["active_trees"])
                 + "/16; handle-bound cleanup; runtime acceptance pending; native EPLAN not connected"

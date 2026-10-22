@@ -30,6 +30,9 @@ def _main():
         run_worker(*sys.argv[2:])
         return
     parser = argparse.ArgumentParser(description="EPLAN MCP Server - local DWG/DXF/PDF extraction")
+    from . import __version__
+
+    parser.add_argument("--version", action="version", version=__version__)
     parser.add_argument("--config", default=os.environ.get("EPLAN_MCP_CONFIG", ".local/config.json"))
     sub = parser.add_subparsers(dest="command", required=True)
     serve = sub.add_parser("serve")
