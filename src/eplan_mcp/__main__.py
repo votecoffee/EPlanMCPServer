@@ -184,10 +184,13 @@ def main():
         from .server import SDK2, create_server
 
         server = create_server(service, args.port, workflow=args.workflow)
-        if args.transport == "stdio" or not SDK2:
-            server.run(transport=args.transport)
-        else:
-            server.run(transport="streamable-http", host="127.0.0.1", port=args.port)
+        from .management import Reporting
+
+        with Reporting(service.config.state, server.eplan_scheduler.status):
+            if args.transport == "stdio" or not SDK2:
+                server.run(transport=args.transport)
+            else:
+                server.run(transport="streamable-http", host="127.0.0.1", port=args.port)
         return
     if args.command in {"import-reports", "snapshot", "snapshot-export", "snapshot-check", "snapshot-query"}:
         from pathlib import Path

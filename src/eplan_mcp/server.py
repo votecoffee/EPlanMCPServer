@@ -32,6 +32,7 @@ def create_server(service: DrawingService, port: int = 8816, *, workflow: bool =
         instructions=WORKFLOW,
         **({"version": __version__} if SDK2 else {"host": "127.0.0.1", "port": port}),
     )
+    mcp.eplan_scheduler = scheduler
 
     def tool(*, read=True, control=False):
         def decorate(fn):

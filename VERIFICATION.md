@@ -49,3 +49,18 @@ Configure `examples/synthetic` as root `synthetic` to repeat the portable protoc
 Generate archives under `.local/packages/`. Inspect source and wheel contents before publishing;
 the source packager excludes private working directories and rejects symbolic links. Keep the
 tracked byte manifest current after changing packaged source or documentation.
+# Service-manager reporting profile
+
+Run `python -m pytest -q tests/test_management.py` with a dedicated registry. Verify cached versions,
+unknown availability, per-instance activity, failed-call accounting, busy/stale denial, concurrent
+duplicate blocked receipts, credential-free snapshots and stopped registration on clean shutdown.
+Run the shared framework's synthetic management profile separately for independent restart effect
+counts and durable uncertain barriers across process/instance lifetimes. Those synthetic effects
+are not EPLAN process-restart acceptance.
+
+Verify the pinned framework wheel SHA-256/RECORD, hashed locks, dependency consistency, packaged
+runtime and existing 49-tool direct/50-tool framework schemas. Start only a disposable source-free
+or synthetic server for manager-row checks. Existing chats/projects must remain untouched. Confirm
+the exact plugin ID and actual running/stopped state rather than equating inventory with reporting.
+Live process replacement remains unaccepted and disabled until an app-owned supervisor and
+cross-chat safe quiescence protocol exist.

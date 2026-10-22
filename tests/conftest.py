@@ -9,6 +9,11 @@ from eplan_mcp.exports import ExportService
 from eplan_mcp.service import DrawingService
 
 
+@pytest.fixture(autouse=True)
+def isolated_management_registry(tmp_path, monkeypatch):
+    monkeypatch.setenv("EPLAN_MANAGEMENT_REGISTRY", str(tmp_path / "management-registry"))
+
+
 @pytest.fixture
 def drawing_service(tmp_path):
     source = tmp_path / "drawings"

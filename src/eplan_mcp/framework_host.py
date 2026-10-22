@@ -15,7 +15,7 @@ from . import __version__
 from .config import Config, inside
 from .integration import HIGHLIGHT, OFFLINE_WRITES
 
-FRAMEWORK_VERSION = "0.17.0"
+FRAMEWORK_VERSION = "0.18.0"
 HOST_INSTRUCTIONS = (
     "EPLAN MCP Server app-owned framework host. Use search_tools, then describe_service and "
     "describe_tool for drawing-engine/eplan_get_workflow. Read that tool's current app workflow "
@@ -222,12 +222,17 @@ def serve(state: Path, publication: Path, config_path: Path):
         state, publication, config_path, max_request_body_bytes=settings.max_request_body_bytes
     )
     server = host.create_server(port=settings.port)
+    from .management import Activity, Reporting, track_backend
+
+    activity = Activity()
+    track_backend(host.backend, activity)
     base = server.streamable_http_app(**server.http_options)
 
     @asynccontextmanager
     async def lifespan(_):
         async with host, server.session_manager.run():
-            yield
+            with Reporting(Config.load(config_path).state, activity.status):
+                yield
 
     app = Starlette(routes=base.routes, lifespan=lifespan)
     runtime = uvicorn.Config(

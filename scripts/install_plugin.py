@@ -137,6 +137,16 @@ def main():
             [codex, "plugin", "marketplace", "add", result["marketplace"]], check=True, stdout=sys.stderr
         )
         subprocess.run([codex, "plugin", "add", result["plugin"], "--json"], check=True, stdout=sys.stderr)
+        from eplan_mcp import __version__
+        from eplan_mcp.config import Config
+
+        atomic_json(
+            Config.load(config).state / "management-installation.json",
+            {
+                "plugin_id": result["plugin"],
+                "plugin_version": __version__,
+            },
+        )
         result["registration_requested"] = True
     if plan["action"] != "defer":
         atomic_json(repo / ".local/codex-integration.json", {"schema_version": 1, **plan})

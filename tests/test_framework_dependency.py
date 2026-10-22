@@ -16,12 +16,12 @@ def fixture_wheel(tmp_path, monkeypatch):
     wheel = tmp_path / "supplied.whl"
     files = {
         "universal_tools/framework.py": b"# disposable framework fixture\n",
-        "universal_codex_tools-0.17.0.dist-info/licenses/LICENSE": b"MIT\n",
-        "universal_codex_tools-0.17.0.dist-info/METADATA": (
-            b"Metadata-Version: 2.4\nName: universal-codex-tools\nVersion: 0.17.0\nRequires-Dist: mcp==2.3.0\n"
+        "universal_codex_tools-0.18.0.dist-info/licenses/LICENSE": b"MIT\n",
+        "universal_codex_tools-0.18.0.dist-info/METADATA": (
+            b"Metadata-Version: 2.4\nName: universal-codex-tools\nVersion: 0.18.0\nRequires-Dist: mcp==2.3.0\n"
         ),
     }
-    record = "universal_codex_tools-0.17.0.dist-info/RECORD"
+    record = "universal_codex_tools-0.18.0.dist-info/RECORD"
     rows = [
         f"{name},sha256={base64.urlsafe_b64encode(hashlib.sha256(data).digest()).decode().rstrip('=')},{len(data)}"
         for name, data in files.items()

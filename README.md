@@ -37,13 +37,13 @@ The shared framework is a separately supplied local wheel, not fetched from an u
 package with the same name. The installer verifies SHA-256 and every wheel RECORD member:
 
 ```text
-universal_codex_tools-0.17.0-py3-none-any.whl
-SHA-256 6387265e9353f69f2dd767e4431ab2c7f6df40dd090118592a01daa3b5946c6b
-Source commit 87157f88de4a5320d2712224216b1e6f18a0ec8d
+universal_codex_tools-0.18.0-py3-none-any.whl
+SHA-256 0c1084b424f079957ebd3bec763e609564aaef64cd1fedee78b61a45bfbc24ac
+Source commit 7d8a0ccdc06598313061147ee8774837118a8861
 ```
 
 ```powershell
-.\InstallAndRun.cmd --framework-wheel C:\Packages\universal_codex_tools-0.17.0-py3-none-any.whl --root "engineering=C:\Engineering\EPLAN-Exports" --install-only
+.\InstallAndRun.cmd --framework-wheel C:\Packages\universal_codex_tools-0.18.0-py3-none-any.whl --root "engineering=C:\Engineering\EPLAN-Exports" --install-only
 ```
 
 Dependencies install into `.venv`; roots, caches, receipts, artifacts and plugin bindings stay
@@ -233,6 +233,14 @@ uses independent host/app receipts, and exposes the current workflow through `ep
 Tasks, remote access, OAuth, replication and native UI integration are not enabled by this app.
 
 ## Development
+
+The direct server and optional app-owned framework host report to the existing Windows MCP Service
+Manager through framework 0.18.0. No manager installation or broker registration is performed here.
+Status uses cached package/plugin metadata and per-instance activity; availability remains unknown
+without an update source. Restart stays disabled: EPLAN has no surviving process supervisor or
+cross-chat quiescence fence for pending operations and uncertain receipts. New server processes
+report automatically; existing chat processes require their normal reconnect to load this integration.
+See [service management](docs/service-management.md) for the restart boundary and verification.
 
 See [VERIFICATION.md](VERIFICATION.md) for repeatable checks and [native integration boundaries](docs/eplan-native-integration.md).
 Run tests before committing; packages use an explicit source allowlist and byte manifest.

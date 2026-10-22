@@ -11,10 +11,10 @@ import zipfile
 from email.parser import Parser
 from pathlib import Path
 
-VERSION = "0.17.0"
-FILENAME = "universal_codex_tools-0.17.0-py3-none-any.whl"
-SOURCE_COMMIT = "87157f88de4a5320d2712224216b1e6f18a0ec8d"
-SHA256 = "6387265e9353f69f2dd767e4431ab2c7f6df40dd090118592a01daa3b5946c6b"
+VERSION = "0.18.0"
+FILENAME = "universal_codex_tools-0.18.0-py3-none-any.whl"
+SOURCE_COMMIT = "7d8a0ccdc06598313061147ee8774837118a8861"
+SHA256 = "0c1084b424f079957ebd3bec763e609564aaef64cd1fedee78b61a45bfbc24ac"
 
 
 def verify(wheel: Path) -> dict:
