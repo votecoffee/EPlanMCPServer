@@ -18,6 +18,10 @@ def install(command):
 
 
 def main():
+    raise ValueError("Bootstrap and shell-wrapper lifecycle profile is unaccepted; automatic installation/startup is disabled")
+
+
+def _main_unaccepted():
     parser = argparse.ArgumentParser(description="Install dependencies locally and run EPLAN MCP Server")
     parser.add_argument(
         "--install-only", action="store_true", help="Install and validate configuration without starting"

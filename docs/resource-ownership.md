@@ -1,0 +1,81 @@
+# Owned resource lifecycle
+
+This is an unaccepted Windows implementation under development. Pure stub tests and source checks
+do not prove process-tree cleanup. No plugin/server/native application is started by validation
+while an operator runtime hold is active. Existing native editors and unrelated processes are
+never enumerated, adopted or closed.
+
+## Exclusive ownership
+
+The application CLI enters an exclusive process-owner scope. A library embedded in another
+application cannot implicitly adopt that host process. Child launch requires that exclusive scope
+and a private evidence directory selected by the application configuration. Current launch sites
+cover extraction, preview, table and local-reader workers, ODA conversion and CLI inventory.
+All child arguments are literal argv, with no shell command expansion. There is no native EPLAN
+editor attachment, shared application lease or dirty native project save/close operation.
+
+Before creating children, the exclusive app process is assigned to a private Windows job with
+kill-on-close and a 64-process limit. Its non-inherited job handle is retained until OS process exit;
+it is not explicitly closed during an orderly close because that would terminate the owner itself.
+Children inherit job membership from creation. This protects the otherwise vulnerable interval
+between child creation and explicit assignment to its nested job.
+
+Each root child is created suspended and assigned to a separate private kill-on-close job before
+the primary thread resumes. Retained process and primary-thread handles bind creation/cleanup;
+diagnostic PIDs are never reopened for termination. Each child tree has a 16-process limit, and an
+owner admits at most 16 active trees. These containment limits do not establish a memory budget.
+Breakaway is not requested. Nested-job refusal fails closed without running the suspended child.
+Descendant shell/Node/console processes stay within their exclusive tree; no name-based global
+cleanup is used. The implementation uses CPython's Windows creation primitive and pywin32, so
+runtime/version compatibility and nested-job behavior still require native acceptance.
+
+Normal child completion terminates residual descendants and waits for an empty job. Startup
+failure, timeout, cancellation and owner-scope exit also request teardown through retained handles.
+The request scheduler propagates a cancellation event to owned workers and drains their cleanup
+before releasing admission. This does not roll back earlier files in an indexing batch or clear
+an unknown write receipt. Output is detached from MCP stdin/stdout, spooled to private temporary
+files and checked against a 4 MiB capture budget. Polling is not a hard disk quota.
+
+## Durable evidence and recovery boundary
+
+Every explicitly launched root tree has a versioned private JSON record under the selected state
+directory's `owned-resources/`. Before resume, the record retains owner/resource UUIDs, owner and
+child creation times, diagnostic PIDs, exclusive ownership, containment type and lifecycle state.
+Arguments and source paths are omitted. Records use flushed/fsynced temporary files and atomic
+replacement. Nested worker launches inherit only the private evidence location, not permission to
+adopt another app. These are tree ownership records; individual short-lived descendant events
+are not a complete process audit trail.
+
+Interrupted records survive owner death. A recorded PID or an old `running` state does not prove
+present ownership. There is no automatic replay, stale-PID killing, journal clearing or recovery
+mutation. Cleanup uncertainty refuses success and fences further child launches in that owner.
+Review the retained resource record together with the app request receipt and source hashes before
+further engineering work. Inaccessible evidence prevents launch; no unjournaled fallback exists.
+
+The shared framework's durable resource-ledger API is not integrated yet. A future manager must
+verify creation identity and exclusive ownership through that published API before recovery.
+The app's current records are evidence, not authority for an external manager to kill a PID.
+Optional framework serve/proxy entry points are blocked until their backend containment and
+shared-owner lease profile is accepted. Bootstrap and plugin-install wrappers are likewise blocked
+until their separate ownership profile is ready. Publication/preparation of local data does not
+enable or restart those routes. Non-Windows child execution has no unmanaged fallback.
+
+## Status and acceptance
+
+`eplan_concurrency_status.resource_ownership` reports bounded process-local ownership observations.
+Service-manager status reports the active owned-tree count and that acceptance is pending; it does
+not scan native applications or claim access to every resource record from other processes.
+
+Pure OS-stub tests check containment-before-resume ordering, persisted creation identity, startup
+failure, cancellation, timeout, bounded admission, cleanup failure, and continued cleanup after one
+resource fails. No real process is launched by these tests. Subsequent isolated acceptance must prove:
+
+- Direct child and descendant cleanup on normal completion, client EOF, timeout and cancellation.
+- Abrupt owner death during creation/assignment/resume and active worker/converter execution.
+- Startup/assignment refusal, nested jobs, handle inheritance and capture cleanup on supported Windows/Python versions.
+- Preservation of independently launched or attached applications and another owner's shared resources.
+- Durable crash records, identity mismatch/PID reuse rejection, cleanup uncertainty and shared-ledger migration.
+- Real direct transport, packaged runtime and full regression after the lifecycle changes.
+
+Run those checks only after explicit release of the runtime hold. Never use an engineering project
+or user-owned native application as a cleanup fixture.

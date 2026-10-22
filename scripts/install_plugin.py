@@ -5,8 +5,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import shutil
-import subprocess
 import sys
 from pathlib import Path
 
@@ -120,37 +118,11 @@ def main():
     args = parser.parse_args()
     repo = Path(__file__).resolve().parents[1]
     config = (args.config or repo / ".local/config.json").resolve(strict=True)
-    from eplan_mcp.electrical import atomic_json
-    from eplan_mcp.integration import integration_plan
 
     if args.prepare_only:
         print(json.dumps(prepare(repo, config, frontend=args.frontend, host_state=args.host_state)))
         return
-    plan = integration_plan(repo, args.mode)
-    result = dict(plan)
-    if plan["action"] == "install":
-        result.update(prepare(repo, config, frontend=args.frontend, host_state=args.host_state))
-        codex = shutil.which("codex")
-        if not codex:
-            raise ValueError("Codex CLI was not found; local plugin prepared but not registered")
-        subprocess.run(
-            [codex, "plugin", "marketplace", "add", result["marketplace"]], check=True, stdout=sys.stderr
-        )
-        subprocess.run([codex, "plugin", "add", result["plugin"], "--json"], check=True, stdout=sys.stderr)
-        from eplan_mcp import __version__
-        from eplan_mcp.config import Config
-
-        atomic_json(
-            Config.load(config).state / "management-installation.json",
-            {
-                "plugin_id": result["plugin"],
-                "plugin_version": __version__,
-            },
-        )
-        result["registration_requested"] = True
-    if plan["action"] != "defer":
-        atomic_json(repo / ".local/codex-integration.json", {"schema_version": 1, **plan})
-    print(json.dumps(result))
+    raise ValueError("Plugin installation is blocked pending owned CLI/wrapper lifecycle acceptance")
 
 
 if __name__ == "__main__":

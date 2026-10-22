@@ -12,8 +12,20 @@ def profiles():
             "Four non-waiting cross-process slots per app state; source-only lock checks, server startup acceptance pending",
         ),
         "parent_exit_cleanup": item(
+            "implemented-but-unassessed",
+            "Exclusive Windows owner/child jobs and retained creation handles; abrupt parent exit/descendant cleanup require isolated acceptance",
+        ),
+        "owned_process_lifecycle": item(
+            "implemented-but-unassessed",
+            "Parser/converter/CLI argv trees use bounded exclusive Windows containment; no attached apps or unmanaged platform fallback",
+        ),
+        "framework_host_ownership": item(
             "blocked",
-            "Client EOF cleanup was tested previously; abrupt parent exit and descendant termination lack an accepted supervisor profile",
+            "Serve/proxy entry points refuse startup until shared leases and framework backend-tree containment are accepted",
+        ),
+        "installer_lifecycle": item(
+            "blocked",
+            "Bootstrap and plugin-install external wrappers refuse execution pending a contained installer ownership profile",
         ),
         "skills_and_guides": item(
             "enabled-and-tested", "Canonical tool/reference/catalog reads; explicit atomic publication"

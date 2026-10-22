@@ -7,6 +7,8 @@ import shutil
 import subprocess
 from pathlib import Path
 
+from .owned_processes import run as run_owned
+
 PLUGIN_ID = "eplan@eplan-local"
 OFFLINE_WRITES = (
     "eplan_import_reports",
@@ -20,7 +22,7 @@ HIGHLIGHT = "eplan_highlight_source_object"
 
 
 def installed_plugins(codex: str) -> dict:
-    result = subprocess.run(
+    result = run_owned(
         [codex, "plugin", "list", "--json"],
         check=True,
         capture_output=True,

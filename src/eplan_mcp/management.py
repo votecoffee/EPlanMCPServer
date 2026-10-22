@@ -100,13 +100,21 @@ class Reporting:
             self.versions = versions
 
     def status(self):
+        from .owned_processes import snapshot
+
+        ownership = snapshot()
         activity = self.activity()
         pending = activity["active"] + activity["queued"] + activity["control_requests"]
         with self.guard:
             versions = dict(self.versions)
         return ManagedStatus(
             state="busy" if pending else "running",
-            message=self.role + "; per-instance admitted/queued work only; native EPLAN not connected",
+            message=(
+                self.role
+                + "; owned child trees="
+                + str(ownership["active_trees"])
+                + "/16; handle-bound cleanup; runtime acceptance pending; native EPLAN not connected"
+            ),
             active_operations=pending,
             versions=versions,
             restart_allowed=False,

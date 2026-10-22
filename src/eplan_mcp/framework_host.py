@@ -215,6 +215,12 @@ def create_host(state: Path, publication: Path, config_path: Path, **kwargs):
 
 
 def serve(state: Path, publication: Path, config_path: Path):
+    raise ValueError(
+        "Framework serving is blocked pending owned backend-tree and shared-owner lease acceptance; no host started"
+    )
+
+
+def _serve_unaccepted(state: Path, publication: Path, config_path: Path):
     import secrets
 
     import uvicorn
@@ -261,6 +267,12 @@ def serve(state: Path, publication: Path, config_path: Path):
 
 
 def proxy(state: Path):
+    raise ValueError(
+        "Framework proxy is blocked pending accepted shared-host owner leases; no host connection started"
+    )
+
+
+def _proxy_unaccepted(state: Path):
     require_framework()
     from universal_tools.models import load_settings
     from universal_tools.surface import RemoteBackend, create_surface

@@ -7,7 +7,18 @@ import sys
 
 
 def main():
+    from .owned_processes import owner_scope
+
+    with owner_scope(exclusive=True):
+        return _main()
+
+
+def _main():
     if len(sys.argv) > 1 and sys.argv[1] in {"_extract", "_render", "_tables", "_local"}:
+        from .owned_processes import bind_evidence
+
+        if state := os.environ.get("EPLAN_RESOURCE_OWNER_STATE"):
+            bind_evidence(state)
         if sys.argv[1] == "_extract":
             from .extract import run_worker
         elif sys.argv[1] == "_render":
@@ -146,6 +157,9 @@ def main():
     from .service import DrawingService
 
     service = DrawingService(Config.load(args.config))
+    from .owned_processes import bind_evidence
+
+    bind_evidence(service.config.state)
     if args.command == "guidance-publish":
         from .guide_publication import publish
 

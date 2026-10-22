@@ -19,6 +19,7 @@ import zlib
 from pathlib import Path
 
 from .config import inside
+from .owned_processes import run as run_owned
 from .service import paginate, sha256
 from .worker_launch import worker_command
 
@@ -673,7 +674,7 @@ class LocalDataService:
             kwargs = {"creationflags": subprocess.CREATE_NO_WINDOW} if os.name == "nt" else {}
             with self.drawings.coordinator.worker():
                 try:
-                    completed = subprocess.run(
+                    completed = run_owned(
                         arguments,
                         stdin=subprocess.DEVNULL,
                         capture_output=True,

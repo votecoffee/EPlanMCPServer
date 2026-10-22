@@ -28,6 +28,12 @@ EPLAN for offline analysis. It does not yet provide native EPLAN project access 
 
 ## Install
 
+**Lifecycle transition:** bootstrap installation and the optional framework serve/proxy routes
+currently refuse startup pending owned-resource acceptance. The direct Windows process-containment
+implementation is source-tested with OS stubs only. Do not use it as an accepted production
+cleanup profile. See [resource ownership](docs/resource-ownership.md) for limits and pending checks.
+Installation examples below describe the retained setup workflow once that gate is resolved.
+
 ### Dependencies
 
 Python 3.11+; Windows is the primary target. Python 3.13 is used for validation. ODA File Converter
@@ -223,6 +229,9 @@ restore, UI highlighting, controller access, network scanning or automatic OCR e
 Export completeness, native check-run results and physical continuity are not established.
 
 ## Optional app-owned framework
+
+Serving and proxy startup are currently blocked pending backend-tree and shared-owner lifetime
+acceptance. The following describes the retained design; it is not permission to start the profile.
 
 The direct standalone endpoint is the default. To prepare a dedicated host:
 

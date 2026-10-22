@@ -1,5 +1,10 @@
 # Service management
 
+The [owned-resource lifecycle](resource-ownership.md) is currently implemented with pure OS-stub
+acceptance only. Management reports owned-tree counts with that limitation. Optional framework
+serve/proxy and bootstrap/plugin-install launch paths are blocked pending their ownership profile;
+the retained framework package is not assumed to supply the forthcoming durable resource ledger.
+
 Framework 0.18.0 provides same-user authenticated loopback reporting to the optional Windows MCP
 Service Manager. EPLAN does not install a manager, select a different plugin route or register a
 Universal Tools broker. Canonical plugin identity is `eplan@eplan-local`; each owning server/host

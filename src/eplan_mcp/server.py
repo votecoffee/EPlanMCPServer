@@ -162,8 +162,11 @@ def create_server(service: DrawingService, port: int = 8816, *, workflow: bool =
     @tool(control=True)
     def eplan_concurrency_status() -> dict:
         """Inspect per-process request admission, queue and worker limits; control calls remain responsive under load."""
+        from .owned_processes import snapshot
+
         return {
             **scheduler.status(),
+            "resource_ownership": snapshot(),
             "operation_observations": operations.snapshot(),
             "shared_worker_process_limit": service.config.max_worker_processes,
             "shared_oda_process_limit": service.config.max_oda_processes,

@@ -159,6 +159,10 @@ class RequestScheduler:
                     with self.guard:
                         self.active -= 1
 
+        from .owned_processes import cancel_requested
+
+        cancellation = threading.Event()
+        cancellation_token = cancel_requested.set(cancellation)
         try:
             # A disconnected caller does not abandon a running state mutation. Its durable receipt remains queryable.
             work = asyncio.create_task(
@@ -171,6 +175,7 @@ class RequestScheduler:
             try:
                 return await asyncio.shield(work)
             except asyncio.CancelledError:
+                cancellation.set()
                 from .operation_progress import current
 
                 if hook := current.get():
@@ -191,6 +196,7 @@ class RequestScheduler:
                     pass
                 raise
         finally:
+            cancel_requested.reset(cancellation_token)
             with self.guard:
                 if control:
                     self.pending_controls -= 1

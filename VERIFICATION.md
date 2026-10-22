@@ -30,6 +30,13 @@ extraction and exercises import/query/check/trace/compare/export plus receipt re
 
 ## Acceptance boundaries
 
+Owned-resource lifecycle changes currently have pure Windows-API stub and in-process admission
+checks only. They launch no process, job, server, plugin or native application. Full regression,
+real Windows containment/parent-death/descendant cleanup, clean client EOF, installed runtime and
+cross-manager ledger recovery are pending. See [resource ownership](docs/resource-ownership.md).
+Bootstrap and framework startup refusals are intentional pending acceptance; earlier successful
+protocol/package checks do not validate the changed launch implementation.
+
 Included report examples are synthetic custom schemas. Native EPLAN projects, vendor report
 schemes, project restoration and native check-runs require separate acceptance. Package and
 protocol checks do not establish engineering correctness or physical continuity.

@@ -19,6 +19,7 @@ import pymupdf
 from . import EXTRACTION_VERSION, __version__
 from .config import SUPPORTED, Config
 from .coordination import Coordinator
+from .owned_processes import run as run_owned
 from .worker_launch import worker_command
 
 
@@ -221,7 +222,7 @@ class DrawingService:
                 # A Windows venv launcher can stall when it inherits the active MCP input pipe.
                 # Workers take all input through argv/files and must never read that pipe.
                 with self.coordinator.worker(native=extension in {".dwg", ".dwt", ".dws"}):
-                    completed = subprocess.run(
+                    completed = run_owned(
                         args,
                         check=False,
                         stdin=subprocess.DEVNULL,
@@ -485,7 +486,7 @@ class DrawingService:
             )
             opts = {"creationflags": subprocess.CREATE_NO_WINDOW} if os.name == "nt" else {}
             with self.coordinator.worker(native=source.suffix.lower() in {".dwg", ".dwt", ".dws"}):
-                result = subprocess.run(
+                result = run_owned(
                     args,
                     check=False,
                     stdin=subprocess.DEVNULL,
@@ -521,7 +522,7 @@ class DrawingService:
                 raise ValueError("Source changed before table detection")
             opts = {"creationflags": subprocess.CREATE_NO_WINDOW} if os.name == "nt" else {}
             with self.coordinator.worker():
-                result = subprocess.run(
+                result = run_owned(
                     worker_command(
                         "_tables",
                         str(staged),
