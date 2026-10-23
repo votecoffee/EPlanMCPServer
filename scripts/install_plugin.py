@@ -5,7 +5,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import sys
 from pathlib import Path
 
 FILES = (
@@ -17,42 +16,38 @@ FILES = (
 )
 
 
-def prepare(repo: Path, config: Path | None = None, *, frontend="legacy", host_state: Path | None = None):
+def prepare(
+    repo: Path,
+    config: Path | None = None,
+    *,
+    frontend="legacy",
+    host_state: Path | None = None,
+    stable_root: Path | None = None,
+):
     repo = repo.resolve()
     template = repo / "plugins" / "eplan"
     config = (config or repo / ".local" / "config.json").resolve(strict=True)
-    python = repo / ".venv" / ("Scripts/python.exe" if sys.platform == "win32" else "bin/python")
-    if not python.is_file():
-        raise ValueError("Run InstallAndRun.cmd --install-only first")
     from eplan_mcp.config import Config
     from eplan_mcp.release_version import DISPLAY_VERSION, PACKAGE_VERSION
 
     Config.load(config)
+    if stable_root is None:
+        raise ValueError("Prepare a reviewed stable installation before publishing a plugin binding")
+    try:
+        from .stable_launcher import verify
+    except ImportError:
+        from stable_launcher import verify
+    selection, _, snapshot = verify(stable_root)
+    if json.loads((snapshot / "config.json").read_bytes()) != json.loads(config.read_bytes()):
+        raise ValueError("Plugin configuration differs from selected immutable runtime")
     server = {
         "type": "stdio",
-        "command": str(python),
-        "args": ["-m", "eplan_mcp", "--config", str(config), "serve"],
-        "cwd": str(repo),
+        "command": selection["interpreter"],
+        "args": ["-I", "-B", str(stable_root / "Start-Mcp.py")],
+        "cwd": str(stable_root),
     }
     if frontend == "framework":
-        if host_state is None or not (host_state / "eplan-application.json").is_file():
-            raise ValueError("Prepare a dedicated app framework host before preparing its frontend")
-        from eplan_mcp.framework_entry import verify_deployment
-
-        publication = json.loads((host_state / "eplan-application.json").read_bytes())
-        arguments = publication["backends"][0]["service"]["transport"]["args"]
-        deployment = verify_deployment(Path(arguments[-2]).parent, arguments[-1])
-        if publication["id"] != "eplan" or Path(deployment["config"]).resolve() != config:
-            raise ValueError("Framework frontend must use this app and selected configuration")
-        server["args"] = [
-            "-m",
-            "eplan_mcp",
-            "--config",
-            str(config),
-            "framework-proxy",
-            "--host-state",
-            str(host_state.resolve()),
-        ]
+        raise ValueError("Optional framework host is not selected; stable direct binding only")
     elif frontend != "legacy" or host_state is not None:
         raise ValueError("Select legacy or framework explicitly; host state applies only to framework")
     portable = {
@@ -118,12 +113,23 @@ def main():
     parser.add_argument("--config", type=Path, help="Use this app configuration in the generated binding")
     parser.add_argument("--frontend", choices=["legacy", "framework"], default="legacy")
     parser.add_argument("--host-state", type=Path, help="Dedicated app-owned framework host state")
+    parser.add_argument("--stable-root", type=Path, help="Reviewed durable application installation")
     args = parser.parse_args()
     repo = Path(__file__).resolve().parents[1]
     config = (args.config or repo / ".local/config.json").resolve(strict=True)
 
     if args.prepare_only:
-        print(json.dumps(prepare(repo, config, frontend=args.frontend, host_state=args.host_state)))
+        print(
+            json.dumps(
+                prepare(
+                    repo,
+                    config,
+                    frontend=args.frontend,
+                    host_state=args.host_state,
+                    stable_root=args.stable_root,
+                )
+            )
+        )
         return
     raise ValueError("Plugin installation is blocked pending owned CLI/wrapper lifecycle acceptance")
 

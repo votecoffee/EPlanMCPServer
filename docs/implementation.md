@@ -2,6 +2,11 @@
 
 ## Architecture and supported profiles
 
+Published direct connections now use the [stable deployment](stable-launcher.md)
+contract: retained app-owned engine/runtime, atomic selection, integrity refusal,
+peer-preserving updates and exact owner-generation cleanup. A source setup path
+or disposable plugin cache is not a published server entry point.
+
 EPLAN owns its standalone SDK 2.3 stdio server, `eplan@eplan-local` plugin and
 `eplan-analysis` skill. The shared service layer owns analysis and state changes;
 MCP and CLI adapters remain thin callers. Start discovery with `eplan_get_workflow`
@@ -41,8 +46,9 @@ framework wheel, installs hash-locked dependencies and this source package into
 ```
 
 The default workspace is empty and private; explicit `--root` values are first-setup
-only. Existing configuration is preserved. `--prepare-plugin` creates local plugin
-files without registration or enablement. Setup does not write global Codex TOML,
+only. Existing configuration is preserved. `scripts/install_plugin.py --prepare-only`
+with `--stable-root` creates local plugin files without registration or enablement.
+The old source setup `--prepare-plugin` flag refuses before installation. Setup does not write global Codex TOML,
 install the manager, start a server, or select a native-reader profile. The retained
 `--stdio` flag explains the direct run command and fails before installing anything.
 No CLI bootstrap wrapper is silently promoted into a native lifetime profile.

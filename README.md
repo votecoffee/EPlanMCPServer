@@ -2,7 +2,7 @@
 
 Source-preserving EPLAN export, electrical report and drawing analysis for MCP
 
-Standalone Codex plugin, shared Python service and CLI. Version **26.1023.114959**.
+Standalone Codex plugin, shared Python service and CLI. Version **26.1023.170645**.
 The main purpose is to extract device names/descriptions, network addresses, PLC I/O points,
 and the power or compressed-air supplies feeding each device.
 The repository uses `EPlanMCPServer`; the Python distribution uses the normalized package name
@@ -44,6 +44,27 @@ semantic EPLAN project APIs and native editing are not implemented.
 
 ## Install
 
+Published connections use an app-owned `Start-Mcp.py`, stable working directory,
+retained Python engine and immutable versioned runtimes. Atomic selection changes
+apply to new connections; live peers keep their original runtime. Launch verifies
+the selected inventory and never installs, discovers a newer directory or falls
+back after failure. Plugin-cache removal does not remove this entry point.
+
+Prepare a reviewed deployment through the root installer (Windows Python 3.13):
+
+```powershell
+.\Install.cmd --stable-deploy --help
+.\Install.cmd --stable-deploy --root "C:\Apps\EPlanMCPServer" --runtime "C:\Reviewed\runtime" --wheel "C:\Packages\eplan_mcp_server-RELEASE-py3-none-any.whl" --wheel-sha256 REVIEWED_SHA256 --config "C:\Reviewed\config.json" --dependencies "C:\Reviewed\dependencies.json"
+```
+
+Updates require `--expected-current` with the prior selection's SHA-256. Keep old
+runtime generations and receipts. Prepare plugin bindings separately with
+`scripts/install_plugin.py --prepare-only --stable-root` and the matching `--config`.
+Source plugin templates retain the standalone skill but publish no implicit HTTP
+route. Host settings publication is a separate serialized operation; no installer
+edits global Codex TOML or immutable plugin caches. See the
+[stable deployment guide](docs/stable-launcher.md).
+
 `Install.cmd` and the retained `InstallAndRun.cmd` install only: neither starts a
 server/native application, enables a plugin, installs the manager, or writes global
 Codex settings. Use `--help` before setup. Existing configuration is preserved.
@@ -73,8 +94,9 @@ Source commit 5b2cac50ca24d21a15b732e0424bb02fd794e1fb
 
 Dependencies install into `.venv`; roots, caches, receipts, artifacts and plugin bindings stay
 under ignored `.local`. Existing configuration and explicit integration preferences are preserved.
-`--offline` uses cached dependencies/build wheels only. `--prepare-plugin` stages
-the standalone plugin locally without registering or enabling it. No customer roots
+`--offline` uses cached dependencies/build wheels only. Stable plugin preparation
+requires an explicitly reviewed installation; source setup alone does not publish
+a checkout-based server connection. No customer roots
 are inferred. Exit codes and quoted arguments propagate through both CMD wrappers.
 
 Start an explicitly selected configuration through the app-owned entry point:

@@ -43,7 +43,7 @@ def fake_windows(tmp_path, monkeypatch):
             raise OSError("synthetic assignment refusal")
 
     def create_job(security, name):
-        assert name == ""  # pywin32 requires an empty string, not None, for an unnamed job.
+        assert name in ("", owned._job_name)
         return Handle("job")
 
     def terminate(job, code):
@@ -96,6 +96,7 @@ def fake_windows(tmp_path, monkeypatch):
     for name, module in modules.items():
         monkeypatch.setitem(sys.modules, name, module)
     claims = SimpleNamespace(
+        owner=SimpleNamespace(identity=SimpleNamespace(model_dump=lambda **kw: {"pid": os.getpid()})),
         begin=lambda label: "f" * 32,
         bind=lambda *args: events.append(("ledger_bind",)),
         barrier=lambda *args: events.append(("ledger_barrier",)),

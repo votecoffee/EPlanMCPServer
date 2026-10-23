@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "version": "26.1023.114959",
-  "display_version": "26.1023.114959",
+  "version": "26.1023.170645",
+  "display_version": "26.1023.170645",
   "files": {
     ".gitattributes": {
       "sha256": "d31f0c193272fb7ef087d9f85da6430f98fca11835aa3c5483a49bdc5c1ad6fb",
@@ -16,12 +16,12 @@
       "bytes": 1876
     },
     "Install.cmd": {
-      "sha256": "8fc070f4f5f10655ae6bbcac818715f3aff35d6f7e2112cff84c805cb924458b",
-      "bytes": 88
+      "sha256": "5688feae98ff96bbbe1ceec3e07b477c1e52aa25f7c95ca1dda9e82f8bce78c2",
+      "bytes": 112
     },
     "InstallAndRun.cmd": {
-      "sha256": "36ec1ca54824da6884614f60b5dc95c581048997322dbb89a0070ed58f34d0a8",
-      "bytes": 754
+      "sha256": "9d0043f21cb9d461be2aba039b8f097d687294db9e24a5bd0e441d97d0e40e79",
+      "bytes": 778
     },
     "LICENSE": {
       "sha256": "e1e2d2d0f228c8956d1f5e3e108c35919c88e37e76b4243f21b7ef5307ec3367",
@@ -32,12 +32,12 @@
       "bytes": 477
     },
     "README.md": {
-      "sha256": "b77a8e7a16db794c381cae03614fad39d242a7e253ddad2a0635b6ce7d73c4ee",
-      "bytes": 18633
+      "sha256": "4d9ce6324767f48234a8a087d47ac718e6e59ea2e6f331b202df363f16f3e388",
+      "bytes": 20012
     },
     "VERIFICATION.md": {
-      "sha256": "ddb1138110586c5a24dbbe278df4db0315ba21129520172ac7128517263cef9f",
-      "bytes": 3892
+      "sha256": "51fb78058de7cd9ec71141124a49f99dd5a5caa209a3ac38c6f0f4e116d9d79f",
+      "bytes": 4772
     },
     "docs/device-information.md": {
       "sha256": "5e3d552862f90b6ce5b5068ba8d7a47a23a1e4cbac689da953bc0040e0f334b8",
@@ -52,8 +52,8 @@
       "bytes": 130
     },
     "docs/implementation.md": {
-      "sha256": "fff2abc4427bef6cfc369f55b9709785a0950e8e7045281b9df45878ca455151",
-      "bytes": 6130
+      "sha256": "f8a27169a05533ae3a8c2083fc393721d27dc2f26c840e6ca66fc84ee0109661",
+      "bytes": 6559
     },
     "docs/local-readers.md": {
       "sha256": "893ae75848c63b4476b0066fbbf95a69fb194ddeb74a2f3dba09ca598e6c75f4",
@@ -78,6 +78,10 @@
     "docs/service-management.md": {
       "sha256": "bf467e4590121a08089498dc68de78c5300d7637514de586460d1b2247719b1d",
       "bytes": 5836
+    },
+    "docs/stable-launcher.md": {
+      "sha256": "6510e731ba81dfd07b5ffd6f28858e5fbcc372232eaca4a7b54c5ba2c9a28b7b",
+      "bytes": 4358
     },
     "examples/config.example.json": {
       "sha256": "3dad086567d3e64c15981b79b9f0e12b0a1580bc72b24613e8c1b3bbe8f97aa4",
@@ -128,19 +132,19 @@
       "bytes": 533
     },
     "plugins/eplan/.codex-plugin/plugin.json": {
-      "sha256": "a5b19c5b372d32d782bda676fe98b78d0454d16a84ffdf9b37cb48581ad656a4",
+      "sha256": "d00615a3cbf1a64ff104fed1c3088664439304ed2b6b9b316deea14d8f0aa684",
       "bytes": 1012
     },
     "plugins/eplan/.mcp.json": {
-      "sha256": "8117118dceafae22c4f11a00a73d5cc5368257e0541349487533fac749a660e3",
-      "bytes": 121
+      "sha256": "d8e397af03b5b032f21d0aa967086f0c78b33c87b76f2e9898ae0a144df7de02",
+      "bytes": 23
     },
     "plugins/eplan/mcp.json": {
-      "sha256": "8117118dceafae22c4f11a00a73d5cc5368257e0541349487533fac749a660e3",
-      "bytes": 121
+      "sha256": "d8e397af03b5b032f21d0aa967086f0c78b33c87b76f2e9898ae0a144df7de02",
+      "bytes": 23
     },
     "plugins/eplan/plugin.json": {
-      "sha256": "a5b19c5b372d32d782bda676fe98b78d0454d16a84ffdf9b37cb48581ad656a4",
+      "sha256": "d00615a3cbf1a64ff104fed1c3088664439304ed2b6b9b316deea14d8f0aa684",
       "bytes": 1012
     },
     "plugins/eplan/skills/eplan-analysis/SKILL.md": {
@@ -148,7 +152,7 @@
       "bytes": 1491
     },
     "pyproject.toml": {
-      "sha256": "a697bfcbc2456bb51b1f3d9e566ea65d46b2e271fe0312d99da6426402d37028",
+      "sha256": "cb513722805177d1d78a0ebcb0cc86f2cbaa82b24913a954bce354e880fe0268",
       "bytes": 987
     },
     "requirements-dev-lock.txt": {
@@ -176,20 +180,28 @@
       "bytes": 337
     },
     "scripts/install_plugin.py": {
-      "sha256": "81ecb3b1f8de6f514cf6dd8de6940480ace9c29365336b6f3b97837fdbaab94e",
-      "bytes": 5338
+      "sha256": "2d2705db948b5f83377664c70cc2f02efadc2b8a5135ec8148cae806dbba08e3",
+      "bytes": 5169
     },
     "scripts/launcher.py": {
-      "sha256": "58e40f9fb84f9b07feb3b82f5464f8aa2be1de832ca13a73225e8584da8ccc70",
-      "bytes": 4153
+      "sha256": "a9cf8d81ec299e049eff307f228e9e3d7cb11b53bd55cd5668a753bf279b06c9",
+      "bytes": 4958
     },
     "scripts/package.py": {
-      "sha256": "30fd1e2a7924aa19b3ebe3ec509fd41a3a8dda509a114ede5189faeea7655e8c",
-      "bytes": 5193
+      "sha256": "4cd31f9f1f73327805d142af35838407f0ccc15d2f165559b60cf48ac89dc1f2",
+      "bytes": 5217
     },
     "scripts/protocol_smoke.py": {
       "sha256": "6d55570c6c0d86c43c9724962e415d0dc9decee94bb56fb0a9e6e83c4105eb3d",
       "bytes": 2935
+    },
+    "scripts/stable_install.py": {
+      "sha256": "e67492c50de551710d4063558dc84f108c0292147460ffcae272947513922307",
+      "bytes": 11130
+    },
+    "scripts/stable_launcher.py": {
+      "sha256": "6d6c60d0c37583b95f340c1d40f8907c59d8170ce5562222eb5d9b60eacf0adf",
+      "bytes": 6520
     },
     "scripts/stamp_release.py": {
       "sha256": "003eba0eb30258f1e2aa9153252ff2a35894cca7781c259be7804c13b054b91e",
@@ -292,8 +304,8 @@
       "bytes": 6819
     },
     "src/eplan_mcp/management.py": {
-      "sha256": "f143459dc521b3b156c5757ac39b688f009c175b50012851e990ad72588deb73",
-      "bytes": 5170
+      "sha256": "12c4641ea03142140f3814b28c55b414c5ba89762c7fc5ffd622d190ee36c9da",
+      "bytes": 5943
     },
     "src/eplan_mcp/native_threads.py": {
       "sha256": "3023a0d487e7ec13c40d4ce3bf2065be22a52928d377578ceb93fdbbc99c469c",
@@ -304,8 +316,8 @@
       "bytes": 3170
     },
     "src/eplan_mcp/owned_processes.py": {
-      "sha256": "99e55863e4efe757721c0676e0e7ca231c0d57eb7e371cfaffd8dba67e922b4d",
-      "bytes": 16185
+      "sha256": "32827eae20816e408926556d878414340bfa265abc6fb35594cf7db57aad4fd9",
+      "bytes": 16504
     },
     "src/eplan_mcp/references/device-information.md": {
       "sha256": "8be4fc8e31cb856a6154be438854527869fbaa8510ac4879b7d86003f566c226",
@@ -324,7 +336,7 @@
       "bytes": 5167
     },
     "src/eplan_mcp/release_version.py": {
-      "sha256": "729f4281a2ae42b915426ed506297cc12f2e2eb60baafef01953b60d22e973ac",
+      "sha256": "20e7d30331638d1821f0af277400fe77b4b5f7092ff84eeac997eb27ac2243d8",
       "bytes": 1442
     },
     "src/eplan_mcp/render.py": {
@@ -336,16 +348,16 @@
       "bytes": 2371
     },
     "src/eplan_mcp/resource_claims.py": {
-      "sha256": "63c8215d8f4112bfba676040ac3104b201895ee22d8f592984b788ce6f7b4811",
-      "bytes": 2853
+      "sha256": "ac91d5bd19d9924315ab638bb32f86d63cf3cda083b92a267ac4a215cfedc07f",
+      "bytes": 6928
     },
     "src/eplan_mcp/reviewed_evidence.py": {
       "sha256": "36d595c263b91e25b0f02ce538d246f82e6ef4a8a52d476bff6c90f9ab9f8a0e",
       "bytes": 5889
     },
     "src/eplan_mcp/server.py": {
-      "sha256": "24928a60e980b3c6684e41b328c21434d49889e846df461234dc508562797602",
-      "bytes": 14761
+      "sha256": "c4808c7b3c03ec7b6168781bb479b1925a4f3cb8cc0a7fe51f6623f72a9a6635",
+      "bytes": 15838
     },
     "src/eplan_mcp/service.py": {
       "sha256": "e2bc0385d1db6db79686171dc7f7ea0849b00e565d3ca4f4251ba1a1c9597027",
@@ -400,8 +412,8 @@
       "bytes": 3406
     },
     "tests/test_framework_dependency.py": {
-      "sha256": "23d1308a1339ac9432d94aec1f5e12f0025dc5f717876738c9a18bb6ef7336f1",
-      "bytes": 3601
+      "sha256": "5bfc7259e42543f5e7412a512932e55d7ae147d6e577fe70b27a5f0acb639e52",
+      "bytes": 3658
     },
     "tests/test_guidance.py": {
       "sha256": "2785e49e683449fb356f43642500bddff2aa4e244566f9d99e1ca401b0c5167d",
@@ -440,16 +452,16 @@
       "bytes": 2407
     },
     "tests/test_owned_processes.py": {
-      "sha256": "1a3b9c5d7940eeaed18591b1ce586a698f24e76ff52fb67375bf47d639e093f9",
-      "bytes": 9952
+      "sha256": "ddc53f82a07dcf03073e1122d3500362998aa7fac26d7e8c4fdac3dd72265249",
+      "bytes": 10007
     },
     "tests/test_package.py": {
       "sha256": "82df83c6f0d654eb328ad72819900cadad1afcefc73a4beaf75a8995104e9027",
       "bytes": 1730
     },
     "tests/test_plugin.py": {
-      "sha256": "51c08574c72dfb2b140e0e77beba23508306b69ec0118bd59abc9ad23942c2f3",
-      "bytes": 2427
+      "sha256": "a03ca368ad768c4a6367945b6d6289d0d5fcf87f76f2bafa914e41862029177d",
+      "bytes": 1949
     },
     "tests/test_plugin_policy.py": {
       "sha256": "99eede1e87cbdbd45c0deeedeafe85ee871992087963f831ba7bfce76bce72bc",
@@ -460,20 +472,28 @@
       "bytes": 2978
     },
     "tests/test_release_version.py": {
-      "sha256": "f88e34620591ededcc263ab0c69ce0da6d3da61d7415209ebe8fd49765308caf",
-      "bytes": 5084
+      "sha256": "93a45f5e6fc299fff6e059ba54ddd5b4441b9bb457d7dcee3ca92319dcb811ee",
+      "bytes": 4973
     },
     "tests/test_resource_claims.py": {
-      "sha256": "4ce032ad66f1bf9fd16ae45bbbc776edaba8a319a8149e6c2c673ba10e95c05f",
-      "bytes": 3398
+      "sha256": "1d8d6f64ecc66024c8d5dcbc09f166b95abcbdc39c745597b281bb5ee5f73dc8",
+      "bytes": 5084
     },
     "tests/test_reviewed_evidence.py": {
       "sha256": "5bb82f22a1122d757b3b19b1c60c33834534999f6af024608f9108ee38e0aebe",
       "bytes": 9720
     },
+    "tests/test_stable_launcher.py": {
+      "sha256": "012b35e2cc37b76a479e2bd16df8598977e02d43f3c17ea06bfe35a4b37062ef",
+      "bytes": 5016
+    },
     "tests/test_toml_publication.py": {
       "sha256": "2d0a7b800e17d0d0b906b2f66f5474ab3b3a93ae7441088dd9d6cc4c4ea0a877",
       "bytes": 3417
+    },
+    "tests/test_tool_contract.py": {
+      "sha256": "3161c4a581ab6f22b143050e3d50731b94e1f202319d6f2bf7ae471bca4e88c2",
+      "bytes": 1406
     }
   }
 }

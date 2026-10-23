@@ -88,7 +88,10 @@ def main():
     files = selected_files(repo)
     from eplan_mcp.release_version import DISPLAY_VERSION, PACKAGE_VERSION
 
-    if tomllib.loads((repo / "pyproject.toml").read_text(encoding="utf-8"))["project"]["version"] != PACKAGE_VERSION:
+    if (
+        tomllib.loads((repo / "pyproject.toml").read_text(encoding="utf-8"))["project"]["version"]
+        != PACKAGE_VERSION
+    ):
         raise ValueError("Package version differs from fixed release identity")
     manifest = {
         "schema_version": 1,

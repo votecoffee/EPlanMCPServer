@@ -40,11 +40,30 @@ def main(argv=None):
     )
     parser.add_argument("--offline", action="store_true", help="Use cached dependency/build wheels only")
     parser.add_argument(
+        "--stable-deploy",
+        nargs=argparse.REMAINDER,
+        help="Prepare/select a reviewed retained runtime; remaining flags go to stable_install.py",
+    )
+    parser.add_argument(
         "--stdio",
         action="store_true",
         help="Retained legacy flag; use the explicit server command after setup",
     )
     args = parser.parse_args(argv)
+    if args.prepare_plugin:
+        parser.error(
+            "Use scripts/install_plugin.py --prepare-only --stable-root with a reviewed stable deployment"
+        )
+    if args.stable_deploy is not None:
+        if args.stdio or args.root or args.prepare_plugin:
+            parser.error("Stable deployment is separate from source setup switches")
+        try:
+            from .stable_install import main as stable_main
+        except ImportError:
+            from stable_install import main as stable_main
+        sys.path.insert(0, str(REPO / "src"))
+        stable_main(args.stable_deploy)
+        return 0
     if args.stdio:
         parser.error(
             "This installer does not start servers; run .venv\\Scripts\\python.exe -m eplan_mcp --config .local/config.json serve explicitly"

@@ -7,6 +7,7 @@ import json
 import os
 import threading
 from contextlib import contextmanager
+from pathlib import Path
 
 from universal_tools.management import ComponentVersion, ManagedService, ManagedStatus, RestartResult
 
@@ -85,6 +86,20 @@ class Reporting:
             versions[key] = ComponentVersion(
                 installed=installed, running=running, available=None, update_pending=False
             )
+        if root := os.environ.get("EPLAN_INSTALL_ROOT"):
+            try:
+                selection = json.loads((Path(root) / "launcher/current.json").read_bytes())
+                selected = canonical_identity(selection["app_version"])
+                versions["app"] = ComponentVersion(
+                    installed=selected,
+                    running=__package_version__,
+                    available=None,
+                    update_pending=selected != __package_version__,
+                )
+            except (OSError, ValueError, KeyError):
+                versions["app"] = ComponentVersion(
+                    installed="unknown", running=__package_version__, available=None, update_pending=False
+                )
         installed = "unknown"
         try:
             metadata = json.loads((self.state / "management-installation.json").read_bytes())
@@ -118,7 +133,7 @@ class Reporting:
                 + __version__
                 + "; owned child trees="
                 + str(ownership["active_trees"])
-                + "/16; handle-bound cleanup; runtime acceptance pending; native EPLAN not connected"
+                + "/16; handle-bound cleanup; direct-profile evidence is artifact-specific; native EPLAN not connected"
             ),
             active_operations=pending,
             versions=versions,

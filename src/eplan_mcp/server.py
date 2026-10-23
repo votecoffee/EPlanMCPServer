@@ -3,11 +3,13 @@ from __future__ import annotations
 import inspect
 import json
 from functools import wraps
-from typing import Any
+from typing import Annotated, Any
 
 from mcp.server.caching import CacheHint
 from mcp.server.mcpserver import Context
+from mcp.server.mcpserver.exceptions import ToolError
 from mcp.types import ToolAnnotations
+from pydantic import Field
 
 try:
     from mcp.server import MCPServer
@@ -95,6 +97,8 @@ def create_server(service: DrawingService, port: int = 8816, *, workflow: bool =
                             if not hook.started
                             else "uncertain"
                         )
+                    if isinstance(error, ValueError):
+                        raise ToolError(str(error)) from error
                     raise
                 finally:
                     current.reset(token)
@@ -118,9 +122,24 @@ def create_server(service: DrawingService, port: int = 8816, *, workflow: bool =
                 )
 
             signature = getattr(wrapped, "__signature__", original_signature)
+            # Expose actual shared pagination bounds; specialized batch operations
+            # retain their own narrower validators below.
+            annotations = dict(wrapped.__annotations__)
+            parameters = []
+            for parameter in signature.parameters.values():
+                if parameter.name == "offset":
+                    parameter = parameter.replace(annotation=Annotated[int, Field(ge=0, strict=True)])
+                elif parameter.name == "limit":
+                    maximum = 5 if fn.__name__ == "eplan_index_project" else 200
+                    parameter = parameter.replace(
+                        annotation=Annotated[int, Field(ge=1, le=maximum, strict=True)]
+                    )
+                annotations[parameter.name] = parameter.annotation
+                parameters.append(parameter)
+            wrapped.__annotations__ = annotations
             wrapped.__signature__ = signature.replace(
                 parameters=[
-                    *signature.parameters.values(),
+                    *parameters,
                     inspect.Parameter(
                         "mcp_context", inspect.Parameter.KEYWORD_ONLY, default=None, annotation=Context
                     ),

@@ -1,5 +1,6 @@
 """Shared-ledger integration with synthetic process identities only; no OS process launches."""
 
+import json
 import os
 
 import pytest
@@ -92,3 +93,43 @@ def test_uncertain_tree_cleanup_keeps_claim_for_review(claims):
     with pytest.raises(ValueError, match="remain unresolved"):
         owner.close()
     assert owner.ledger.get(resource).state == "active"
+
+
+@pytest.mark.parametrize("gate", ["eligible", "live-owner", "job-present", "barrier", "legacy"])
+def test_dead_full_generation_reconciliation_is_narrow(claims, tmp_path, gate):
+    old, driver = claims
+    resource = old.begin("Disposable parser")
+    old.bind(resource, 777, 101)
+    if gate == "barrier":
+        old.barrier(resource, "Uncertain evidence; do not clear")
+    record = old.ledger.get(resource)
+    proof = {
+        "framework_resource_id": resource,
+        "owner_identity": record.owner.model_dump(mode="json"),
+        "owner_job_contract": 1,
+        "owner_job": "Local\\EPlanMCP-owner-" + record.owner_id,
+        "state": "running",
+    }
+    if gate == "legacy":
+        proof.pop("owner_job_contract")
+    evidence = tmp_path / "owned"
+    evidence.mkdir()
+    original = json.dumps(proof).encode()
+    (evidence / "original.json").write_bytes(original)
+    capture = driver.capture
+    driver.capture = lambda pid: {**capture(pid), "created": "300" if pid == os.getpid() else "200"}
+    driver.state = lambda identity: (
+        "alive"
+        if identity["created"] == "300" or (gate == "live-owner" and identity["created"] == "100")
+        else "absent"
+    )
+    ResourceClaims(
+        ledger=old.ledger, owner_id="c" * 32, evidence=evidence, job_absent=lambda name: gate != "job-present"
+    )
+    updated = old.ledger.get(resource)
+    assert (updated.state == "released") == (gate == "eligible")
+    assert (evidence / "original.json").read_bytes() == original
+    if gate == "eligible":
+        assert updated.reconciliation and list(evidence.glob("recovery-*.json"))
+    if gate == "barrier":
+        assert updated.recovery_barrier

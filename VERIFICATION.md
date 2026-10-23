@@ -1,5 +1,20 @@
 # Verification
 
+## Stable launch publication
+
+Run the stable launcher, tool-contract, resource-claim, owned-process, installer,
+plugin, instance-admission and release-version tests for source changes. Require
+separate retained Windows protocol evidence through the installed stable entry:
+cache independence, exact immutable selection, connected peer preservation,
+current guidance, synthetic reads, EOF before SDK cleanup, active owner death,
+dead-job reconciliation and parent loss with a retained duplicate writer.
+See [stable deployment](docs/stable-launcher.md).
+
+Legacy in-process domain fixtures that launch workers without an exclusive owner
+scope and private evidence fail the ownership gate. Do not disable containment
+to make those fixtures pass, or present a focused passing run as an entirely green
+historical suite. Keep its failures separate from actual installed protocol proof.
+
 ## Source-only checks
 
 Run from a development environment with the reviewed framework wheel and test tools:

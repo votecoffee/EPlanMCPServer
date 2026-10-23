@@ -42,13 +42,14 @@ def test_modified_framework_wheel_is_rejected_before_installation(tmp_path):
     assert not (tmp_path / ".local/wheels").exists()
 
 
-def test_setup_requires_explicit_local_framework_artifact(tmp_path):
+def test_setup_requires_explicit_local_framework_artifact(tmp_path, monkeypatch):
     with pytest.raises(ValueError, match="--framework-wheel"):
         stage(tmp_path)
-    from scripts.launcher import main
+    from scripts import launcher
 
-    with pytest.raises(ValueError, match="lifecycle profile is unaccepted"):
-        main()
+    monkeypatch.setattr(launcher, "REPO", tmp_path)
+    with pytest.raises(ValueError, match="--framework-wheel"):
+        launcher.main([])
 
 
 def test_explicit_verified_framework_wheel_replaces_older_cache(tmp_path, monkeypatch):

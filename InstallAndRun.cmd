@@ -1,5 +1,5 @@
 @echo off
-setlocal
+setlocal DisableDelayedExpansion
 pushd "%~dp0" || exit /b 1
 
 if exist ".venv\Scripts\python.exe" goto existing_environment

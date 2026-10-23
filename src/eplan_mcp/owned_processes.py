@@ -26,6 +26,7 @@ _evidence = None
 _owner_job = None
 _exclusive_owner = False
 _claims = None
+_job_name = "Local\\EPlanMCP-owner-" + _owner
 
 
 def _resource_claims():
@@ -33,7 +34,7 @@ def _resource_claims():
     if _claims is None:
         from .resource_claims import ResourceClaims
 
-        _claims = ResourceClaims(owner_id=_owner)
+        _claims = ResourceClaims(owner_id=_owner, evidence=_evidence)
     return _claims
 
 
@@ -47,7 +48,7 @@ def _contain_owner(api, kernel):
     with _guard:
         if _owner_job is not None:
             return
-        candidate = api.CreateJobObject(None, "")
+        candidate = api.CreateJobObject(None, _job_name)
         try:
             limits = api.QueryInformationJobObject(candidate, api.JobObjectExtendedLimitInformation)
             limits["BasicLimitInformation"]["LimitFlags"] = (
@@ -96,7 +97,7 @@ def snapshot():
             "max_active_trees": 16,
             "ownership": "Exclusive app-launched children only; PIDs are diagnostic, handles authorize cleanup",
             "attached_or_shared_apps": "Not acquired; never enumerated or terminated",
-            "runtime_acceptance": "pending",
+            "runtime_acceptance": "Artifact-specific selected direct-profile evidence; status is not a deployment certificate",
             "shared_ledger": _claims.snapshot() if _claims is not None else {"initialized": False},
             "items": [dict(item[0]) for item in _active.values()] + [dict(r) for r in _recent[-16:]],
         }
@@ -218,6 +219,9 @@ def run(
         record["framework_resource_id"] = _resource_claims().begin(
             "EPLAN offline worker: " + Path(args[0]).name
         )
+        record["owner_identity"] = _claims.owner.identity.model_dump(mode="json")
+        record["owner_job"] = _job_name
+        record["owner_job_contract"] = 1
         try:
             _persist(record)
         except BaseException:

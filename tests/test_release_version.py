@@ -101,13 +101,11 @@ def test_prepared_plugin_package_uses_fixed_canonical_identity(tmp_path):
         json.dumps({"roots": {"synthetic": str(root)}, "state_dir": str(tmp_path / "state")}),
         encoding="utf-8",
     )
-    prepared = prepare(tmp_path, config)
-    assert prepared["display_version"] == __version__
-    assert prepared["package_version"] == __package_version__
-    package = Path(prepared["package"])
-    assert package.name.startswith("eplan-" + __package_version__ + "-")
-    for relative in ("plugin.json", ".codex-plugin/plugin.json"):
-        assert json.loads((package / relative).read_bytes())["version"] == __package_version__
+    with pytest.raises(ValueError, match="stable installation"):
+        prepare(tmp_path, config)
+    # Source templates contain skills but no unsafe implicit HTTP/checkout route.
+    for name in ("mcp.json", ".mcp.json"):
+        assert json.loads((tmp_path / "plugins/eplan" / name).read_bytes())["mcpServers"] == {}
 
 
 def test_management_compares_numeric_app_plugin_components(tmp_path, monkeypatch):
