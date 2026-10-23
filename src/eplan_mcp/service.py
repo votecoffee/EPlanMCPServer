@@ -17,7 +17,7 @@ import ezdxf
 import pymupdf
 
 from . import EXTRACTION_VERSION, __package_version__, __version__
-from .config import PROFILE, SUPPORTED, Config
+from .config import Config
 from .coordination import Coordinator
 from .owned_processes import run as run_owned
 from .worker_launch import worker_command
@@ -79,8 +79,7 @@ def paginate(rows: list, offset: int = 0, limit: int = 100) -> dict:
 
 class DrawingService:
     def __init__(self, config: Config):
-        if config.oda_executable is not None:
-            raise ValueError("Vendor/native converters are disabled in the offline profile")
+        config.validate_converter()
         self.config = config
         self.coordinator = Coordinator(
             config.state, config.lock_timeout_seconds, config.max_worker_processes, config.max_oda_processes
@@ -128,11 +127,11 @@ class DrawingService:
             "name": "EPLAN MCP Server",
             "version": __version__,
             "package_version": __package_version__,
-            "profile": PROFILE,
+            "profile": self.config.profile,
             "native_thread_limits": native_thread_status(),
             "roots": {k: str(v) for k, v in self.config.roots.items()},
             "state_dir": str(self.config.state),
-            "supported_extensions": sorted(SUPPORTED),
+            "supported_extensions": sorted(self.config.supported_extensions),
             "oda_available": bool(self.config.oda_executable),
             "oda_executable": str(self.config.oda_executable) if self.config.oda_executable else None,
             "engines": {"ezdxf": ezdxf.__version__, "PyMuPDF": pymupdf.VersionBind},
@@ -178,7 +177,7 @@ class DrawingService:
     def load(self, root_id: str, relative_path: str, *, cached_only: bool = False) -> dict:
         path = self.config.resolve(root_id, relative_path)
         extension = path.suffix.lower()
-        if extension not in SUPPORTED:
+        if extension not in self.config.supported_extensions:
             raise ValueError(f"Extraction is not supported for {extension}; inventory only")
         before = sha256(path)
         cache_key = hashlib.sha256(f"{before}:{extension}:{self.signature}".encode()).hexdigest()
@@ -213,7 +212,10 @@ class DrawingService:
             if sha256(source) != before or sha256(path) != before:
                 raise ValueError("Source changed during snapshot; retry against a stable source")
             destination = scratch / "extraction.json"
+            self.config.validate_converter()
             options = {
+                "profile": self.config.profile,
+                "oda_sha256": self.config.oda_sha256,
                 "oda_executable": str(self.config.oda_executable) if self.config.oda_executable else None,
                 "max_entities": self.config.max_entities,
                 "max_pages": self.config.max_pages,
@@ -482,6 +484,8 @@ class DrawingService:
                 str(target),
                 json.dumps(
                     {
+                        "profile": self.config.profile,
+                        "oda_sha256": self.config.oda_sha256,
                         "page": page,
                         "layout": layout,
                         "width": width,

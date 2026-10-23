@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import collections
+import hashlib
 import json
 import math
 import os
@@ -10,6 +11,7 @@ from pathlib import Path
 import ezdxf
 import pymupdf
 
+from .config import LOCAL_READERS_PROFILE
 from .owned_processes import run as run_owned
 
 
@@ -25,13 +27,29 @@ def clean(value):
     return str(value)
 
 
-def convert(source: Path, executable: str | None) -> tuple[Path, dict]:
+def convert(source: Path, executable: str | None, *, profile=None, expected_sha256=None) -> tuple[Path, dict]:
     if source.suffix.lower() == ".dxf":
         return source, {"engine": "ezdxf", "conversion": None}
-    raise ValueError("Vendor/native conversion is disabled in the direct offline profile")
+    if profile != LOCAL_READERS_PROFILE:
+        raise ValueError("Vendor/native conversion is disabled in the direct offline profile")
+    if source.suffix.lower() not in {".dwg", ".dwt", ".dws"}:
+        raise ValueError("Unsupported converter input")
+    if not executable or not expected_sha256:
+        raise ValueError("Explicit converter path and SHA-256 required")
+    binary = Path(executable).resolve(strict=True)
+    if binary.suffix.lower() != ".exe" or hashlib.sha256(binary.read_bytes()).hexdigest() != expected_sha256:
+        raise ValueError("Converter executable hash changed")
+    before = hashlib.sha256(source.read_bytes()).hexdigest()
+    result = _convert_vendor(source, str(binary))
+    if (
+        hashlib.sha256(source.read_bytes()).hexdigest() != before
+        or hashlib.sha256(binary.read_bytes()).hexdigest() != expected_sha256
+    ):
+        raise ValueError("Source or converter changed during conversion")
+    return result
 
 
-def _convert_vendor_unaccepted(source: Path, executable: str | None) -> tuple[Path, dict]:
+def _convert_vendor(source: Path, executable: str | None) -> tuple[Path, dict]:
     if not executable:
         raise ValueError("DWG/DWT/DWS requires an installed ODA File Converter configured by the operator")
     output = source.parent / "converted"
@@ -44,6 +62,12 @@ def _convert_vendor_unaccepted(source: Path, executable: str | None) -> tuple[Pa
     candidates = list(dict.fromkeys(candidates))
     if result.returncode or len(candidates) != 1:
         raise ValueError(f"ODA conversion failed: exit={result.returncode}, DXF outputs={len(candidates)}")
+    if (
+        candidates[0].is_symlink()
+        or candidates[0].resolve().parent != output.resolve()
+        or candidates[0].stat().st_size > 268_435_456
+    ):
+        raise ValueError("Invalid or oversized converter output")
     return candidates[0], {
         "engine": "ODA File Converter + ezdxf",
         "conversion": "isolated copy to ACAD2018 DXF",
@@ -109,7 +133,12 @@ def entity_row(entity, layout: str, block: str | None = None) -> dict:
 
 
 def extract_cad(source: Path, options: dict) -> dict:
-    dxf, backend = convert(source, options.get("oda_executable"))
+    dxf, backend = convert(
+        source,
+        options.get("oda_executable"),
+        profile=options.get("profile"),
+        expected_sha256=options.get("oda_sha256"),
+    )
     doc = ezdxf.readfile(dxf)
     rows, blocks, references = [], [], []
     for layout in doc.layouts:

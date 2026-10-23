@@ -122,3 +122,13 @@ publication preserving the prior guide/catalog. Directory reads must remain unad
 changes must remain unpublished until explicit revision-checked publication. Repeat protocol checks
 against the installed standalone route and an isolated wheel. Native Codex skill selection/reload
 and plugin-submission import remain separate host acceptance, not protocol-test results.
+
+
+## Local-reader candidate checkpoint
+
+The explicit local-reader profile restores the existing ODA conversion call through
+owned, bounded workers, with executable SHA-256 checks and immutable source copies.
+Candidate checks: 32 focused source-only tests and lint passed. Converter protocol,
+identity changes and source mutation use inert fixtures and a stubbed owned runner.
+These are not native ODA or EPLAN acceptance. The previously accepted installed
+offline runtime is left intact; candidate normal installation is not performed.

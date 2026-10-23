@@ -19,8 +19,7 @@ def run_tables(source: str, destination: str, options: str):
                 "column_count": table.col_count,
                 "cells": table.extract(),
                 "cell_bboxes": [
-                    [list(cell) if cell is not None else None for cell in row.cells]
-                    for row in table.rows
+                    [list(cell) if cell is not None else None for cell in row.cells] for row in table.rows
                 ],
             }
             for table in found.tables
@@ -43,7 +42,12 @@ def run_worker(source: str, destination: str, options: str):
         from ezdxf.addons.drawing import pymupdf as backend
         from ezdxf.addons.drawing.config import BackgroundPolicy, ColorPolicy, Configuration
 
-        dxf, _ = convert(path, opts.get("oda_executable"))
+        dxf, _ = convert(
+            path,
+            opts.get("oda_executable"),
+            profile=opts.get("profile"),
+            expected_sha256=opts.get("oda_sha256"),
+        )
         doc = ezdxf.readfile(dxf)
         target_layout = doc.layouts.get(opts["layout"])
         renderer = backend.PyMuPdfBackend()

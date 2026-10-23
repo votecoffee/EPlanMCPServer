@@ -1,20 +1,20 @@
 """Discoverable assessment of the app-selected profiles, not dependency feature claims."""
 
 
-def profiles():
+def profiles(profile="direct-standalone-offline", converter=False):
     def item(status, reason):
         return {"status": status, "reason": reason}
 
     return {
         "assessment_scope": "Offline/synthetic app and protocol checks; native host acceptance is separate",
-        "selected_profile": "direct-standalone-offline",
+        "selected_profile": profile,
         "native_thread_pool_policy": item(
             "implemented-but-unassessed",
             "Fixed standalone pre-import numerical limits; refuses preloaded hosts; pure tests only for this release, new MCP memory canary requires review",
         ),
         "vendor_native_readers": item(
-            "blocked",
-            "ODA discovery/configuration/conversion and direct/archive/worker Access reads refused; no environment opt-in",
+            "candidate-pilot-required" if converter else "not-configured",
+            "Explicit local-reader profile and pinned ODA executable restore contained copy-only conversion; native pilot required. Access/ACE remains disabled; no environment opt-in.",
         ),
         "http_transport": item(
             "blocked", "Only direct stdio serving is enabled; HTTP startup refused before config load"

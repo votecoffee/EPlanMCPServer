@@ -105,3 +105,16 @@ All operations use the same LocalDataService through MCP and the CLI:
 Use `--options` with a local JSON file for record_tag, table, pagination and byte-window options.
 Store customer schemas, extracted records, source manifests and installation evidence in ignored
 local storage or the owning engineering service. Public fixtures must remain synthetic.
+
+
+## Explicit local-reader candidate
+
+For DWG/DWT/DWS extraction, the candidate profile is
+`direct-standalone-local-readers` with an explicit `oda_executable` and matching
+`oda_sha256`. Inspect capabilities first: an absent converter remains unconfigured.
+The default offline profile still refuses vendor execution. Environment variables
+cannot opt in. This candidate requires native pilot acceptance before deployment.
+Run only against staged private copies, retaining source and executable hashes.
+A converted drawing is geometric/text evidence, not confirmed electrical continuity.
+Access/ACE and native EPLAN semantic project access are separate capabilities;
+this profile does not enable them.

@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 from dataclasses import dataclass
 from pathlib import Path
 
 PROFILE = "direct-standalone-offline"
+LOCAL_READERS_PROFILE = "direct-standalone-local-readers"
+VENDOR_EXTENSIONS = {".dwg", ".dwt", ".dws"}
 SUPPORTED = {".dxf", ".pdf"}
 
 
@@ -28,13 +31,35 @@ class Config:
     max_oda_processes: int = 1
     lock_timeout_seconds: int = 180
 
+    profile: str = PROFILE
+    oda_sha256: str | None = None
+
+    @property
+    def supported_extensions(self):
+        return SUPPORTED | (
+            VENDOR_EXTENSIONS if self.profile == LOCAL_READERS_PROFILE and self.oda_executable else set()
+        )
+
+    def validate_converter(self):
+        if self.oda_executable is None:
+            return
+        if self.profile != LOCAL_READERS_PROFILE or not self.oda_sha256:
+            raise ValueError(
+                "Vendor/native converters are disabled without explicit local-reader profile and hash"
+            )
+        path = self.oda_executable.resolve(strict=True)
+        if not path.is_file() or path.suffix.lower() != ".exe":
+            raise ValueError("Configure an explicit converter executable")
+        if hashlib.sha256(path.read_bytes()).hexdigest() != self.oda_sha256:
+            raise ValueError("Converter executable hash changed")
+
     @classmethod
     def load(cls, filename: str | Path) -> Config:
         filename = Path(filename).resolve(strict=True)
         raw = json.loads(filename.read_text(encoding="utf-8-sig"))
-        if raw.get("profile", PROFILE) != PROFILE:
-            raise ValueError("Only the direct-standalone-offline profile is available")
-        if raw.get("oda_executable"):
+        if raw.get("profile", PROFILE) not in {PROFILE, LOCAL_READERS_PROFILE}:
+            raise ValueError("Select direct-standalone-offline or direct-standalone-local-readers")
+        if raw.get("oda_executable") and raw.get("profile", PROFILE) == PROFILE:
             raise ValueError("Vendor/native converter configuration is disabled in the offline profile")
         roots = {name: Path(value).resolve(strict=True) for name, value in raw["roots"].items()}
         if not roots or any(
@@ -57,7 +82,18 @@ class Config:
             if type(value) is not int or not low <= value <= high:
                 raise ValueError(f"{key} must be an integer in {low}..{high}")
             concurrency[key] = value
-        return cls(roots, state, executable, **concurrency)
+        if raw.get("profile", PROFILE) == LOCAL_READERS_PROFILE and raw.get("oda_executable"):
+            executable = Path(raw["oda_executable"]).resolve(strict=True)
+        result = cls(
+            roots,
+            state,
+            executable,
+            **concurrency,
+            profile=raw.get("profile", PROFILE),
+            oda_sha256=raw.get("oda_sha256"),
+        )
+        result.validate_converter()
+        return result
 
     def resolve(self, root_id: str, relative_path: str) -> Path:
         if root_id not in self.roots:
@@ -99,7 +135,7 @@ class Config:
                         "extension": path.suffix.lower(),
                         "size_bytes": stat.st_size,
                         "mtime_ns": stat.st_mtime_ns,
-                        "supported": path.suffix.lower() in SUPPORTED,
+                        "supported": path.suffix.lower() in self.supported_extensions,
                     }
                 )
                 if len(result) > 100_000:

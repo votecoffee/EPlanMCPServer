@@ -2,7 +2,7 @@
 
 Source-preserving EPLAN export, electrical report and drawing analysis for MCP
 
-Standalone Codex plugin, shared Python service and CLI. Version **26.1022.185010**.
+Standalone Codex plugin, shared Python service and CLI. Version **26.1023.071701**.
 The main purpose is to extract device names/descriptions, network addresses, PLC I/O points,
 and the power or compressed-air supplies feeding each device.
 The repository uses `EPlanMCPServer`; the Python distribution uses the normalized package name
@@ -25,6 +25,20 @@ The repository uses `EPlanMCPServer`; the Python distribution uses the normalize
 Built using the [AutoCAD MCP Server](https://github.com/votecoffee/AutoCADMCPServer) architecture.
 This release analyzes exported evidence without changing engineering sources. It does not require
 EPLAN for offline analysis. It does not yet provide native EPLAN project access or editing.
+
+## Local reader candidate
+
+The optional `direct-standalone-local-readers` profile restores the existing ODA
+DWG/DWT/DWS-to-DXF adapter. Configure `oda_executable` as an explicit `.exe` path
+and `oda_sha256` as its reviewed SHA-256. No executable discovery or environment
+opt-in is used. Default configurations stay `direct-standalone-offline`.
+
+Conversion runs only against a private staged copy, through the existing bounded,
+job-contained and durably recorded worker ownership layer. Executable and source
+hashes are checked around conversion; changed evidence is discarded. A bounded
+native pilot is required before activating this candidate. Existing installed
+offline deployments need no change. Access/ACE provider execution remains gated;
+semantic EPLAN project APIs and native editing are not implemented.
 
 ## Install
 

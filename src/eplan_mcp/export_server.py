@@ -11,9 +11,9 @@ def register_exports(tool, drawings):
     def eplan_capabilities() -> dict:
         """Read export schema, supported analyses and native EPLAN boundaries before importing reports."""
         return {
-            "selected_profile": "direct-standalone-offline",
+            "selected_profile": drawings.config.profile,
             "disabled_routes": [
-                "vendor converters",
+                *([] if drawings.config.oda_executable else ["unconfigured vendor converter"]),
                 "Access/ACE provider",
                 "native engineering apps",
                 "controllers/SCM",
@@ -21,7 +21,7 @@ def register_exports(tool, drawings):
                 "HTTP serving",
                 "plugin install/bootstrap",
             ],
-            "feature_profiles": profiles(),
+            "feature_profiles": profiles(drawings.config.profile, bool(drawings.config.oda_executable)),
             "report_kinds": sorted(KINDS),
             "canonical_fields": sorted(FIELDS),
             "formats": [
