@@ -2,7 +2,7 @@
 
 Source-preserving EPLAN export, electrical report and drawing analysis for MCP
 
-Standalone Codex plugin, shared Python service and CLI. Version **26.1023.071701**.
+Standalone Codex plugin, shared Python service and CLI. Version **26.1023.114959**.
 The main purpose is to extract device names/descriptions, network addresses, PLC I/O points,
 and the power or compressed-air supplies feeding each device.
 The repository uses `EPlanMCPServer`; the Python distribution uses the normalized package name
@@ -11,6 +11,7 @@ The repository uses `EPlanMCPServer`; the Python distribution uses the normalize
 ## Table of Contents
 
 - [Background](#background)
+- [Local readers](#local-readers)
 - [Install](#install)
 - [Usage](#usage)
 - [Features](#features)
@@ -26,35 +27,35 @@ Built using the [AutoCAD MCP Server](https://github.com/votecoffee/AutoCADMCPSer
 This release analyzes exported evidence without changing engineering sources. It does not require
 EPLAN for offline analysis. It does not yet provide native EPLAN project access or editing.
 
-## Local reader candidate
+## Local readers
 
-The optional `direct-standalone-local-readers` profile restores the existing ODA
+The explicit `direct-standalone-local-readers` profile enables the existing ODA
 DWG/DWT/DWS-to-DXF adapter. Configure `oda_executable` as an explicit `.exe` path
 and `oda_sha256` as its reviewed SHA-256. No executable discovery or environment
 opt-in is used. Default configurations stay `direct-standalone-offline`.
 
 Conversion runs only against a private staged copy, through the existing bounded,
 job-contained and durably recorded worker ownership layer. Executable and source
-hashes are checked around conversion; changed evidence is discarded. A bounded
-native pilot is required before activating this candidate. Existing installed
+hashes are checked around conversion; changed evidence is discarded. The direct
+stdio and pinned ODA paths have synthetic read, preview and descendant-cleanup
+coverage. Revalidate changed runtime/vendor bytes before activation. Existing
 offline deployments need no change. Access/ACE provider execution remains gated;
 semantic EPLAN project APIs and native editing are not implemented.
 
 ## Install
 
-**Lifecycle transition:** bootstrap installation and the optional framework serve/proxy routes
-currently refuse startup pending owned-resource acceptance. The direct Windows process-containment
-implementation has pure/stub and harmless Python process-fixture checks. MCP/host lifecycle
-acceptance is pending. Do not use it as an accepted production
-cleanup profile. See [resource ownership](docs/resource-ownership.md) for limits and pending checks.
-Installation examples below describe the retained setup workflow once that gate is resolved.
+`Install.cmd` and the retained `InstallAndRun.cmd` install only: neither starts a
+server/native application, enables a plugin, installs the manager, or writes global
+Codex settings. Use `--help` before setup. Existing configuration is preserved.
+With no first-time `--root`, setup creates an empty private `.local/workspace`.
+See [implementation and developer guide](docs/implementation.md).
 
 ### Dependencies
 
 Python 3.11+; Windows is the primary target. Python 3.13 is used for validation. The selected
 `direct-standalone-offline` profile supports DXF, PDF, explicit reports and local byte/XML readers.
-DWG/DWT/DWS conversion and Access/ACE provider reads are refused. No vendor discovery or
-environment opt-in enables them. Configurations containing an ODA executable are refused.
+The explicit local-reader profile also supports ODA-converted DWG/DWT/DWS. No vendor
+discovery or environment opt-in selects it. Access/ACE provider reads remain refused.
 
 The shared framework is a separately supplied local wheel, not fetched from an unverified public
 package with the same name. The installer verifies SHA-256 and every wheel RECORD member:
@@ -66,21 +67,23 @@ Source commit 5b2cac50ca24d21a15b732e0424bb02fd794e1fb
 ```
 
 ```powershell
-.\InstallAndRun.cmd --framework-wheel C:\Packages\universal_codex_tools-0.20.0-py3-none-any.whl --root "engineering=C:\Engineering\EPLAN-Exports" --install-only
+.\Install.cmd --help
+.\Install.cmd --framework-wheel "C:\Packages\universal_codex_tools-0.20.0-py3-none-any.whl" --root "engineering=C:\Engineering\EPLAN Exports"
 ```
 
 Dependencies install into `.venv`; roots, caches, receipts, artifacts and plugin bindings stay
 under ignored `.local`. Existing configuration and explicit integration preferences are preserved.
-The initial setup refreshes the standalone Codex plugin by default. To skip that integration use
-`--codex-integration none`. No customer directories are automatically selected.
+`--offline` uses cached dependencies/build wheels only. `--prepare-plugin` stages
+the standalone plugin locally without registering or enabling it. No customer roots
+are inferred. Exit codes and quoted arguments propagate through both CMD wrappers.
 
-After controlled runtime authorization, direct stdio is the selected server route:
+Start an explicitly selected configuration through the app-owned entry point:
 
 ```powershell
 .\.venv\Scripts\python.exe -m eplan_mcp --config .local/config.json serve
 ```
 
-HTTP, shared-host, bootstrap and plugin-install entry points currently refuse startup. The plugin
+HTTP, shared-host and automatic plugin-install entry points remain unavailable. The plugin
 is `eplan@eplan-local`. Its generated stdio binding starts this application's own
 environment. Reconnect Codex or open a fresh chat after installation. Package/protocol checks
 do not prove activation in an already-open chat.
@@ -216,7 +219,7 @@ Sources and state directories must not overlap. Tool arguments cannot select exe
 
 ## Features
 
-- Independently inspect nested XML records, Windows Access base tables, ELK/ELL project links,
+- Independently inspect nested XML records, ELK/ELL project links,
   ordinary ZIP members, raw binary byte ranges and offset-bound text candidates.
 - Discover and inflate checksum-valid zlib streams in binary data with strict resource budgets.
   Experimental EOD slot partitioning exposes raw headers; it does not infer native object status.
@@ -237,7 +240,7 @@ Sources and state directories must not overlap. Tool arguments cannot select exe
   WDP and AutoCAD Electrical reports remain a separate compatibility workflow.
 - Bound responses and worker concurrency; coordinate shared state across processes; record durable
   write receipts and recover lost replies without silently repeating effects.
-- Use 49 direct MCP tools, or the optional app-owned shared-framework host. No universal daemon required.
+- Use 50 direct MCP tools. No universal plugin or daemon is required.
 
 **Boundaries:** ZW1/ZW9/macros remain inventory only. ELK/ELL links and raw/decompressed EOD/EOX
 evidence can be read independently; full semantic project decoding is not provided. Nested XML
@@ -246,6 +249,13 @@ restore, UI highlighting, controller access, network scanning or automatic OCR e
 Export completeness, native check-run results and physical continuity are not established.
 
 ## Optional app-owned framework
+
+[CodexMCPBroker](https://github.com/votecoffee/CodexMCPBroker) provides the shared
+Python framework and a **separate Windows MCP Service Manager application**. The
+manager is optional and installed independently. EPLAN retains its standalone MCP
+server, `eplan@eplan-local` plugin and `eplan-analysis` skill. No universal plugin or
+shared-host migration is required. The Python names `universal-codex-tools` and
+`universal_tools` identify the shared library, not a universal plugin selection.
 
 Serving and proxy startup are currently blocked pending backend-tree and shared-owner lifetime
 acceptance. The following describes the retained design; it is not permission to start the profile.
@@ -271,7 +281,7 @@ See [release stamping and verification](docs/releases.md). Runtime startup and b
 The standalone entry point sets numerical-library pool limits to one before importing NumPy or
 ezdxf, including in parser workers. A preloaded native-library host is refused. This changes only
 the app process environment, not user/system settings. Configured limits and measured OS thread/
-commit counts are separate evidence; the current policy still needs its own MCP runtime canary.
+commit counts are separate evidence; changed runtimes still require validation.
 
 `eplan_capabilities.feature_profiles` reports enabled/tested features and concrete blockers.
 [Feature profiles](docs/feature-profiles.md) cover progress, cooperative cancellation, private
@@ -290,7 +300,8 @@ cross-chat quiescence fence for pending operations and uncertain receipts. New s
 report automatically; existing chat processes require their normal reconnect to load this integration.
 See [service management](docs/service-management.md) for the restart boundary and verification.
 
-See [VERIFICATION.md](VERIFICATION.md) for repeatable checks and [native integration boundaries](docs/eplan-native-integration.md).
+See [implementation and developer guide](docs/implementation.md), [VERIFICATION.md](VERIFICATION.md)
+and [native integration boundaries](docs/eplan-native-integration.md).
 Run tests before committing; packages use an explicit source allowlist and byte manifest.
 Keep private engineering content and runtime state out of Git and distributable artifacts.
 

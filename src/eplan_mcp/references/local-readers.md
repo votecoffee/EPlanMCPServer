@@ -107,13 +107,13 @@ Store customer schemas, extracted records, source manifests and installation evi
 local storage or the owning engineering service. Public fixtures must remain synthetic.
 
 
-## Explicit local-reader candidate
+## Explicit local-reader profile
 
-For DWG/DWT/DWS extraction, the candidate profile is
+For DWG/DWT/DWS extraction, the explicit profile is
 `direct-standalone-local-readers` with an explicit `oda_executable` and matching
 `oda_sha256`. Inspect capabilities first: an absent converter remains unconfigured.
 The default offline profile still refuses vendor execution. Environment variables
-cannot opt in. This candidate requires native pilot acceptance before deployment.
+cannot opt in. Revalidate changed runtime/vendor bytes before deployment. Setup does not select this profile automatically.
 Run only against staged private copies, retaining source and executable hashes.
 A converted drawing is geometric/text evidence, not confirmed electrical continuity.
 Access/ACE and native EPLAN semantic project access are separate capabilities;

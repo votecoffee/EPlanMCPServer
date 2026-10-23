@@ -1,12 +1,14 @@
 # Service management
 
-The [owned-resource lifecycle](resource-ownership.md) is currently implemented with pure OS-stub
-acceptance only. Management reports owned-tree counts with that limitation. Optional framework
-serve/proxy and bootstrap/plugin-install launch paths are blocked pending their ownership profile;
-the shared ledger adapter is checked with synthetic process identities only, not runtime recovery.
+The selected direct profiles have Windows transport/process-lifetime coverage, including
+active/queued EOF, cancellation, client/supervisor loss, ODA descendant cleanup and
+revision-bound orphan receipt idempotence. Repeat applicable acceptance when runtime
+or vendor bytes change. Optional host/shared-GUI profiles remain separate.
 
-Framework 0.20.0 provides same-user authenticated loopback reporting to the optional Windows MCP
-Service Manager. EPLAN does not install a manager, select a different plugin route or register a
+[CodexMCPBroker](https://github.com/votecoffee/CodexMCPBroker) provides the shared Python
+framework and the separate optional Windows MCP Service Manager application. Framework
+0.20.0 supplies same-user authenticated loopback reporting. EPLAN does not install the
+manager, select a different plugin route or register a
 Universal Tools broker. Canonical plugin identity is `eplan@eplan-local`; each owning server/host
 process gets a random instance ID. Transient framework workers and proxy clients do not register
 as owning services.
@@ -16,7 +18,7 @@ its own Codex plugin and native skill. No universal Codex plugin or connection i
 installed, composed or used to choose EPLAN installation. The Python distribution/import names
 `universal-codex-tools` and `universal_tools` identify the shared library; they do not imply a
 universal plugin deployment. Framework 0.20.0 pins and reviewed wheel bytes are updated in source;
-no installed environment, live registration, plugin or manager has been migrated by that edit.
+updating that pin alone does not migrate a running process or independently installed manager.
 
 The direct server reports admitted/queued analysis and control work from its scheduler. The
 app-owned framework host counts backend invocations, including failures. Counts describe that
@@ -57,11 +59,11 @@ Normal/exceptional exit releases the slot, and process death releases the OS loc
 not PID inventories and must not be deleted to bypass admission. Separate state directories have
 separate limits; this is not a system-wide memory bound or a shared supervisor.
 
-In-process lock checks cover capacity and exception release. End-to-end startup/termination tests
-for this new gate remain pending. The existing clean client-EOF checks do not establish cleanup
-after abrupt parent termination, inherited pipe handles, or forced process death. Descendant
-termination and a surviving supervisor remain concrete acceptance blockers. No automatic restart,
-hidden host startup, process killing, plugin enablement, or journal reconciliation is added.
+Selected-profile checks include capacity, exception release, abrupt client/owner loss,
+inherited-pipe preservation and ODA descendant cleanup. Lock-file presence alone is not
+proof of a held lock; never delete locks to bypass admission. A private test watchdog is
+not a system-wide resource quota or permission to interrupt another session. Automatic
+restart, shared-GUI adoption and semantic EPLAN project access remain outside this profile.
 
 The default standalone stdio route owns one server per live connection; multiple responding rows
 can be legitimate different chats. Status labels distinguish per-chat stdio connections, standalone

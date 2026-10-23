@@ -6,46 +6,46 @@ def profiles(profile="direct-standalone-offline", converter=False):
         return {"status": status, "reason": reason}
 
     return {
-        "assessment_scope": "Offline/synthetic app and protocol checks; native host acceptance is separate",
+        "assessment_scope": "Implementation availability; selected direct-profile lifetime coverage is separate from current artifact and host acceptance",
         "selected_profile": profile,
         "native_thread_pool_policy": item(
-            "implemented-but-unassessed",
-            "Fixed standalone pre-import numerical limits; refuses preloaded hosts; pure tests only for this release, new MCP memory canary requires review",
+            "implemented",
+            "Fixed standalone pre-import numerical limits; preloaded hosts refused; selected direct runtime measurements are separate from configured limits",
         ),
         "vendor_native_readers": item(
-            "candidate-pilot-required" if converter else "not-configured",
-            "Explicit local-reader profile and pinned ODA executable restore contained copy-only conversion; native pilot required. Access/ACE remains disabled; no environment opt-in.",
+            "configured" if converter else "not-configured",
+            "Explicit profile and pinned ODA copy-only conversion; selected DWG read/preview and descendant cleanup covered. Revalidate changed vendor/runtime bytes. Access/ACE stays disabled.",
         ),
         "http_transport": item(
             "blocked", "Only direct stdio serving is enabled; HTTP startup refused before config load"
         ),
         "framework_020_runtime": item(
-            "implemented-but-unassessed",
-            "Reviewed 0.20 wheel/pins and synthetic ledger adapter checks; installed/MCP/native lifecycle acceptance pending",
+            "implemented",
+            "Reviewed 0.20 wheel/pins; selected direct MCP/ODA lifetime coverage; optional shared host is not selected",
         ),
         "endpoint_instance_admission": item(
-            "implemented-but-unassessed",
-            "Four non-waiting cross-process slots per app state; source-only lock checks, server startup acceptance pending",
+            "implemented",
+            "Four non-waiting cross-process slots per state; selected direct admission and independent-session lifetime coverage",
         ),
         "parent_exit_cleanup": item(
-            "implemented-but-unassessed",
-            "Harmless Python owner-death/descendant fixtures passed; actual MCP EOF/upstream-client loss still pending",
+            "implemented",
+            "Selected direct EOF, client loss with held writer, supervisor death and ODA descendants covered; no shared GUI adoption",
         ),
         "owned_process_lifecycle": item(
-            "implemented-but-unassessed",
-            "Harmless Python startup/timeout/cancel/normal/descendant fixtures passed; actual MCP worker path still pending",
+            "implemented",
+            "Handle-bound normal/failure/cancellation teardown and selected actual MCP/ODA descendant coverage; no PID/name cleanup",
         ),
         "shared_resource_ledger": item(
-            "implemented-but-unassessed",
-            "Framework 0.20 reservations/binding/reconciliation tested with synthetic identities; real Windows and manager recovery acceptance pending",
+            "implemented",
+            "Reservations, creation-bound binding, reconciliation and revision-bound orphan/idempotence covered; uncertain barriers preserved",
         ),
         "framework_host_ownership": item(
             "blocked",
             "Serve/proxy entry points refuse startup until shared leases and framework backend-tree containment are accepted",
         ),
         "installer_lifecycle": item(
-            "blocked",
-            "Bootstrap and plugin-install external wrappers refuse execution pending a contained installer ownership profile",
+            "setup-only",
+            "Install-only setup and disposable CMD forwarding/help/failure checks; no server/native/plugin/global-config activation. Automatic plugin registration remains unavailable.",
         ),
         "skills_and_guides": item(
             "enabled-and-tested", "Canonical tool/reference/catalog reads; explicit atomic publication"

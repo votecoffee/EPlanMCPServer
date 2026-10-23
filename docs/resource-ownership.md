@@ -1,18 +1,19 @@
 # Owned resource lifecycle
 
-This remains unaccepted for MCP/native-host use. Pure/stub checks and bounded harmless Python
-process fixtures cover selected ownership paths, not transport/native acceptance.
-No plugin/server/native application is started by validation
-while an operator runtime hold is active. Existing native editors and unrelated processes are
-never enumerated, adopted or closed.
+The selected direct stdio profiles have synthetic/Windows lifetime coverage, including
+configured ODA read/preview and native descendants after supervisor loss. Offline,
+native-reader and optional host/shared-GUI acceptance remain distinct. Repeat the
+applicable checks after changing runtime/vendor bytes. Existing editors and unrelated
+processes are never adopted or closed. See [implementation](implementation.md).
 
 ## Exclusive ownership
 
 The application CLI enters an exclusive process-owner scope. A library embedded in another
 application cannot implicitly adopt that host process. Child launch requires that exclusive scope
 and a private evidence directory selected by the application configuration. Enabled launch sites
-cover extraction, preview, table and local-reader Python workers. ODA, Access providers, plugin
-CLI installation/inventory, shared hosts and HTTP are unavailable from selected entry points.
+cover extraction, preview, table and local-reader Python workers. ODA requires the
+explicit local-reader profile and pinned executable hash. Access providers, shared
+hosts and HTTP remain unavailable from selected entry points.
 All child arguments are literal argv, with no shell command expansion. There is no native EPLAN
 editor attachment, shared application lease or dirty native project save/close operation.
 
@@ -29,7 +30,7 @@ owner admits at most 16 active trees. These containment limits do not establish 
 Breakaway is not requested. Nested-job refusal fails closed without running the suspended child.
 Descendant shell/Node/console processes stay within their exclusive tree; no name-based global
 cleanup is used. The implementation uses CPython's Windows creation primitive and pywin32, so
-runtime/version compatibility and nested-job behavior still require native acceptance.
+runtime/version changes require renewed containment verification.
 
 Normal child completion terminates residual descendants and waits for an empty job. Startup
 failure, timeout, cancellation and owner-scope exit also request teardown through retained handles.
@@ -71,12 +72,14 @@ remain visible. Shared records bound non-retired EPLAN claims to 32 across super
 
 Manager recovery remains a reviewed operation with exact host/identity, ownership, revision,
 conflicting-claim and uncertainty gates. No prior app-only JSON is silently imported or adopted.
-Neither the adapter nor status reads perform orphan cleanup or migrate a live registration. Real
-cross-manager recovery, transport and native cleanup acceptance remain pending.
+Neither the adapter nor status reads perform orphan cleanup or migrate a live registration.
+Selected direct transport/native cleanup and reviewed orphan receipts have coverage;
+shared-GUI leases and automatic recovery remain separate.
 
 Optional framework serve/proxy entry points are blocked until their backend containment and
-shared-owner lease profile is accepted. Bootstrap and plugin-install wrappers are likewise blocked
-until their separate ownership profile is ready. Publication/preparation of local data does not
+shared-owner lease profile is accepted. Setup is installation-only and does not start
+servers/native apps or activate plugins. Automatic plugin registration remains separate.
+Publication/preparation of local data does not
 enable or restart those routes. Non-Windows child execution has no unmanaged fallback.
 
 ## Status and acceptance
@@ -100,34 +103,22 @@ evidence from an older immutable wheel is not automatic acceptance of this start
 
 ### Launch-path coverage
 
-| Path | Ownership and containment | Source gate / remaining acceptance |
-| --- | --- | --- |
-| Direct stdio / loopback supervisor | Actual exclusive Python process owns its workers; no registration helper acts as owner | Implemented; existing SDK transport retained; new EOF/reconnect/crash/resource-use acceptance pending |
-| Extraction / local-reader / render / table worker | Shared ledger reservation, retained creation handle, app-owned Windows job tree | Pure/stub checks pass; real creation, descendants, cancellation and owner death pending |
-| ODA converter | No discovery; configuration and conversion refused | Disabled; no vendor process launch in this profile |
-| Access provider objects | Direct/archive/worker Access dispatch refused; MDB bytes remain readable | Disabled; no COM/provider acquisition in this profile |
-| Shell / Node / console descendants | Job contains descendants of a directly launched private process; no arbitrary shell expansion | Real descendant fixtures pending; out-of-job service/COM launchers are not supported or adopted |
-| Existing user-owned native editor | Not opened, attached, enumerated or closed | Protected by absence of acquisition; attached preservation fixture still pending |
-| Shared native application / optional framework host | No accepted lease/refcount or backend containment profile | Implementation gap; serve/proxy startup refused, no automatic host start |
-| Bootstrap / plugin installer wrappers | No accepted dependency-free installer containment profile | Implementation gap; entry points refuse installation/startup |
-| Windows manager recovery | Shared record host/creation/image identity and explicit private policy; no app auto-cleanup | Shared API stub integration checked; real orphan/receipt/barrier recovery pending |
+Direct stdio, worker cancellation, client/supervisor loss and configured ODA
+conversion have selected Windows lifetime coverage. Those results do not acquire
+native editors or shared applications. Access/ACE, HTTP and optional shared-host
+profiles remain unselected. Setup is install-only and never starts a native app
+or activates a plugin. See [implementation](implementation.md).
 
-The direct offline profile is the candidate for controlled runtime validation. An unsupported
-optional launch path does not become enabled when a transport test passes. Start/close ownership,
-real manager recovery and supported Python/Windows containment must pass before ordinary use.
-Abrupt upstream-client loss with inherited open pipe handles is not established by source review;
-client EOF, parent/owner termination and duplicate reconnect need separate transport fixtures.
-No native dirty-document policy is implemented because native editor/project access is unsupported.
-Engineering write uncertainty remains in existing request journals; no journal replay or barrier
-resolution is performed by the ownership adapter.
+Uncertain journals and recovery barriers remain untouched. A source build is not
+proof of installed activation; repeat applicable checks after runtime changes.
 
 `eplan_concurrency_status.resource_ownership` reports bounded process-local ownership observations.
-Service-manager status reports the active owned-tree count and that acceptance is pending; it does
+Service-manager status reports active owned-tree counts, not a live acceptance certificate. It does
 not scan native applications or claim access to every resource record from other processes.
 
 Pure OS-stub tests check containment-before-resume ordering, persisted creation identity, startup
 failure, cancellation, timeout, bounded admission, cleanup failure, and continued cleanup after one
-resource fails. No real process is launched by these tests. Subsequent isolated acceptance must prove:
+resource fails. No real process is launched by these tests. Isolated acceptance after relevant runtime changes must check:
 
 - Direct child and descendant cleanup on normal completion, client EOF, timeout and cancellation.
 - Abrupt owner death during creation/assignment/resume and active worker/converter execution.

@@ -1,134 +1,70 @@
 # Verification
 
-## Repeatable checks
+## Source-only checks
 
-Run from the checkout after installing the reviewed framework wheel and hash-locked dependencies:
-
-```powershell
-uv pip install --python .venv/Scripts/python.exe --require-hashes --only-binary :all: --find-links .local/wheels -r requirements-dev-lock.txt
-uv pip install --python .venv/Scripts/python.exe --no-deps -e .
-.\.venv\Scripts\ruff.exe check .
-.\.venv\Scripts\ruff.exe format --check .
-.\.venv\Scripts\python.exe -m pytest -q
-.\.venv\Scripts\python.exe scripts/package.py --output .local/packages/EPlanMCPServer-0.3.0.zip
-.\.venv\Scripts\python.exe scripts/package.py --verify
-uv pip check --python .venv/Scripts/python.exe
-```
-
-Tests cover synthetic PDF/DXF extraction, tables/previews, source hashes, indexing/freshness,
-device profiles, explicit power/air paths, terminal-bridge boundaries, ambiguous tag scopes,
-multi-point I/O, conflicting IP claims, branching/cycles and PDF candidate context,
-geometry/electrical evidence, cross-process locking and durable write receipts. Local-reader tests
-cover nested XML, UTF-16 links, missing/path-escaping database references, binary byte coordinates,
-zlib checksums/corruption/decompression budgets, experimental EOD slot geometry, ZIP member safety,
-and Windows ACE reads of a synthetic database with unchanged source hashes. They
-also exercise ACE schema/row access in the reduced environment inherited by MCP stdio. EPLAN report tests
-cover explicit mapping, provenance, stale/deleted sources, duplicate multiplicity, malformed rows,
-XML entity rejection, namespaces/UTF-16, path escape, snapshot integrity and concurrent imports.
-Real stdio MCP testing initializes the server, discovers schemas/annotations, performs a cold PDF
-extraction and exercises import/query/check/trace/compare/export plus receipt replay.
-
-## Acceptance boundaries
-
-The numerical-pool startup repair has pure environment/module-map tests only. Prior immutable
-canary lifecycle evidence and a separate dependency-import pool experiment do not validate new
-application startup bytes. Retain the original canary package, configuration, state, uncertainty
-receipts and observations; obtain review before running the repaired MCP package. A configured
-native limit is not measured private commit, an OS-thread ceiling or native-host acceptance.
-
-The selected source-gate profile is direct stdio offline only: DXF/PDF, explicit reports and
-provider-free local byte/XML/archive readers. Vendor conversion, Access/ACE (including archive
-members and low-level dispatch), HTTP and optional host/bootstrap entry points are refused.
-Harmless Python-only fixtures cover real Windows job normal/descendant/timeout/cancel/startup
-failure/owner-death paths and private-manager already-exited orphan receipts plus attached/shared
-protection. They do not start an MCP server or establish native Codex/transport acceptance.
-
-Timestamp-release checks are pure/package-only while held: padded display versus canonical PEP
-440/strict SemVer identity, once-stamped source/plugin/README parity, unchanged dependency pins,
-manager normalization, CLI `--version`, wheel METADATA/import and source byte-manifest parity.
-Native Codex cache/loader and MCP initialization information remain controlled-runtime acceptance;
-building or reading a plugin package never enables it. Historical artifacts are retained privately.
-
-The source readiness gate includes pure reporting-startup/join-failure and read-only ADO cleanup
-stubs (`test_handle_cleanup.py`); these never start a management listener or COM/native provider.
-Retain per-run results privately with the launch-path inventory. Unsupported bootstrap/framework
-ownership profiles are implementation gaps; real EOF/crash/descendant/manager checks on the direct
-offline profile are runtime acceptance pending authorization. Neither category is ordinary-use
-acceptance. See the [launch-path coverage table](docs/resource-ownership.md#launch-path-coverage).
-
-Framework 0.20.0 alignment is source-only. Verify the reviewed wheel SHA-256/RECORD and exact SDK
-2.3 pin without installing it during a runtime hold. `test_resource_claims.py` exercises the actual
-shared ledger with synthetic process identities; `test_owned_processes.py` replaces all OS process
-APIs with stubs. These establish record/adapter behavior, not real Windows containment or manager
-orphan cleanup. Installed environments and historical plugin bindings are intentionally unchanged.
-
-Owned-resource lifecycle changes currently have pure Windows-API stub and in-process admission
-checks only. They launch no process, job, server, plugin or native application. Full regression,
-real Windows containment/parent-death/descendant cleanup, clean client EOF, installed runtime and
-cross-manager ledger recovery are pending. See [resource ownership](docs/resource-ownership.md).
-Bootstrap and framework startup refusals are intentional pending acceptance; earlier successful
-protocol/package checks do not validate the changed launch implementation.
-
-Included report examples are synthetic custom schemas. Native EPLAN projects, vendor report
-schemes, project restoration and native check-runs require separate acceptance. Package and
-protocol checks do not establish engineering correctness or physical continuity.
-
-The explicit binary text-encoding reader has focused byte-preservation checks for UTF-8,
-UTF-16 LE/BE and Windows-1252, malformed sequences and surrogate pairs. Synthetic isolated-worker,
-compressed/archive and direct stdio checks passed during development. Full regression and wheel
-acceptance after the latest source changes remain pending; do not treat the earlier 125-test run
-as acceptance of subsequent changes.
-
-The four-endpoint admission gate currently has in-process lock/capacity/exception-release checks
-only. Startup, abrupt parent exit, descendant cleanup and installed-runtime acceptance remain
-pending. Do not start a server or validation worker while an operator startup hold is active.
-
-## Local validation evidence
-
-Store installation receipts, machine details, customer paths, corpus manifests, extracted data,
-screenshots and run-specific results under the ignored repository-root `.local/` directory or
-outside the checkout. Do not add them to this document, public documentation or examples.
-
-Configure `examples/synthetic` as root `synthetic` to repeat the portable protocol smoke:
+Run from a development environment with the reviewed framework wheel and test tools:
 
 ```powershell
-.\.venv\Scripts\python.exe scripts/protocol_smoke.py --root synthetic --reports examples/synthetic/reports.json
+python -m pytest -q tests/test_installer.py tests/test_toml_publication.py tests/test_package.py tests/test_offline_profile.py tests/test_local_reader_candidate.py tests/test_native_threads.py tests/test_release_version.py
+python -m ruff check scripts tests src
+python scripts/stamp_release.py --verify
+python scripts/package.py --output .local/packages/RELEASE/EPlanMCPServer-source.zip
+python scripts/package.py --verify
 ```
 
-Generate archives under `.local/packages/`. Inspect source and wheel contents before publishing;
-the source packager excludes private working directories and rejects symbolic links. Keep the
-tracked byte manifest current after changing packaged source or documentation.
-# Service-manager reporting profile
+Source packaging uses an explicit allowlist, license and exact byte manifest. Keep
+outputs private. Compare wheel METADATA, RECORD payloads and display/canonical
+versions. Building a package does not install, enable or restart the running app.
 
-Run `python -m pytest -q tests/test_management.py` with a dedicated registry. Verify cached versions,
-unknown availability, per-instance activity, failed-call accounting, busy/stale denial, concurrent
-duplicate blocked receipts, credential-free snapshots and stopped registration on clean shutdown.
-Run the shared framework's synthetic management profile separately for independent restart effect
-counts and durable uncertain barriers across process/instance lifetimes. Those synthetic effects
-are not EPLAN process-restart acceptance.
+Installer tests use a disposable path with spaces/Unicode and a disposable venv.
+They exercise actual Windows CMD forwarding, exit code 37 propagation, real
+help/invalid-argument parsing and an inert install command plan. They do not
+install dependencies into the active app, register plugins or start a server.
 
-Verify the pinned framework wheel SHA-256/RECORD, hashed locks, dependency consistency, packaged
-runtime and current 50-tool direct/backend schemas (49 original tools plus the shared workflow reader). Start only a disposable source-free
-or synthetic server for manager-row checks. Existing chats/projects must remain untouched. Confirm
-the exact plugin ID and actual running/stopped state rather than equating inventory with reporting.
-Live process replacement remains unaccepted and disabled until an app-owned supervisor and
-cross-chat safe quiescence protocol exist.
-# Runtime guidance profile
+TOML tests publish only disposable UTF-8 files. Cover LF/CRLF input and output,
+Unicode, multiline strings, parsed settings, unrelated-setting preservation,
+malformed CR/CRCRLF rejection, stale hashes and refusal of the protected live
+target. Windows text translation can turn existing CRLF into CRCRLF. The safe
+writer normalizes once, encodes once and publishes bytes.
 
-Run `python -m pytest -q tests/test_guidance.py tests/test_framework.py`. Verify the generated
-bootstrap, canonical supporting-reference parity, manifest byte hashes, list/get/resource consistency,
-connected-client guide and reference updates/removal, stale revision/hash rejection, and failed
-publication preserving the prior guide/catalog. Directory reads must remain unadvertised. Source
-changes must remain unpublished until explicit revision-checked publication. Repeat protocol checks
-against the installed standalone route and an isolated wheel. Native Codex skill selection/reload
-and plugin-submission import remain separate host acceptance, not protocol-test results.
+## Selected runtime profiles
 
+The direct offline profile covers PDF/DXF, explicit reports and provider-free
+XML/link/archive/byte readers. The explicit local-reader profile additionally
+uses a reviewed SHA-pinned ODA converter against staged DWG/DWT/DWS copies.
+Access/ACE dispatch and semantic native EPLAN project APIs remain unavailable.
 
-## Local-reader candidate checkpoint
+Selected Windows direct-profile validation includes initialize/current guidance,
+50 tools, source-preserving reads, authenticated healthy idle management, restart
+refusal, normal/active/queued EOF, cancellation, independent sessions, client loss
+with held writer, supervisor crash, ODA descendants gone before SDK cleanup,
+revision-bound orphan/idempotent receipts and unrelated harmless stand-ins.
 
-The explicit local-reader profile restores the existing ODA conversion call through
-owned, bounded workers, with executable SHA-256 checks and immutable source copies.
-Candidate checks: 32 focused source-only tests and lint passed. Converter protocol,
-identity changes and source mutation use inert fixtures and a stubbed owned runner.
-These are not native ODA or EPLAN acceptance. The previously accepted installed
-offline runtime is left intact; candidate normal installation is not performed.
+Runtime, package bytes, plugin/cache route and host activation are separate
+evidence layers. Repeat applicable checks for a changed implementation or runtime.
+No native test, normal reinstall, restart or config activation is implied by a
+docs/source checkpoint. Never use customer projects or existing editors as
+cleanup fixtures. Preserve raw failures as failures.
+
+## Ownership and uncertainty
+
+Record source/executable/cache/preview hashes, creation-bound handles, private job
+accounting and terminal claims. Intermediate DXF bytes are not retained by the
+selected API; do not invent their hash or race a live converter file to obtain one.
+Finally-close must still attempt the exact SDK job cleanup if an observer fails,
+preserving the original error afterward. Abort cleanup is not a native acceptance
+pass. Deliberate native owner-loss acceptance requires descendants gone before
+outer cleanup.
+
+An unobserved short-lived job PID is not exact-generation cleanup proof. Keep
+whole-job accounting/emptiness distinct from retained handles; never adopt,
+reopen or kill a PID to fill an observation gap. No name-based cleanup or
+history-wide quiescence is allowed.
+
+Cancellation is not rollback. Preserve unknown requests/barriers and inspect
+effects instead of replaying writes. Manager offline/stopped state, plugin-version
+unknown and update availability remain honest. Automatic restart, shared GUI,
+HTTP/shared-host ownership and controller/SCM access are separate boundaries.
+
+See [implementation](docs/implementation.md), [ownership](docs/resource-ownership.md),
+[management](docs/service-management.md) and [guidance](docs/runtime-guidance.md).

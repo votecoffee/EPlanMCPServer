@@ -20,3 +20,10 @@ use existing paginated tools instead. Resources never acquire engineering projec
 Protocol/source/package checks are separate from a host's native progress UI, notification stream,
 Skills loader, approval rendering or live engineering acceptance. Reconnect/refetch if hints are
 missed. The selected standalone route and cross-process cache/index locks remain unchanged.
+
+
+Selected direct stdio and configured ODA paths have Windows lifetime coverage.
+Coverage is separate from exact installed-artifact/host acceptance. Revalidate
+changed runtime/vendor bytes. Source setup is install-only and never starts
+native software, selects a plugin route or writes global Codex TOML. Preserve
+unknown receipts and other sessions; optional shared hosts remain unselected.

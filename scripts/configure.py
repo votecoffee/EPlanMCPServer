@@ -10,6 +10,10 @@ def main():
     parser.add_argument("--root", action="append", required=True, help="name=absolute directory (repeatable)")
     parser.add_argument("--oda", help="Absolute installed ODAFileConverter.exe")
     args = parser.parse_args()
+    if args.oda:
+        parser.error(
+            "Setup never activates native readers; review an explicit pinned local-reader configuration separately"
+        )
     repo = Path(__file__).resolve().parents[1]
     local = repo / ".local"
     local.mkdir(exist_ok=True)
@@ -28,7 +32,7 @@ def main():
     from eplan_mcp.config import Config
 
     temporary = local / "config.pending.json"
-    temporary.write_text(json.dumps(config, indent=2), encoding="utf-8")
+    temporary.write_text(json.dumps(config, indent=2), encoding="utf-8", newline="\n")
     Config.load(temporary)
     temporary.replace(config_path)
     print(json.dumps({"config": str(config_path)}))
