@@ -109,6 +109,60 @@ class Coordinator:
             self._release(stream)
 
     @contextlib.contextmanager
+    def frontdoor(self, identity=None):
+        """Separate bounded lightweight metadata leases, never analysis admission."""
+        import uuid
+
+        from .json_state import atomic_json
+
+        stream = None
+        for slot in range(12):
+            stream = self._try(f"metadata-frontdoor:{slot}")
+            if stream is not None:
+                break
+        if stream is None:
+            raise ResourceBusy("Metadata frontdoor capacity is full (12); existing peers are preserved")
+        record = None
+        try:
+            if identity is None and os.name == "nt":
+                from universal_tools.windows_resources import ProcessDriver
+
+                identity = ProcessDriver().capture(os.getpid())
+            record = self.folder.parent / "frontdoor-leases" / (uuid.uuid4().hex + ".json")
+            body = {
+                "schema_version": 1,
+                "slot": slot,
+                "owner": identity,
+                "state": "held",
+                "authority": "Retained OS byte-range lock; historical held records do not consume admission",
+            }
+            atomic_json(record, body)
+            yield
+        finally:
+            try:
+                if record is not None and record.exists():
+                    atomic_json(record, {**body, "state": "closed"})
+            finally:
+                self._release(stream)
+
+    @contextlib.contextmanager
+    def analysis(self, count):
+        """Scarce operation admission is immediate and independent of idle frontdoors."""
+        stream = None
+        for slot in range(min(4, count)):
+            stream = self._try(f"analysis-operation:{slot}")
+            if stream is not None:
+                break
+        if stream is None:
+            raise ResourceBusy(
+                f"Analysis capacity is busy ({min(4, count)}/{min(4, count)} OS slots held when checked); metadata/guidance remain available. No work was dispatched; inspect any previous request_id before retrying"
+            )
+        try:
+            yield
+        finally:
+            self._release(stream)
+
+    @contextlib.contextmanager
     def worker(self, native=False):
         # Always acquire the backend before a general slot, so queued native work does not occupy all slots.
         with self.pool("oda", self.oda_workers) if native else contextlib.nullcontext():

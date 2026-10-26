@@ -1,0 +1,2983 @@
+{
+  "schema_version": 1,
+  "tools": [
+    {
+      "name": "eplan_get_workflow",
+      "description": "Read current EPLAN guidance and its reference catalog, or a revision/hash-pinned reference.\nCall without arguments first. Guide content is not write approval or a native EPLAN claim.\nRediscover after stale pins; preserve the selected endpoint and engineering receipt IDs.\n",
+      "inputSchema": {
+        "properties": {
+          "expected_revision": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Expected Revision"
+          },
+          "reference_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Reference Id"
+          },
+          "expected_sha256": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Expected Sha256"
+          }
+        },
+        "title": "eplan_get_workflowArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_get_workflowDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_status",
+      "description": "List configured source roots, installed backends, supported formats and extraction limits.",
+      "inputSchema": {
+        "properties": {},
+        "title": "eplan_statusArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_statusDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_concurrency_status",
+      "description": "Inspect per-process request admission, queue and worker limits; control calls remain responsive under load.",
+      "inputSchema": {
+        "properties": {},
+        "title": "eplan_concurrency_statusArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_concurrency_statusDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_get_transaction",
+      "description": "Read a durable write receipt/result. An abandoned owner is reported unknown; no operation is retried.",
+      "inputSchema": {
+        "properties": {
+          "request_id": {
+            "title": "Request Id",
+            "type": "string"
+          },
+          "include_result": {
+            "default": false,
+            "title": "Include Result",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "request_id"
+        ],
+        "title": "eplan_get_transactionArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_get_transactionDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_list_files",
+      "description": "Inventory a configured drawing root recursively. Unsupported CAD formats can be listed too.",
+      "inputSchema": {
+        "properties": {
+          "root_id": {
+            "title": "Root Id",
+            "type": "string"
+          },
+          "supported_only": {
+            "default": true,
+            "title": "Supported Only",
+            "type": "boolean"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 100,
+            "maximum": 200,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "root_id"
+        ],
+        "title": "eplan_list_filesArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_list_filesDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_inspect",
+      "description": "Extract source SHA-256, metadata, units, entity counts, layouts, PDF page count and limitations.",
+      "inputSchema": {
+        "properties": {
+          "root_id": {
+            "title": "Root Id",
+            "type": "string"
+          },
+          "relative_path": {
+            "title": "Relative Path",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root_id",
+          "relative_path"
+        ],
+        "title": "eplan_inspectArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_inspectDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_get_entities",
+      "description": "Read CAD entities and geometry properties by layer/layout/type/handle. Block coordinates are local.\n\nINSERT entities include transforms and attached attributes. Use layout '@block' and block name for\ndefinitions. Polyline vertices are limited to 256 per record; eplan_entity_vertices retrieves slices.\n",
+      "inputSchema": {
+        "properties": {
+          "root_id": {
+            "title": "Root Id",
+            "type": "string"
+          },
+          "relative_path": {
+            "title": "Relative Path",
+            "type": "string"
+          },
+          "layout": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Layout"
+          },
+          "layer": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Layer"
+          },
+          "entity_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Entity Type"
+          },
+          "handle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Handle"
+          },
+          "block": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Block"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "root_id",
+          "relative_path"
+        ],
+        "title": "eplan_get_entitiesArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_get_entitiesDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_get_text",
+      "description": "Read/search literal CAD text, block attributes or positioned PDF text. PDF pages are one-based.\n\nEvery row has a record_index plus CAD handle/location or PDF page/bbox. Long text is explicitly\ntruncated at 8000 characters; eplan_read_text_record retrieves full text in slices.\n",
+      "inputSchema": {
+        "properties": {
+          "root_id": {
+            "title": "Root Id",
+            "type": "string"
+          },
+          "relative_path": {
+            "title": "Relative Path",
+            "type": "string"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Query"
+          },
+          "layout": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Layout"
+          },
+          "layer": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Layer"
+          },
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Page"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 100,
+            "maximum": 200,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "root_id",
+          "relative_path"
+        ],
+        "title": "eplan_get_textArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_get_textDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_read_text_record",
+      "description": "Read a slice of one text record, using its zero-based record_index. Maximum length is 16000.",
+      "inputSchema": {
+        "properties": {
+          "root_id": {
+            "title": "Root Id",
+            "type": "string"
+          },
+          "relative_path": {
+            "title": "Relative Path",
+            "type": "string"
+          },
+          "record_index": {
+            "title": "Record Index",
+            "type": "integer"
+          },
+          "start": {
+            "default": 0,
+            "title": "Start",
+            "type": "integer"
+          },
+          "length": {
+            "default": 8000,
+            "title": "Length",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "root_id",
+          "relative_path",
+          "record_index"
+        ],
+        "title": "eplan_read_text_recordArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_read_text_recordDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_entity_vertices",
+      "description": "Read LWPOLYLINE vertex slices [x,y,start_width,end_width,bulge] using a CAD entity handle.",
+      "inputSchema": {
+        "properties": {
+          "root_id": {
+            "title": "Root Id",
+            "type": "string"
+          },
+          "relative_path": {
+            "title": "Relative Path",
+            "type": "string"
+          },
+          "handle": {
+            "title": "Handle",
+            "type": "string"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 100,
+            "maximum": 200,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "root_id",
+          "relative_path",
+          "handle"
+        ],
+        "title": "eplan_entity_verticesArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_entity_verticesDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_get_layers",
+      "description": "Read CAD layer names, colors, linetypes and off/frozen/locked flags.",
+      "inputSchema": {
+        "properties": {
+          "root_id": {
+            "title": "Root Id",
+            "type": "string"
+          },
+          "relative_path": {
+            "title": "Relative Path",
+            "type": "string"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 100,
+            "maximum": 200,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "root_id",
+          "relative_path"
+        ],
+        "title": "eplan_get_layersArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_get_layersDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_get_blocks",
+      "description": "Read block definitions, base points and xref paths. Read INSERT entities for attributes/placements.",
+      "inputSchema": {
+        "properties": {
+          "root_id": {
+            "title": "Root Id",
+            "type": "string"
+          },
+          "relative_path": {
+            "title": "Relative Path",
+            "type": "string"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 100,
+            "maximum": 200,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "root_id",
+          "relative_path"
+        ],
+        "title": "eplan_get_blocksArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_get_blocksDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_get_dimensions",
+      "description": "Read dimension entities, raw measurement, type, text override and definition points.\n\nValues are not formatted dimension labels; dimension style rounding/scaling is not applied.\n",
+      "inputSchema": {
+        "properties": {
+          "root_id": {
+            "title": "Root Id",
+            "type": "string"
+          },
+          "relative_path": {
+            "title": "Relative Path",
+            "type": "string"
+          },
+          "layout": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Layout"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 100,
+            "maximum": 200,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "root_id",
+          "relative_path"
+        ],
+        "title": "eplan_get_dimensionsArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_get_dimensionsDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_get_references",
+      "description": "List declared xrefs, image and PDF/DWF/DGN underlay paths; never open or load references.",
+      "inputSchema": {
+        "properties": {
+          "root_id": {
+            "title": "Root Id",
+            "type": "string"
+          },
+          "relative_path": {
+            "title": "Relative Path",
+            "type": "string"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 100,
+            "maximum": 200,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "root_id",
+          "relative_path"
+        ],
+        "title": "eplan_get_referencesArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_get_referencesDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_get_pdf_pages",
+      "description": "Read PDF page sizes, rotation, text counts, image counts and image-only OCR candidates.",
+      "inputSchema": {
+        "properties": {
+          "root_id": {
+            "title": "Root Id",
+            "type": "string"
+          },
+          "relative_path": {
+            "title": "Relative Path",
+            "type": "string"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 100,
+            "maximum": 200,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "root_id",
+          "relative_path"
+        ],
+        "title": "eplan_get_pdf_pagesArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_get_pdf_pagesDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_get_pdf_tables",
+      "description": "Detect and extract PDF table cells on one one-based page; verify against eplan_render_preview.",
+      "inputSchema": {
+        "properties": {
+          "root_id": {
+            "title": "Root Id",
+            "type": "string"
+          },
+          "relative_path": {
+            "title": "Relative Path",
+            "type": "string"
+          },
+          "page": {
+            "title": "Page",
+            "type": "integer"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 20,
+            "maximum": 200,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "root_id",
+          "relative_path",
+          "page"
+        ],
+        "title": "eplan_get_pdf_tablesArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_get_pdf_tablesDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_index_project",
+      "description": "Index 1..5 files into app-owned search state. Continue next_offset until null; inspect failures.\n\nThis writes only the server's cache/index and preserves all source files.\n\nOptional request_id provides durable idempotency; inspect eplan_get_transaction after a lost response.",
+      "inputSchema": {
+        "properties": {
+          "root_id": {
+            "title": "Root Id",
+            "type": "string"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 2,
+            "maximum": 5,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "request_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Request Id"
+          }
+        },
+        "required": [
+          "root_id"
+        ],
+        "title": "eplan_index_projectArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_index_projectDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_search_project",
+      "description": "Search indexed drawing text/attributes literally across one root with exact provenance.\n\nStale or deleted files are excluded. Coverage reports missing/stale sources; index first.\n",
+      "inputSchema": {
+        "properties": {
+          "root_id": {
+            "title": "Root Id",
+            "type": "string"
+          },
+          "query": {
+            "title": "Query",
+            "type": "string"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "root_id",
+          "query"
+        ],
+        "title": "eplan_search_projectArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_search_projectDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_compare_drawings",
+      "description": "Compare text multiplicities and layer/block names across two files; structural content diff only.",
+      "inputSchema": {
+        "properties": {
+          "root_id": {
+            "title": "Root Id",
+            "type": "string"
+          },
+          "relative_path": {
+            "title": "Relative Path",
+            "type": "string"
+          },
+          "other_root_id": {
+            "title": "Other Root Id",
+            "type": "string"
+          },
+          "other_relative_path": {
+            "title": "Other Relative Path",
+            "type": "string"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 100,
+            "maximum": 200,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "root_id",
+          "relative_path",
+          "other_root_id",
+          "other_relative_path"
+        ],
+        "title": "eplan_compare_drawingsArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_compare_drawingsDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_render_preview",
+      "description": "Write a PNG preview in app-owned state. PDF page is one-based; CAD uses an exact layout name.\n\nWidth is limited to 3000 pixels. CAD rendering is approximate and may omit unsupported entities.\n\nOptional request_id provides durable idempotency; inspect eplan_get_transaction after a lost response.",
+      "inputSchema": {
+        "properties": {
+          "root_id": {
+            "title": "Root Id",
+            "type": "string"
+          },
+          "relative_path": {
+            "title": "Relative Path",
+            "type": "string"
+          },
+          "page": {
+            "default": 1,
+            "title": "Page",
+            "type": "integer"
+          },
+          "layout": {
+            "default": "Model",
+            "title": "Layout",
+            "type": "string"
+          },
+          "width": {
+            "default": 1600,
+            "title": "Width",
+            "type": "integer"
+          },
+          "request_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Request Id"
+          }
+        },
+        "required": [
+          "root_id",
+          "relative_path"
+        ],
+        "title": "eplan_render_previewArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_render_previewDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_build_electrical_project",
+      "description": "Build immutable project evidence after eplan_index_project. WDP supplies membership; explicit reports\nsupply native assertions. Reports: [{relative_path, kind, field_map?}]; kinds components, panel,\nplc_connections, from_to, network, drawing_map. DWGIX requires an explicit FILETIME mapping.\nWrites app-owned state. PDF text stays an unassociated candidate. No native engine validation.\n\nOptional request_id provides durable idempotency; inspect eplan_get_transaction after a lost response.",
+      "inputSchema": {
+        "properties": {
+          "root_id": {
+            "title": "Root Id",
+            "type": "string"
+          },
+          "drawing_paths": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Drawing Paths"
+          },
+          "electrical_project_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Electrical Project Path"
+          },
+          "reports": {
+            "anyOf": [
+              {
+                "items": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Reports"
+          },
+          "attribute_map": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Attribute Map"
+          },
+          "wire_layers": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Wire Layers"
+          },
+          "tolerance": {
+            "default": 0.0001,
+            "title": "Tolerance",
+            "type": "number"
+          },
+          "include_pdf_candidates": {
+            "default": true,
+            "title": "Include Pdf Candidates",
+            "type": "boolean"
+          },
+          "request_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Request Id"
+          }
+        },
+        "required": [
+          "root_id"
+        ],
+        "title": "eplan_build_electrical_projectArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_build_electrical_projectDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_get_electrical_project",
+      "description": "Read project counts, checks and current source freshness. Historical snapshots remain readable.",
+      "inputSchema": {
+        "properties": {
+          "project_id": {
+            "title": "Project Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id"
+        ],
+        "title": "eplan_get_electrical_projectArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_get_electrical_projectDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_get_device_inventory",
+      "description": "Read tags, descriptions, manufacturer/catalog, equipment codes and source handles.\nDevices are physical occurrences, including child and panel roles. PDF candidates are separate.\n",
+      "inputSchema": {
+        "properties": {
+          "project_id": {
+            "title": "Project Id",
+            "type": "string"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Query"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "pdf_candidates_only": {
+            "default": false,
+            "title": "Pdf Candidates Only",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "project_id"
+        ],
+        "title": "eplan_get_device_inventoryArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_get_device_inventoryDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_get_plc_io",
+      "description": "Read controller/rack/slot/channel/address, devices, wires and terminals. Unknown values stay null.\nOptional bounded graph traces carry explicit incomplete/branching status and evidence bases.\n",
+      "inputSchema": {
+        "properties": {
+          "project_id": {
+            "title": "Project Id",
+            "type": "string"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Query"
+          },
+          "trace_connections": {
+            "default": false,
+            "title": "Trace Connections",
+            "type": "boolean"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 25,
+            "maximum": 200,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "project_id"
+        ],
+        "title": "eplan_get_plc_ioArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_get_plc_ioDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_get_connections",
+      "description": "Read graph edges with source objects/report rows, wires/cables and evidence classification.",
+      "inputSchema": {
+        "properties": {
+          "project_id": {
+            "title": "Project Id",
+            "type": "string"
+          },
+          "device_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Device Id"
+          },
+          "connection_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Connection Id"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "project_id"
+        ],
+        "title": "eplan_get_connectionsArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_get_connectionsDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_trace_connection",
+      "description": "Trace documented electrical or network paths. Associations never imply continuity.\nStops at a destination device/terminal; continue from that device to follow another segment.\nReturns unresolved ends, branching and explicit budget truncation, with connection IDs for evidence.\n",
+      "inputSchema": {
+        "properties": {
+          "project_id": {
+            "title": "Project Id",
+            "type": "string"
+          },
+          "device_id": {
+            "title": "Device Id",
+            "type": "string"
+          },
+          "terminal": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Terminal"
+          },
+          "domain": {
+            "default": "electrical",
+            "title": "Domain",
+            "type": "string"
+          },
+          "max_depth": {
+            "default": 40,
+            "title": "Max Depth",
+            "type": "integer"
+          },
+          "max_paths": {
+            "default": 20,
+            "title": "Max Paths",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "project_id",
+          "device_id"
+        ],
+        "title": "eplan_trace_connectionArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_trace_connectionDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_get_equipment_groups",
+      "description": "Read explicit installation/location/panel/station groups and separate WDP membership groups.",
+      "inputSchema": {
+        "properties": {
+          "project_id": {
+            "title": "Project Id",
+            "type": "string"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Query"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "project_id"
+        ],
+        "title": "eplan_get_equipment_groupsArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_get_equipment_groupsDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_get_network_inventory",
+      "description": "Read documented device addresses, ports/interfaces and unassociated text literals. No network access.",
+      "inputSchema": {
+        "properties": {
+          "project_id": {
+            "title": "Project Id",
+            "type": "string"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Query"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "project_id"
+        ],
+        "title": "eplan_get_network_inventoryArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_get_network_inventoryDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_check_drawing_consistency",
+      "description": "Review duplicate tags, address conflicts, missing descriptions, references and panel differences.\nMissing scope produces potential conflicts; unavailable comparisons remain explicitly not evaluable.\n",
+      "inputSchema": {
+        "properties": {
+          "project_id": {
+            "title": "Project Id",
+            "type": "string"
+          },
+          "code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Code"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "project_id"
+        ],
+        "title": "eplan_check_drawing_consistencyArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_check_drawing_consistencyDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_compare_electrical_revisions",
+      "description": "Compare semantic device/connection records in two historical snapshots with source provenance.",
+      "inputSchema": {
+        "properties": {
+          "before_project_id": {
+            "title": "Before Project Id",
+            "type": "string"
+          },
+          "after_project_id": {
+            "title": "After Project Id",
+            "type": "string"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "before_project_id",
+          "after_project_id"
+        ],
+        "title": "eplan_compare_electrical_revisionsArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_compare_electrical_revisionsDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_export_electrical_project",
+      "description": "Write and readback-verify a complete JSON export in app-owned state; return path/hash.\nOptional request_id provides durable idempotency; inspect eplan_get_transaction after a lost response.",
+      "inputSchema": {
+        "properties": {
+          "project_id": {
+            "title": "Project Id",
+            "type": "string"
+          },
+          "request_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Request Id"
+          }
+        },
+        "required": [
+          "project_id"
+        ],
+        "title": "eplan_export_electrical_projectArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_export_electrical_projectDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_capabilities",
+      "description": "Read export schema, supported analyses and native EPLAN boundaries before importing reports.",
+      "inputSchema": {
+        "properties": {},
+        "title": "eplan_capabilitiesArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_capabilitiesDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_import_reports",
+      "description": "Create immutable EPLAN evidence from declared CSV/TSV/JSON/flat XML exports.\n\nEach declaration: {relative_path, kind, field_map?, row_tag?, delimiter?, evidence_relative_path?}.\nKinds include devices, connections, plc_io, terminals, cables, parts, network, pages,\nsupplies, supply_links, supply_references and bridges.\nfield_map maps canonical field to exact source column. XML requires exact row_tag.\nevidence_relative_path selects an eplan-row-evidence/1 sidecar for reviewed drawing rows.\nEvery row needs reviewer/note and hash/page/exact text-record quotes from indexed PDFs.\nThese remain reviewed drawing assertions, not authenticated exports or native validation.\nWrites only private state; source reports remain unchanged. Native ELK/ZW1 cannot be imported here.\n\nOptional request_id provides durable idempotency; inspect eplan_get_transaction after a lost response.",
+      "inputSchema": {
+        "properties": {
+          "root_id": {
+            "title": "Root Id",
+            "type": "string"
+          },
+          "reports": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Reports",
+            "type": "array"
+          },
+          "request_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Request Id"
+          }
+        },
+        "required": [
+          "root_id",
+          "reports"
+        ],
+        "title": "eplan_import_reportsArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_import_reportsDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_get_export_snapshot",
+      "description": "Read snapshot counts, declared mappings, limitations and current source hashes/freshness.",
+      "inputSchema": {
+        "properties": {
+          "snapshot_id": {
+            "title": "Snapshot Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "snapshot_id"
+        ],
+        "title": "eplan_get_export_snapshotArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_get_export_snapshotDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_query_export",
+      "description": "Query exported devices, connections, PLC I/O, terminals, cables, parts, network or pages.\n\nIncludes raw properties, explicit canonical mapping, source SHA-256 and row ordinal.\nDoes not combine records by unqualified device tags. Unknown properties remain raw.\n",
+      "inputSchema": {
+        "properties": {
+          "snapshot_id": {
+            "title": "Snapshot Id",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Query"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "snapshot_id",
+          "kind"
+        ],
+        "title": "eplan_query_exportArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_query_exportDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_check_exports",
+      "description": "Review potential duplicate device tags, PLC/network addresses and missing connection endpoints.\nDuplicate functions can be legitimate; findings require review and are not native check-run results.\n",
+      "inputSchema": {
+        "properties": {
+          "snapshot_id": {
+            "title": "Snapshot Id",
+            "type": "string"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "snapshot_id"
+        ],
+        "title": "eplan_check_exportsArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_check_exportsDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_trace_export_connection",
+      "description": "Trace exact source/target tag+terminal assertions from exported connection rows.\nRequires full structured tags. No implicit device-internal bridges or physical continuity claims.\n",
+      "inputSchema": {
+        "properties": {
+          "snapshot_id": {
+            "title": "Snapshot Id",
+            "type": "string"
+          },
+          "tag": {
+            "title": "Tag",
+            "type": "string"
+          },
+          "terminal": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Terminal"
+          },
+          "max_depth": {
+            "default": 10,
+            "title": "Max Depth",
+            "type": "integer"
+          },
+          "max_edges": {
+            "default": 100,
+            "title": "Max Edges",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "snapshot_id",
+          "tag"
+        ],
+        "title": "eplan_trace_export_connectionArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_trace_export_connectionDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_compare_export_snapshots",
+      "description": "Compare mapped export records, preserving duplicate multiplicity and both source manifests.",
+      "inputSchema": {
+        "properties": {
+          "before_snapshot_id": {
+            "title": "Before Snapshot Id",
+            "type": "string"
+          },
+          "after_snapshot_id": {
+            "title": "After Snapshot Id",
+            "type": "string"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "before_snapshot_id",
+          "after_snapshot_id"
+        ],
+        "title": "eplan_compare_export_snapshotsArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_compare_export_snapshotsDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_export_snapshot",
+      "description": "Write and readback-verify JSON evidence in private state; returns artifact path and SHA-256.\nOptional request_id provides durable idempotency; inspect eplan_get_transaction after a lost response.",
+      "inputSchema": {
+        "properties": {
+          "snapshot_id": {
+            "title": "Snapshot Id",
+            "type": "string"
+          },
+          "request_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Request Id"
+          }
+        },
+        "required": [
+          "snapshot_id"
+        ],
+        "title": "eplan_export_snapshotArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_export_snapshotDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_read_archive",
+      "description": "List ordinary ZIP entries or read one exact member using xml/link/text/bytes/streams.\nAccess/ACE member operations are refused by the selected offline profile.\nNative ZW1/ZW9 are not treated as ZIP. Members are size-bounded, CRC-verified and isolated.\nreader_options supports record_tag, query, table, byte_offset, byte_length, stream_offset,\nminimum_length, text_encoding only. Pagination applies to the selected member reader or ZIP inventory.\n",
+      "inputSchema": {
+        "properties": {
+          "root_id": {
+            "title": "Root Id",
+            "type": "string"
+          },
+          "relative_path": {
+            "title": "Relative Path",
+            "type": "string"
+          },
+          "member": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Member"
+          },
+          "member_operation": {
+            "default": "text",
+            "title": "Member Operation",
+            "type": "string"
+          },
+          "reader_options": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Reader Options"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 25,
+            "maximum": 200,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "root_id",
+          "relative_path"
+        ],
+        "title": "eplan_read_archiveArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_read_archiveDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_read_eod_slots",
+      "description": "Experimental EOD byte-slot reader with raw header integers and offset-bound text candidates.\nInfer slot size only from repeated header intervals that exactly divide the file, or provide\nan explicit size. Does not establish active objects, property meanings or connectivity.\n",
+      "inputSchema": {
+        "properties": {
+          "root_id": {
+            "title": "Root Id",
+            "type": "string"
+          },
+          "relative_path": {
+            "title": "Relative Path",
+            "type": "string"
+          },
+          "slot_size": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Slot Size"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 25,
+            "maximum": 200,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "root_id",
+          "relative_path"
+        ],
+        "title": "eplan_read_eod_slotsArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_read_eod_slotsDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_read_xml",
+      "description": "Inspect XML tags or read exact record_tag matches with raw attributes and nested children.\nOmit record_tag for schema discovery. Includes ordinal provenance; no property IDs are guessed.\n",
+      "inputSchema": {
+        "properties": {
+          "root_id": {
+            "title": "Root Id",
+            "type": "string"
+          },
+          "relative_path": {
+            "title": "Relative Path",
+            "type": "string"
+          },
+          "record_tag": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Record Tag"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Query"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 25,
+            "maximum": 200,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "root_id",
+          "relative_path"
+        ],
+        "title": "eplan_read_xmlArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_read_xmlDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_read_access",
+      "description": "Refused by the selected direct offline profile; never acquires an Access/ACE provider.\nThe signature is retained for compatibility. Raw MDB byte/text evidence remains available.\nUses Windows ACE in read-only mode against an isolated copy. No arbitrary SQL or saved queries.\nTable row ordinals reflect provider order under the returned source hash, not inferred keys.\nFor a full cell, supply column and zero-based row offset; start/length slice text or binary data.\n",
+      "inputSchema": {
+        "properties": {
+          "root_id": {
+            "title": "Root Id",
+            "type": "string"
+          },
+          "relative_path": {
+            "title": "Relative Path",
+            "type": "string"
+          },
+          "table": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Table"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 25,
+            "maximum": 200,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "column": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Column"
+          },
+          "start": {
+            "default": 0,
+            "title": "Start",
+            "type": "integer"
+          },
+          "length": {
+            "default": 8000,
+            "title": "Length",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "root_id",
+          "relative_path"
+        ],
+        "title": "eplan_read_accessArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_read_accessDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_read_project_link",
+      "description": "Read ELK/ELL link text and bounded inventory of its local EDB folder, without opening EPLAN.\nTarget must stay under the configured root. Folder inventory is not an atomic project snapshot.\n",
+      "inputSchema": {
+        "properties": {
+          "root_id": {
+            "title": "Root Id",
+            "type": "string"
+          },
+          "relative_path": {
+            "title": "Relative Path",
+            "type": "string"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "root_id",
+          "relative_path"
+        ],
+        "title": "eplan_read_project_linkArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_read_project_linkDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_read_binary_bytes",
+      "description": "Read at most 4096 bytes as hex from local EPLAN data or a checksum-valid zlib stream.\nbyte_offset refers to source bytes, or inflated bytes when stream_offset selects a stream.\n",
+      "inputSchema": {
+        "properties": {
+          "root_id": {
+            "title": "Root Id",
+            "type": "string"
+          },
+          "relative_path": {
+            "title": "Relative Path",
+            "type": "string"
+          },
+          "byte_offset": {
+            "default": 0,
+            "title": "Byte Offset",
+            "type": "integer"
+          },
+          "byte_length": {
+            "default": 256,
+            "title": "Byte Length",
+            "type": "integer"
+          },
+          "stream_offset": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Stream Offset"
+          }
+        },
+        "required": [
+          "root_id",
+          "relative_path"
+        ],
+        "title": "eplan_read_binary_bytesArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_read_binary_bytesDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_find_compressed_streams",
+      "description": "Find checksum-valid zlib streams whose headers start within a bounded 4 MiB source window.\nContinue next_scan_byte_offset for coverage; scan budgets and record pagination are separate.\nThese are compressed byte streams, not decoded EPLAN object records.\n",
+      "inputSchema": {
+        "properties": {
+          "root_id": {
+            "title": "Root Id",
+            "type": "string"
+          },
+          "relative_path": {
+            "title": "Relative Path",
+            "type": "string"
+          },
+          "byte_offset": {
+            "default": 0,
+            "title": "Byte Offset",
+            "type": "integer"
+          },
+          "byte_length": {
+            "default": 4194304,
+            "title": "Byte Length",
+            "type": "integer"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "root_id",
+          "relative_path"
+        ],
+        "title": "eplan_find_compressed_streamsArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_find_compressed_streamsDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_read_binary_text",
+      "description": "Read offset-bound text candidates from raw or inflated local data.\nDefault is ASCII/ASCII-compatible UTF-16. Explicit text_encoding accepts utf-8, utf-16-le,\nutf-16-be or cp1252; invalid units split runs. Align UTF-16 at the selected byte_offset.\nFalse positives and window-edge fragments are possible. No electrical identity/relationship inferred.\n",
+      "inputSchema": {
+        "properties": {
+          "root_id": {
+            "title": "Root Id",
+            "type": "string"
+          },
+          "relative_path": {
+            "title": "Relative Path",
+            "type": "string"
+          },
+          "byte_offset": {
+            "default": 0,
+            "title": "Byte Offset",
+            "type": "integer"
+          },
+          "byte_length": {
+            "default": 65536,
+            "title": "Byte Length",
+            "type": "integer"
+          },
+          "stream_offset": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Stream Offset"
+          },
+          "minimum_length": {
+            "default": 4,
+            "title": "Minimum Length",
+            "type": "integer"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Query"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "text_encoding": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Text Encoding"
+          }
+        },
+        "required": [
+          "root_id",
+          "relative_path"
+        ],
+        "title": "eplan_read_binary_textArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_read_binary_textDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_get_device_profile",
+      "description": "Read exact-tag device descriptions, IPs, PLC I/O facts and power/air supply summaries.\nUses declared exports or explicitly reviewed drawing rows. Retains quote/hash references,\nconflicting facts and known scope ambiguity. Reviewer labels are not authenticated.\nFacts retain sources; first ten per field are returned with full counts. Use query_export for more.\n",
+      "inputSchema": {
+        "properties": {
+          "snapshot_id": {
+            "title": "Snapshot Id",
+            "type": "string"
+          },
+          "tag": {
+            "title": "Tag",
+            "type": "string"
+          },
+          "installation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Installation"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Location"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 25,
+            "maximum": 200,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "snapshot_id",
+          "tag"
+        ],
+        "title": "eplan_get_device_profileArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_get_device_profileDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_trace_device_supply",
+      "description": "Trace upstream power or air feeds from explicit terminal relationships to reported supplies.\nmedium is electrical or pneumatic. connections/bridges require explicit flow_direction;\nsupply_links declare source-to-target flow by kind. No bridges, ratings or live valve states inferred.\nreported_references retains feed labels/sheet references; these never create terminal graph edges.\n",
+      "inputSchema": {
+        "properties": {
+          "snapshot_id": {
+            "title": "Snapshot Id",
+            "type": "string"
+          },
+          "tag": {
+            "title": "Tag",
+            "type": "string"
+          },
+          "medium": {
+            "default": "electrical",
+            "title": "Medium",
+            "type": "string"
+          },
+          "terminal": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Terminal"
+          },
+          "installation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Installation"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Location"
+          },
+          "max_depth": {
+            "default": 20,
+            "title": "Max Depth",
+            "type": "integer"
+          },
+          "max_paths": {
+            "default": 20,
+            "title": "Max Paths",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "snapshot_id",
+          "tag"
+        ],
+        "title": "eplan_trace_device_supplyArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_trace_device_supplyDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eplan_collect_device_evidence",
+      "description": "Collect source-bound device text, IP literals, power/air labels and I/O-address candidates.\nIndex drawings first. category: device, ip, power, air, io or omitted for all. When device_query\nis supplied, include exact literal matches and PDF text within radius points on that same page.\nProximity is candidate evidence only: it never establishes device ownership or feed connectivity.\n",
+      "inputSchema": {
+        "properties": {
+          "root_id": {
+            "title": "Root Id",
+            "type": "string"
+          },
+          "drawing_paths": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Drawing Paths",
+            "type": "array"
+          },
+          "device_query": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Device Query"
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Category"
+          },
+          "radius": {
+            "default": 80,
+            "title": "Radius",
+            "type": "number"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "root_id",
+          "drawing_paths"
+        ],
+        "title": "eplan_collect_device_evidenceArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "eplan_collect_device_evidenceDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    }
+  ],
+  "capabilities": {
+    "selected_profile": "direct-standalone-offline",
+    "disabled_routes": [
+      "unconfigured vendor converter",
+      "Access/ACE provider",
+      "native engineering apps",
+      "controllers/SCM",
+      "shared host",
+      "HTTP serving",
+      "plugin install/bootstrap"
+    ],
+    "feature_profiles": {
+      "assessment_scope": "Implementation availability; selected direct-profile lifetime coverage is separate from current artifact and host acceptance",
+      "selected_profile": "direct-standalone-offline",
+      "native_thread_pool_policy": {
+        "status": "implemented",
+        "reason": "Fixed standalone pre-import numerical limits; preloaded hosts refused; selected direct runtime measurements are separate from configured limits"
+      },
+      "vendor_native_readers": {
+        "status": "not-configured",
+        "reason": "Explicit profile and pinned ODA copy-only conversion; selected DWG read/preview and descendant cleanup covered. Revalidate changed vendor/runtime bytes. Access/ACE stays disabled."
+      },
+      "http_transport": {
+        "status": "blocked",
+        "reason": "Only direct stdio serving is enabled; HTTP startup refused before config load"
+      },
+      "framework_020_runtime": {
+        "status": "implemented",
+        "reason": "Reviewed 0.20 wheel/pins; selected direct MCP/ODA lifetime coverage; optional shared host is not selected"
+      },
+      "endpoint_instance_admission": {
+        "status": "implemented",
+        "reason": "Twelve lightweight metadata leases per state; at most four on-demand analysis operations (configuration may be narrower). Parser/ODA limits are unchanged. Legacy endpoint leases are never stolen."
+      },
+      "parent_exit_cleanup": {
+        "status": "implemented",
+        "reason": "Selected direct EOF, client loss with held writer, supervisor death and ODA descendants covered; no shared GUI adoption"
+      },
+      "owned_process_lifecycle": {
+        "status": "implemented",
+        "reason": "Handle-bound normal/failure/cancellation teardown and selected actual MCP/ODA descendant coverage; no PID/name cleanup"
+      },
+      "shared_resource_ledger": {
+        "status": "implemented",
+        "reason": "Reservations, creation-bound binding, reconciliation and revision-bound orphan/idempotence covered; uncertain barriers preserved"
+      },
+      "framework_host_ownership": {
+        "status": "blocked",
+        "reason": "Serve/proxy entry points refuse startup until shared leases and framework backend-tree containment are accepted"
+      },
+      "installer_lifecycle": {
+        "status": "setup-only",
+        "reason": "Install-only setup and disposable CMD forwarding/help/failure checks; no server/native/plugin/global-config activation. Automatic plugin registration remains unavailable."
+      },
+      "skills_and_guides": {
+        "status": "enabled-and-tested",
+        "reason": "Canonical tool/reference/catalog reads; explicit atomic publication"
+      },
+      "direct_discovery_cache": {
+        "status": "enabled-and-tested",
+        "reason": "Modern tools/list only; private 1000 ms TTL; invocation still runs policy/revision checks"
+      },
+      "guidance_notifications": {
+        "status": "implemented-but-unassessed",
+        "reason": "Framework live resource notifications wired; reconnect/refetch tested, native host delivery not accepted"
+      },
+      "framework_catalog_watch": {
+        "status": "blocked",
+        "reason": "Optional framework host is not selected; standalone SDK discovery uses its immutable per-generation catalog"
+      },
+      "index_and_import_progress": {
+        "status": "final-observations",
+        "reason": "Backend returns real final file/report stage observations; frontend counters show admission, not live backend stages. Live stage streaming is not advertised."
+      },
+      "cooperative_cancellation": {
+        "status": "owned-tree-cancellation",
+        "reason": "Frontend disconnect/cancellation stops its owned ephemeral analysis tree. Committed private units remain; interrupted write receipts can stay unknown. Never infer rollback or replay."
+      },
+      "local_data_cancellation": {
+        "status": "owned-tree-cancellation",
+        "reason": "Single parsers have no intra-worker checkpoints; their private owned trees stop on cancellation under existing worker budgets. No native editor or shared software is acquired."
+      },
+      "tasks": {
+        "status": "blocked",
+        "reason": "No durable app-owned batch job/worker lifecycle or trusted job-owner binding; synchronous analysis does not survive process loss"
+      },
+      "approval_continuations": {
+        "status": "outside-workflow",
+        "reason": "No native engineering writes; ordinary private offline analysis does not need new approval prompts"
+      },
+      "direct_report_resources": {
+        "status": "enabled-and-tested",
+        "reason": "Private snapshot IDs, verified content hash/freshness, 16000-byte reads; query tools remain available"
+      },
+      "framework_report_relay": {
+        "status": "blocked",
+        "reason": "No app-authorized report resource relay configured; ordinary backend report tools remain available"
+      },
+      "report_update_notifications": {
+        "status": "blocked",
+        "reason": "Report identities are immutable; no authorized source-freshness watcher or mutable per-owner artifact channel exists"
+      },
+      "native_codex_skills": {
+        "status": "implemented-but-unassessed",
+        "reason": "Packaged bootstrap retained; protocol tests do not activate the native loader"
+      },
+      "redis_oauth_apps": {
+        "status": "outside-workflow",
+        "reason": "Optional profiles are not required or enabled by this app"
+      }
+    },
+    "report_kinds": [
+      "bridges",
+      "cables",
+      "connections",
+      "devices",
+      "network",
+      "pages",
+      "parts",
+      "plc_io",
+      "supplies",
+      "supply_links",
+      "supply_references",
+      "terminals"
+    ],
+    "canonical_fields": [
+      "address",
+      "cable",
+      "channel",
+      "color",
+      "controller",
+      "cross_reference",
+      "cross_section",
+      "description",
+      "device_type",
+      "flow_direction",
+      "function",
+      "id",
+      "installation",
+      "interface",
+      "ip_address",
+      "location",
+      "manufacturer",
+      "medium",
+      "name",
+      "page",
+      "part_number",
+      "port",
+      "potential",
+      "pressure",
+      "pressure_unit",
+      "quantity",
+      "rack",
+      "signal",
+      "slot",
+      "source_installation",
+      "source_location",
+      "source_reference",
+      "source_tag",
+      "source_terminal",
+      "strip",
+      "supply_kind",
+      "tag",
+      "target_installation",
+      "target_location",
+      "target_reference",
+      "target_tag",
+      "target_terminal",
+      "terminal",
+      "voltage",
+      "voltage_unit",
+      "wire"
+    ],
+    "formats": [
+      "csv",
+      "tsv",
+      "txt",
+      "json",
+      "flat XML with explicit row_tag",
+      "flat EPJ with explicit row_tag"
+    ],
+    "native_project_access": false,
+    "native_editing": false,
+    "native_highlighting": false,
+    "inventory_only": [
+      "zw1",
+      "zw9",
+      "ema",
+      "ems"
+    ],
+    "independent_readers": [
+      "nested XML",
+      "ELK/ELL link text",
+      "ordinary ZIP members",
+      "raw binary ranges",
+      "ASCII-compatible binary text",
+      "checksum-valid zlib streams"
+    ],
+    "binary_semantic_project_decoder": false,
+    "device_information": [
+      "source-bound profiles",
+      "explicit electrical/pneumatic supply traces",
+      "drawing text candidates",
+      "reviewed drawing rows with hash/quote bindings",
+      "reported feed/sheet references with unresolved port connectivity"
+    ],
+    "mapping": "field_map maps canonical names to exact exported column/property names; no numeric property IDs guessed",
+    "limits": {
+      "report_bytes": 16777216,
+      "snapshot_rows": 100000,
+      "report_count": 32
+    },
+    "workflow": "Import explicitly declared exports; query snapshot_id; inspect freshness on every response.",
+    "reviewed_drawings": {
+      "declaration_field": "evidence_relative_path",
+      "sidecar_schema": "eplan-row-evidence/1",
+      "requires": "Indexed PDF, original SHA-256, page and exact text-record quotes for every row",
+      "boundary": "Caller review assertion; quote/hash validation does not prove engineering meaning or authenticate the reviewer"
+    }
+  }
+}

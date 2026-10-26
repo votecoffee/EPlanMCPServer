@@ -2,6 +2,11 @@
 
 ## Architecture and supported profiles
 
+Use [multi-chat readiness](connection-readiness.md) for the current lightweight
+metadata/frontdoor design, lazy scarce-work admission and required regression
+workload. Per-chat initialization no longer acquires the four legacy heavy
+endpoint slots. Old live generations retain their slots until their own exit.
+
 Published direct connections now use the [stable deployment](stable-launcher.md)
 contract: retained app-owned engine/runtime, atomic selection, integrity refusal,
 peer-preserving updates and exact owner-generation cleanup. A source setup path

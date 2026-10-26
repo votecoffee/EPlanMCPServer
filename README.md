@@ -2,7 +2,7 @@
 
 Source-preserving EPLAN export, electrical report and drawing analysis for MCP
 
-Standalone Codex plugin, shared Python service and CLI. Version **26.1023.170645**.
+Standalone Codex plugin, shared Python service and CLI. Version **26.1026.084323**.
 The main purpose is to extract device names/descriptions, network addresses, PLC I/O points,
 and the power or compressed-air supplies feeding each device.
 The repository uses `EPlanMCPServer`; the Python distribution uses the normalized package name
@@ -28,6 +28,12 @@ This release analyzes exported evidence without changing engineering sources. It
 EPLAN for offline analysis. It does not yet provide native EPLAN project access or editing.
 
 ## Local readers
+
+The standalone route uses bounded lightweight metadata frontdoors. Idle chats do
+not reserve analysis or parser/ODA workers. Work is admitted lazily in owned
+ephemeral processes; an exhausted analysis pool returns a meaningful busy error
+while discovery and guidance stay usable. See [multi-chat readiness](docs/connection-readiness.md)
+for independent budgets, measured acceptance requirements and MSIX path handling.
 
 The explicit `direct-standalone-local-readers` profile enables the existing ODA
 DWG/DWT/DWS-to-DXF adapter. Configure `oda_executable` as an explicit `.exe` path

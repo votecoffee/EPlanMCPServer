@@ -3,7 +3,7 @@
 import datetime
 import re
 
-DISPLAY_VERSION = "26.1023.170645"
+DISPLAY_VERSION = "26.1026.084323"
 RELEASE_TIMEZONE = "America/New_York"
 
 

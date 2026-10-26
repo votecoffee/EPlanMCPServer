@@ -34,6 +34,7 @@ def selected_files(repo):
     for folder in ("src", "scripts", "tests"):
         files.extend((repo / folder).rglob("*.py"))
     files.extend((repo / "src/eplan_mcp/references").glob("*.md"))
+    files.append(repo / "src/eplan_mcp/tool_catalog.json")
     files.extend(
         p
         for p in (repo / "examples").rglob("*")

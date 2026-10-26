@@ -40,14 +40,17 @@ and PDF candidates separate from the EPLAN export snapshots.
 
 All writes target private app state. Retain a unique request_id for writes; after lost replies
 read eplan_get_transaction. Unknown outcomes must not be automatically replayed under new IDs.
-The standalone server supports concurrent clients with bounded admission and shared locks.
+The standalone server has bounded lightweight metadata frontdoors. Idle chats do not reserve
+scarce analysis/parser/ODA slots. Analysis is acquired lazily; busy errors dispatch no work.
+Ephemeral analysis returns final stage observations; live per-stage streaming is not provided.
+After a lost write response inspect the durable request_id; never infer rollback or retry it.
 The optional app-owned framework host has its own request journal and requires separate
 host/app request IDs. No universal broker is required. Native UI, engineering modifications,
 network scans, controller access and deployment are outside this release.
 """
 
 WORKFLOW += "Use local data tools on exact paths. Read XML schema before record_tag selection; list Access tables before row reads. Use source hashes and row ordinals. Binary scans cover bounded windows; continue next_scan_byte_offset and pagination separately. Compressed blocks require verified checksums and carry inflated hashes. No binary text match proves device identity, current object status or connectivity."
-WORKFLOW += "\nRead eplan_capabilities.feature_profiles for enabled/tested and blocked features. Index/import calls report real file/report stages and process-local operation observations via eplan_concurrency_status. Cancellation is cooperative at checkpoints: an in-flight unit can complete, committed units remain, and uncertain write receipts still require inspection. No durable Task/job survival is advertised. Direct eplan://reports/{snapshot_id}/{offset}/{length} resources read bounded verified snapshot bytes with source freshness; ordinary report tools remain the fallback. Resource access uses the selected app-state boundary, not an inferred authenticated chat identity.\n"
+WORKFLOW += "\nRead eplan_capabilities.feature_profiles for enabled/tested and blocked features. Index/import results carry final real backend stage observations; eplan_concurrency_status reports frontend admission counters, not live backend stages. EOF/cancellation stops the owned ephemeral analysis tree. Prior committed units remain and interrupted private-write receipts can stay unknown; inspect the request_id without assuming rollback or replay. No durable Task/job survival is advertised. Direct eplan://reports/{snapshot_id}/{offset}/{length} resources read bounded verified snapshot bytes with source freshness; ordinary report tools remain the fallback. Resource access uses the selected app-state boundary, not an inferred authenticated chat identity.\n"
 
 
 BOOTSTRAP = """---

@@ -125,7 +125,17 @@ def test_actual_startup_refuses_before_execution_in_unicode_path(installation, t
 def test_linked_selection_is_refused(installation, monkeypatch):
     root, _, _ = installation
     pointer = root / "launcher/current.json"
-    original = Path.is_symlink
-    monkeypatch.setattr(Path, "is_symlink", lambda p: p == pointer or original(p))
+    from types import SimpleNamespace
+
+    original = Path.lstat
+
+    def linked(path, *args, **kwargs):
+        return (
+            SimpleNamespace(st_mode=0, st_file_attributes=0x400)
+            if path == pointer
+            else original(path, *args, **kwargs)
+        )
+
+    monkeypatch.setattr(Path, "lstat", linked)
     with pytest.raises(ValueError, match="Linked/reparse"):
         launch.verify(root)

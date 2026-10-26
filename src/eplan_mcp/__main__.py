@@ -17,6 +17,11 @@ def main():
 
 
 def _main():
+    if len(sys.argv) > 1 and sys.argv[1] == "_invoke":
+        from .analysis_call import run_worker
+
+        run_worker(*sys.argv[2:])
+        return
     if len(sys.argv) > 1 and sys.argv[1] in {"_extract", "_render", "_tables", "_local"}:
         from .owned_processes import bind_evidence
 
@@ -162,6 +167,11 @@ def _main():
             framework_host.proxy(state)
         return
     from .config import Config
+
+    if args.command == "serve":
+        from .frontdoor import serve
+
+        return serve(Config.load(args.config), args.config)
     from .service import DrawingService
 
     service = DrawingService(Config.load(args.config))
@@ -224,7 +234,9 @@ def _main():
             with Reporting(
                 service.config.state,
                 server.eplan_scheduler.status,
-                role="Per-chat stdio connection" if args.transport == "stdio" else "Standalone loopback service",
+                role="Per-chat stdio connection"
+                if args.transport == "stdio"
+                else "Standalone loopback service",
             ):
                 if args.transport == "stdio" or not SDK2:
                     server.run(transport=args.transport)

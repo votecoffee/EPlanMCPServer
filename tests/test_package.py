@@ -10,6 +10,9 @@ def minimal_repo(tmp_path):
         path = repo / name
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text("public fixture", encoding="utf-8")
+    catalog = repo / "src/eplan_mcp/tool_catalog.json"
+    catalog.parent.mkdir(parents=True)
+    catalog.write_text("{}", encoding="utf-8")
     return repo
 
 
@@ -37,7 +40,7 @@ def test_package_excludes_private_material_inside_public_folders(tmp_path):
 
 def test_package_rejects_source_symlinks(tmp_path, monkeypatch):
     repo = minimal_repo(tmp_path)
-    (repo / "src").mkdir()
+    (repo / "src").mkdir(exist_ok=True)
     link = repo / "src/link.py"
     link.write_text("private sentinel", encoding="utf-8")
     original = type(link).is_symlink

@@ -7,6 +7,7 @@ import json
 import os
 import re
 import site
+import stat
 import sys
 from pathlib import Path
 
@@ -16,55 +17,68 @@ def digest(path):
         return hashlib.file_digest(stream, "sha256").hexdigest()
 
 
-def ordinary(path):
+def ordinary(path, checked=None):
     path = Path(path).absolute()
+    checked = set() if checked is None else checked
     for item in (path, *path.parents):
-        if item.exists() and (item.is_symlink() or getattr(item.stat(), "st_file_attributes", 0) & 0x400):
+        if item in checked:
+            continue
+        try:
+            info = item.lstat()
+        except FileNotFoundError:
+            continue
+        if stat.S_ISLNK(info.st_mode) or getattr(info, "st_file_attributes", 0) & 0x400:
             raise ValueError("Linked/reparse installation paths are refused")
+        if stat.S_ISDIR(info.st_mode):
+            checked.add(item)
     return path
 
 
-def read_json(path, maximum=4_000_000):
-    path = ordinary(path)
+def read_json(path, maximum=4_000_000, checked=None):
+    path = ordinary(path, checked)
     if path.stat().st_size > maximum:
         raise ValueError("Installation record exceeds budget")
     return json.loads(path.read_bytes())
 
 
 def verify(root, selection=None):
-    root = ordinary(root)
+    checked = set()  # Invocation-local directory checks; never a persistent integrity/hash cache.
+    root = ordinary(root, checked)
     pointer = root / "launcher/current.json"
     proposed = selection is not None
-    selection = read_json(pointer, 65536) if selection is None else selection
+    selection = read_json(pointer, 65536, checked) if selection is None else selection
     if selection.get("schema_version") != 1 or not re.fullmatch(
         "[a-f0-9]{64}", selection.get("snapshot", "")
     ):
         raise ValueError("Invalid runtime selection")
-    snapshot = ordinary(root / "runtimes" / selection["snapshot"])
+    snapshot = ordinary(root / "runtimes" / selection["snapshot"], checked)
     manifest = snapshot / "inventory.json"
     if digest(manifest) != selection["manifest_sha256"]:
         raise ValueError("Runtime inventory identity changed")
-    inventory = read_json(manifest)
+    inventory = read_json(manifest, checked=checked)
     if digest(root / "Start-Mcp.py") != selection["entry_sha256"]:
         raise ValueError("Stable entry identity changed")
     if digest(selection["interpreter"]) != selection["interpreter_sha256"]:
         raise ValueError("Reviewed interpreter identity changed")
-    engine = ordinary(Path(selection["interpreter"]).parent)
+    engine = ordinary(Path(selection["interpreter"]).parent, checked)
     if (
         not engine.is_relative_to(root / "engines")
         or digest(engine / "inventory.json") != selection["engine_sha256"]
     ):
         raise ValueError("Reviewed Python engine identity changed")
-    engine_inventory = read_json(engine / "inventory.json")
+    engine_inventory = read_json(engine / "inventory.json", checked=checked)
     for name, value in engine_inventory.items():
         path = Path(name)
         if path.is_absolute() or path.drive or ".." in path.parts or ":" in name:
             raise ValueError("Invalid Python engine path")
-        if digest(ordinary(engine / path)) != value:
+        if digest(ordinary(engine / path, checked)) != value:
             raise ValueError("Reviewed Python engine bytes changed")
-    if {p.relative_to(engine).as_posix() for p in engine.rglob("*") if p.is_file()} != set(
-        engine_inventory
-    ) | {"inventory.json"}:
+    engine_observed = set()
+    for directory, folders, files in os.walk(engine):
+        for name in folders:
+            ordinary(Path(directory, name), checked)
+        engine_observed.update(Path(directory, name).relative_to(engine).as_posix() for name in files)
+    if engine_observed != set(engine_inventory) | {"inventory.json"}:
         raise ValueError("Python engine inventory changed")
     entries = inventory["files"]
     if not 1 <= len(entries) <= 15000:
@@ -74,14 +88,14 @@ def verify(root, selection=None):
         relative = Path(name)
         if relative.is_absolute() or relative.drive or ".." in relative.parts or ":" in name:
             raise ValueError("Invalid runtime inventory path")
-        path = ordinary(snapshot / relative)
+        path = ordinary(snapshot / relative, checked)
         if digest(path) != expected_hash:
             raise ValueError("Reviewed runtime payload changed")
         expected.add(relative.as_posix())
     observed = set()
     for directory, folders, files in os.walk(snapshot):
         for name in folders:
-            ordinary(Path(directory, name))
+            ordinary(Path(directory, name), checked)
         observed.update(Path(directory, name).relative_to(snapshot).as_posix() for name in files)
     if observed != expected:
         raise ValueError("Runtime inventory contains missing or unexpected files")

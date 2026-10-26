@@ -27,6 +27,19 @@ _owner_job = None
 _exclusive_owner = False
 _claims = None
 _job_name = "Local\\EPlanMCP-owner-" + _owner
+_owner_limits = (64, None)
+
+
+def contain_frontdoor():
+    """Bound this exclusive metadata/analysis tree before serving any requests."""
+    global _owner_limits
+    if not _exclusive_owner or _owner_job is not None:
+        raise ValueError("Frontdoor containment requires a fresh exclusive owner")
+    _owner_limits = (12, 768 * 1024 * 1024)
+    import win32api
+    import win32job
+
+    _contain_owner(win32job, win32api)
 
 
 def _resource_claims():
@@ -54,7 +67,10 @@ def _contain_owner(api, kernel):
             limits["BasicLimitInformation"]["LimitFlags"] = (
                 api.JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE | api.JOB_OBJECT_LIMIT_ACTIVE_PROCESS
             )
-            limits["BasicLimitInformation"]["ActiveProcessLimit"] = 64
+            limits["BasicLimitInformation"]["ActiveProcessLimit"] = _owner_limits[0]
+            if _owner_limits[1] is not None:
+                limits["BasicLimitInformation"]["LimitFlags"] |= api.JOB_OBJECT_LIMIT_JOB_MEMORY
+                limits["JobMemoryLimit"] = _owner_limits[1]
             api.SetInformationJobObject(candidate, api.JobObjectExtendedLimitInformation, limits)
             api.AssignProcessToJobObject(candidate, kernel.GetCurrentProcess())
         except BaseException:

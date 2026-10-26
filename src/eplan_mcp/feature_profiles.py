@@ -25,7 +25,7 @@ def profiles(profile="direct-standalone-offline", converter=False):
         ),
         "endpoint_instance_admission": item(
             "implemented",
-            "Four non-waiting cross-process slots per state; selected direct admission and independent-session lifetime coverage",
+            "Twelve lightweight metadata leases per state; at most four on-demand analysis operations (configuration may be narrower). Parser/ODA limits are unchanged. Legacy endpoint leases are never stolen.",
         ),
         "parent_exit_cleanup": item(
             "implemented",
@@ -60,18 +60,19 @@ def profiles(profile="direct-standalone-offline", converter=False):
         ),
         "framework_catalog_watch": item(
             "blocked",
-            "Selected backend is transient legacy; retained auto/modern ownership migration has not been authorized",
+            "Optional framework host is not selected; standalone SDK discovery uses its immutable per-generation catalog",
         ),
         "index_and_import_progress": item(
-            "enabled-and-tested", "Monotonic file/report stages and structured process-local observations"
+            "final-observations",
+            "Backend returns real final file/report stage observations; frontend counters show admission, not live backend stages. Live stage streaming is not advertised.",
         ),
         "cooperative_cancellation": item(
-            "enabled-and-tested",
-            "Queued/dispatch and between-file/report-row checkpoints; in-flight workers are not preempted and durable uncertain receipts remain",
+            "owned-tree-cancellation",
+            "Frontend disconnect/cancellation stops its owned ephemeral analysis tree. Committed private units remain; interrupted write receipts can stay unknown. Never infer rollback or replay.",
         ),
         "local_data_cancellation": item(
-            "blocked",
-            "Single parser subprocesses lack intra-worker cooperative checkpoints; existing worker budgets/cleanup remain",
+            "owned-tree-cancellation",
+            "Single parsers have no intra-worker checkpoints; their private owned trees stop on cancellation under existing worker budgets. No native editor or shared software is acquired.",
         ),
         "tasks": item(
             "blocked",
