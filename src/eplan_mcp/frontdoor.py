@@ -21,6 +21,14 @@ from mcp.types import CallToolResult, ToolAnnotations
 from universal_tools.extensions import ExtensionServer
 
 from . import EXTRACTION_VERSION, __package_version__, __version__
+from .admission import (
+    ANALYSIS_OPERATIONS,
+    METADATA_FRONTDOORS,
+    METADATA_PROCESS_BYTES,
+    OWNER_TREE_BYTES,
+    OWNER_TREE_PROCESSES,
+    app_envelope,
+)
 from .coordination import Coordinator, RequestScheduler
 from .feature_profiles import profiles
 from .guidance import WORKFLOW
@@ -114,12 +122,17 @@ class Frontdoor:
 
     def admission(self):
         return {
-            "metadata_frontdoors_per_state": 12,
-            "analysis_operations_per_state": min(4, self.config.max_concurrent_requests),
+            "metadata_frontdoors_per_state": METADATA_FRONTDOORS,
+            "metadata_process_private_commit_bytes": METADATA_PROCESS_BYTES,
+            "analysis_operations_per_state": min(ANALYSIS_OPERATIONS, self.config.max_concurrent_requests),
             "parser_workers_per_state": self.config.max_worker_processes,
             "oda_workers_per_state": self.config.max_oda_processes,
-            "owner_job_max_processes": 12,
-            "owner_job_max_private_commit_bytes": 768 * 1024 * 1024,
+            "owner_job_max_processes": OWNER_TREE_PROCESSES,
+            "owner_job_max_private_commit_bytes": OWNER_TREE_BYTES,
+            "app_envelope_at_capacity": app_envelope(
+                METADATA_FRONTDOORS, self.config.max_concurrent_requests
+            ),
+            "aggregate_scope": "New app-owned trees only; SDK helpers and legacy generations are counted separately. Legacy jobs have no newly imposed memory limit.",
             "scope": "Metadata leases never reserve analysis/parser/ODA slots. Legacy live endpoints remain untouched.",
         }
 

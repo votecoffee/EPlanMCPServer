@@ -7,9 +7,11 @@ select an optional shared host or TDQS feature.
 
 ## Independent budgets
 
-The expected acceptance workload is six simultaneously connected chats, including
-simultaneous cold startup and reconnect. Twelve lightweight metadata leases per
-operational state provide bounded headroom. Each is an actual OS byte-range lock
+The deployment workload must be measured rather than inferred from a small pilot.
+The selected acceptance budget is sixteen ordinary connected chats, two additional
+loaded chats and two overlapping reconnect/review connections. Twenty lightweight
+metadata leases per operational state cover that finite demand. More demand is
+refused explicitly; this is not unlimited many-chat availability. Each lease is an actual OS byte-range lock
 with a native host/PID/creation-time/image identity receipt. Historical `held`
 receipts are observations, not slot authority; kernel locks release on exit.
 
@@ -30,11 +32,31 @@ No legacy endpoint lease or uncertain request is deleted, stolen or replayed.
 
 The serving frontdoor is the surviving owner of the analysis job. All descendants
 inherit its kill-on-close job, bounded to twelve processes and 768 MiB job commit.
-Count SDK console helpers separately in aggregate observations; they can predate
-the app job. Six idle frontdoors must be measured together, with existing peers
-reported separately. The configured twelve-frontdoor ceiling is not a claim of
-negligible aggregate memory. Twelve owned trees imply an absolute aggregate job
-commit ceiling of 9 GiB, plus SDK helpers and unchanged legacy generations.
+An inner job limits the metadata process to 128 MiB and one actor. Child creation
+silently leaves only this inner job and stops at the non-breakaway outer owner
+job. Analysis descendants remain in that outer full-tree job; no child escapes
+containment. See Microsoft's [nested-job inheritance rules](https://learn.microsoft.com/en-us/windows/win32/procthread/nested-jobs).
+Retain actual process/job membership proof when changing this topology.
+
+For `M` metadata processes and `A` admitted analysis trees the new app's kernel
+ceilings are `M + 11*A` actors and `(M-A)*128 + A*768` MiB private commit. With
+one configured analysis slot this is 27 actors/2688 MiB for sixteen chats and
+31 actors/3200 MiB at twenty-client reconnect capacity. With four analysis slots
+the twenty-client ceiling is 64 actors/5120 MiB. Admission remains at most four;
+parser and ODA pools may narrow actual parallelism further.
+
+Count SDK console helpers separately; they can predate the app job. Measure their
+actual count and commit. Do not label these app-owned ceilings as host-wide
+limits. Existing legacy generations retain their own original limits. In
+particular, an old generation without a memory limit cannot acquire a finite
+transition memory ceiling through observation alone. Report new-generation hard
+bounds plus the independently measured legacy overlap, and state that limitation
+until those peers close naturally. Never terminate them to make a budget pass.
+
+Validate simultaneous cold admission at the intended demand and actual reconnect
+peak, metadata at analysis capacity, and one further meaningful refusal. Keep
+the earlier six-client pilot under its original scope; it is not evidence that
+twenty clients were tested. Report normal and transition processes/private commit.
 Normal acceptance measures actual private commit, working set, threads and actor
 identities; do not infer commit from a small working set or increase limits to
 hide an ownership leak.

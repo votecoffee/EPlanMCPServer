@@ -25,7 +25,7 @@ def profiles(profile="direct-standalone-offline", converter=False):
         ),
         "endpoint_instance_admission": item(
             "implemented",
-            "Twelve lightweight metadata leases per state; at most four on-demand analysis operations (configuration may be narrower). Parser/ODA limits are unchanged. Legacy endpoint leases are never stolen.",
+            "Twenty lightweight metadata leases per state, each metadata process bounded to 128 MiB; at most four on-demand analysis operations (configuration may be narrower). Parser/ODA and outer owning-tree limits are unchanged. Legacy endpoint leases are never stolen.",
         ),
         "parent_exit_cleanup": item(
             "implemented",

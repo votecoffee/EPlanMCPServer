@@ -28,18 +28,42 @@ _exclusive_owner = False
 _claims = None
 _job_name = "Local\\EPlanMCP-owner-" + _owner
 _owner_limits = (64, None)
+_metadata_job = None
 
 
 def contain_frontdoor():
     """Bound this exclusive metadata/analysis tree before serving any requests."""
-    global _owner_limits
+    global _owner_limits, _metadata_job
+    from .admission import METADATA_PROCESS_BYTES, OWNER_TREE_BYTES, OWNER_TREE_PROCESSES
+
     if not _exclusive_owner or _owner_job is not None:
         raise ValueError("Frontdoor containment requires a fresh exclusive owner")
-    _owner_limits = (12, 768 * 1024 * 1024)
+    _owner_limits = (OWNER_TREE_PROCESSES, OWNER_TREE_BYTES)
     import win32api
     import win32job
 
     _contain_owner(win32job, win32api)
+    # Only this process belongs to the inner metadata job. Its child processes
+    # silently leave this inner job, stopping at the non-breakaway outer owner
+    # job above. All descendants retain the existing full-tree kill-on-close,
+    # process and memory limits; no shared/foreign process is assigned here.
+    candidate = win32job.CreateJobObject(None, "Local\\EPlanMCP-metadata-" + _owner)
+    try:
+        limits = win32job.QueryInformationJobObject(candidate, win32job.JobObjectExtendedLimitInformation)
+        limits["BasicLimitInformation"]["LimitFlags"] = (
+            win32job.JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE
+            | win32job.JOB_OBJECT_LIMIT_ACTIVE_PROCESS
+            | win32job.JOB_OBJECT_LIMIT_PROCESS_MEMORY
+            | win32job.JOB_OBJECT_LIMIT_SILENT_BREAKAWAY_OK
+        )
+        limits["BasicLimitInformation"]["ActiveProcessLimit"] = 1
+        limits["ProcessMemoryLimit"] = METADATA_PROCESS_BYTES
+        win32job.SetInformationJobObject(candidate, win32job.JobObjectExtendedLimitInformation, limits)
+        win32job.AssignProcessToJobObject(candidate, win32api.GetCurrentProcess())
+    except BaseException:
+        candidate.Close()
+        raise
+    _metadata_job = candidate.Detach()
 
 
 def _resource_claims():

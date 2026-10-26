@@ -14,6 +14,8 @@ from pathlib import Path
 
 import anyio
 
+from .admission import ANALYSIS_OPERATIONS, METADATA_FRONTDOORS
+
 
 class ResourceBusy(ValueError):
     pass
@@ -116,12 +118,14 @@ class Coordinator:
         from .json_state import atomic_json
 
         stream = None
-        for slot in range(12):
+        for slot in range(METADATA_FRONTDOORS):
             stream = self._try(f"metadata-frontdoor:{slot}")
             if stream is not None:
                 break
         if stream is None:
-            raise ResourceBusy("Metadata frontdoor capacity is full (12); existing peers are preserved")
+            raise ResourceBusy(
+                f"Metadata frontdoor capacity is full ({METADATA_FRONTDOORS}); existing peers are preserved"
+            )
         record = None
         try:
             if identity is None and os.name == "nt":
@@ -149,13 +153,13 @@ class Coordinator:
     def analysis(self, count):
         """Scarce operation admission is immediate and independent of idle frontdoors."""
         stream = None
-        for slot in range(min(4, count)):
+        for slot in range(min(ANALYSIS_OPERATIONS, count)):
             stream = self._try(f"analysis-operation:{slot}")
             if stream is not None:
                 break
         if stream is None:
             raise ResourceBusy(
-                f"Analysis capacity is busy ({min(4, count)}/{min(4, count)} OS slots held when checked); metadata/guidance remain available. No work was dispatched; inspect any previous request_id before retrying"
+                f"Analysis capacity is busy ({min(ANALYSIS_OPERATIONS, count)}/{min(ANALYSIS_OPERATIONS, count)} OS slots held when checked); metadata/guidance remain available. No work was dispatched; inspect any previous request_id before retrying"
             )
         try:
             yield

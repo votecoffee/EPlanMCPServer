@@ -12,6 +12,17 @@ from eplan_mcp.coordination import Coordinator, ResourceBusy
 from eplan_mcp.frontdoor import create_frontdoor
 
 
+@pytest.mark.parametrize(
+    "frontdoors,analysis,actors,mib", [(16, 1, 27, 2688), (20, 1, 31, 3200), (20, 4, 64, 5120)]
+)
+def test_new_app_envelope_counts_only_admitted_analysis(frontdoors, analysis, actors, mib):
+    from eplan_mcp.admission import app_envelope
+
+    result = app_envelope(frontdoors, analysis)
+    assert result["processes"] == actors
+    assert result["private_commit_bytes"] == mib * 1024 * 1024
+
+
 def configuration(tmp_path):
     (tmp_path / "sources").mkdir()
     config = tmp_path / "config.json"
@@ -33,7 +44,7 @@ def test_metadata_leases_do_not_acquire_legacy_or_analysis_slots(tmp_path):
     with ExitStack() as stack:
         for _ in range(4):
             stack.enter_context(coordinator.instance())
-        for _ in range(12):
+        for _ in range(20):
             stack.enter_context(coordinator.frontdoor(identity={"fixture": True}))
         with pytest.raises(ResourceBusy, match="Metadata frontdoor"):
             with coordinator.frontdoor(identity={"fixture": True}):
@@ -45,7 +56,7 @@ def test_metadata_leases_do_not_acquire_legacy_or_analysis_slots(tmp_path):
     with coordinator.frontdoor(identity={"fixture": True}):
         pass
     history = [json.loads(p.read_bytes()) for p in (tmp_path / "frontdoor-leases").glob("*.json")]
-    assert len(history) == 13 and all(r["state"] == "closed" for r in history)
+    assert len(history) == 21 and all(r["state"] == "closed" for r in history)
 
 
 def test_partial_initialization_releases_only_its_lease(tmp_path):
@@ -54,7 +65,7 @@ def test_partial_initialization_releases_only_its_lease(tmp_path):
         with coordinator.frontdoor(identity={"fixture": True}):
             raise RuntimeError("startup fixture")
     with ExitStack() as stack:
-        for _ in range(12):
+        for _ in range(20):
             stack.enter_context(coordinator.frontdoor(identity={"fixture": True}))
 
 

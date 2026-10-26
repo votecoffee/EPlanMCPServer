@@ -43,7 +43,7 @@ def fake_windows(tmp_path, monkeypatch):
             raise OSError("synthetic assignment refusal")
 
     def create_job(security, name):
-        assert name in ("", owned._job_name)
+        assert name in ("", owned._job_name, "Local\\EPlanMCP-metadata-" + owned._owner)
         return Handle("job")
 
     def terminate(job, code):
@@ -66,13 +66,16 @@ def fake_windows(tmp_path, monkeypatch):
     fake_job = SimpleNamespace(
         CreateJobObject=create_job,
         QueryInformationJobObject=job_info,
-        SetInformationJobObject=lambda *args: None,
+        SetInformationJobObject=lambda handle, kind, limits: events.append(("limits", handle.value, limits)),
         AssignProcessToJobObject=assign,
         TerminateJobObject=terminate,
         JobObjectExtendedLimitInformation=1,
         JobObjectBasicAccountingInformation=2,
         JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE=0x2000,
         JOB_OBJECT_LIMIT_ACTIVE_PROCESS=8,
+        JOB_OBJECT_LIMIT_JOB_MEMORY=0x200,
+        JOB_OBJECT_LIMIT_PROCESS_MEMORY=0x100,
+        JOB_OBJECT_LIMIT_SILENT_BREAKAWAY_OK=0x1000,
     )
     modules = {
         "_winapi": SimpleNamespace(
@@ -109,6 +112,8 @@ def fake_windows(tmp_path, monkeypatch):
         "_recent": [],
         "_closing": False,
         "_owner_job": None,
+        "_metadata_job": None,
+        "_owner_limits": (64, None),
         "_evidence": None,
         "_exclusive_owner": True,
         "_claims": claims,
@@ -116,6 +121,23 @@ def fake_windows(tmp_path, monkeypatch):
         monkeypatch.setattr(owned, name, value)
     owned.bind_evidence(tmp_path)
     return values, events, handles, tmp_path / "owned-resources"
+
+
+def test_metadata_limit_does_not_allow_escape_from_outer_owner(fake_windows):
+    _, events, handles, _ = fake_windows
+    owned.contain_frontdoor()
+    limits = [e[2] for e in events if e[0] == "limits"]
+    assert len(limits) == 2
+    outer, metadata = limits
+    assert outer["BasicLimitInformation"]["ActiveProcessLimit"] == 12
+    assert outer["JobMemoryLimit"] == 768 * 1024 * 1024
+    assert not outer["BasicLimitInformation"]["LimitFlags"] & 0x1800
+    assert metadata["BasicLimitInformation"]["ActiveProcessLimit"] == 1
+    assert metadata["ProcessMemoryLimit"] == 128 * 1024 * 1024
+    assert metadata["BasicLimitInformation"]["LimitFlags"] & 0x1000
+    assert len([e for e in events if e[0] == "assign"]) == 2
+    assert not any(e[0] == "close" for e in events)
+    assert owned._owner_job == handles[0].value and owned._metadata_job == handles[1].value
 
 
 def test_containment_precedes_creation_and_resume_with_persistent_identity(fake_windows):
